@@ -27,14 +27,14 @@ else:
   spark_mb = max(512, system_ram_mb - 1300)
 
 template_vars = {
-  "master_list": os.getenv("MASTERS"),
-  "active_master": os.getenv("MASTERS").split("\n")[0],
-  "slave_list": os.getenv("SLAVES"),
+  "master_list": os.getenv("MESOS_MASTERS"),
+  "active_master": os.getenv("MESOS_MASTERS").split("\n")[0],
+  "slave_list": os.getenv("MESOS_SLAVES"),
   "zoo_list": os.getenv("MESOS_ZOO_LIST"),
   "cluster_url": os.getenv("MESOS_CLUSTER_URL"),
-  "hdfs_data_dirs": os.getenv("HDFS_DATA_DIRS"),
-  "mapred_local_dirs": os.getenv("MAPRED_LOCAL_DIRS"),
-  "spark_local_dirs": os.getenv("SPARK_LOCAL_DIRS"),
+  "hdfs_data_dirs": os.getenv("MESOS_HDFS_DATA_DIRS"),
+  "mapred_local_dirs": os.getenv("MESOS_MAPRED_LOCAL_DIRS"),
+  "spark_local_dirs": os.getenv("MESOS_SPARK_LOCAL_DIRS"),
   "default_spark_mem": "%dm" % spark_mb
 }
 
