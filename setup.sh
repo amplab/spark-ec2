@@ -93,6 +93,14 @@ wait
 ./mesos/compute_cluster_url.py > ./cluster-url
 export MESOS_CLUSTER_URL=`cat ./cluster-url`
 
+# Install / Init module before templates if required
+for module in $MODULES; do
+  echo "Initializing $module"
+  if [[ -e $module/init.sh ]]; then
+    source $module/init.sh
+  fi
+done
+
 # Deploy templates
 # TODO: Move configuring templates to a per-module ?
 echo "Creating local config files..."
