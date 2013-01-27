@@ -7,7 +7,7 @@ source ./setup-slave.sh
 
 for node in $SLAVES $OTHER_MASTERS; do
   echo $node
-  ssh -t $SSH_OPTS root@$node "/root/spark-ec2/ephemeral-hdfs/setup-slave.sh" & sleep 0.3
+  ssh -t -t $SSH_OPTS root@$node "/root/spark-ec2/ephemeral-hdfs/setup-slave.sh" & sleep 0.3
 done
 
 /root/spark-ec2/copy-dir $EPHEMERAL_HDFS/conf

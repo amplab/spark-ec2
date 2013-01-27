@@ -84,7 +84,7 @@ source ./setup-slave.sh
 echo "Running slave setup script on other cluster nodes..."
 for node in $SLAVES $OTHER_MASTERS; do
   echo $node
-  ssh -t $SSH_OPTS root@$node "spark-ec2/setup-slave.sh" & sleep 0.3
+  ssh -t -t $SSH_OPTS root@$node "spark-ec2/setup-slave.sh" & sleep 0.3
 done
 wait
 
