@@ -11,3 +11,7 @@ echo "Deploying Spark config files..."
 /root/spark-ec2/copy-dir /root/spark/conf
 
 # Add stuff for standalone mode here, using an environment variable
+if [[ "$SPARK_STANDALONE" != "" ]]; then
+  cp /root/spark-ec2/slaves /root/spark/conf/
+  /root/spark/bin/start-all.sh
+fi
