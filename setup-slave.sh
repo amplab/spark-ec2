@@ -17,6 +17,7 @@ echo "Setting up slave on `hostname`..."
 # Mount options to use for ext3 and xfs disks (the ephemeral disks
 # are ext3, but we use xfs for EBS volumes to format them faster)
 EXT3_MOUNT_OPTS="defaults,noatime,nodiratime"
+XFS_MOUNT_OPTS="defaults,noatime,nodiratime,allocsize=8m"
 
 # Mount any ephemeral volumes we might have beyond /mnt
 function setup_extra_volume {
