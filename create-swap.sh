@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-  echo "Usage: create-swap <amount of MB>"
+  echo "Usage: create-swap.sh <amount of MB>"
   exit 1
 fi
 

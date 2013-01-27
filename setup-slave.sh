@@ -67,4 +67,4 @@ chmod -R a+w /mnt*
 rm -f /root/.ssh/known_hosts
 
 # Create swap space on /mnt
-/root/spark-ec2/create-swap $SWAP_MB
+/root/spark-ec2/create-swap.sh $SWAP_MB

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 EPHEMERAL_HDFS=/root/ephemeral-hdfs
-pushd $EPHEMERAL_HDFS
 
+pushd /root/spark-ec2/ephemeral-hdfs
 source ./setup-slave.sh
 
 for node in $SLAVES $OTHER_MASTERS; do

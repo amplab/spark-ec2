@@ -71,13 +71,13 @@ if [[ "$DOWNLOADED" == "1" ]] ; then
 fi
 
 echo "Setting up Hadoop framework config files..."
-cp hadoop-framework-conf/* /root/hadoop-mesos/conf
+cp /root/spark-ec2/mesos/hadoop-framework-conf/* /root/hadoop-mesos/conf
 
 echo "Deploying Hadoop framework config files..."
 /root/spark-ec2/copy-dir /root/hadoop-mesos/conf
 
 echo "Redeploying /root/mesos..."
-./redeploy-mesos
+/root/spark-ec2/mesos/redeploy-mesos
 
 if [[ $NUM_ZOOS != 0 ]]; then
   echo "Starting ZooKeeper quorum..."
@@ -89,8 +89,8 @@ if [[ $NUM_ZOOS != 0 ]]; then
 fi
 
 echo "Stopping any existing Mesos cluster..."
-./stop-mesos
+/root/spark-ec2/mesos/stop-mesos
 sleep 2
 
 echo "Starting Mesos cluster..."
-./start-mesos
+/root/spark-ec2/mesos/start-mesos

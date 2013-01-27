@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /root/mesos-ec2
+cd /root/spark-ec2
 
 MASTERS=`cat masters`
 SLAVES=`cat slaves`
