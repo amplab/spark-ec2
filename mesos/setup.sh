@@ -27,6 +27,7 @@ mkdir -p /mnt/mesos-work
 for node in $SLAVES $OTHER_MASTERS; do
   ssh -t $SSH_OPTS root@$node "mkdir -p /mnt/mesos-logs /mnt/mesos-work" & sleep 0.3
 done
+wait
 
 DOWNLOADED=0
 
