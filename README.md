@@ -40,4 +40,6 @@ and can be used to install any pre-requisites.
    d. Add a file named `setup.sh` to launch any services on the master/slaves. This is called
    after the templates have been configured. You can use the environment variables `$SLAVES` to
    get a list of slave hostnames and `/root/spark-ec2/copy-dir` to sync a directory across machines.
-   
+      
+   e. Modify https://github.com/mesos/spark/blob/master/ec2/spark_ec2.py to add your module to
+   the list of enabled modules.
