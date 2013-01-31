@@ -5,9 +5,6 @@ cd /root/spark-ec2
 
 source ec2-variables.sh
 
-echo "export JAVA_HOME=/usr/lib/jvm/java-openjdk " >> ~/.bash_profile
-echo "export SCALA_HOME=/root/scala-2.9.2" >> ~/.bash_profile
-
 # Set hostname based on EC2 private DNS name, so that it is set correctly
 # even if the instance is restarted with a different private DNS name
 PRIVATE_DNS=`wget -q -O - http://instance-data.ec2.internal/latest/meta-data/local-hostname`
@@ -16,6 +13,16 @@ echo $PRIVATE_DNS > /etc/hostname
 HOSTNAME=$PRIVATE_DNS  # Fix the bash built-in hostname variable too
 
 echo "Setting up slave on `hostname`..."
+
+# Install scala
+pushd /root
+wget http://www.scala-lang.org/downloads/distrib/files/scala-2.9.2.tgz
+tar -xf /root/scala-2.9.2.tgz
+popd
+
+echo "export JAVA_HOME=/usr/lib/jvm/java-openjdk " >> ~/.bash_profile
+echo "export SCALA_HOME=/root/scala-2.9.2" >> ~/.bash_profile
+
 
 # Mount options to use for ext3 and xfs disks (the ephemeral disks
 # are ext3, but we use xfs for EBS volumes to format them faster)
