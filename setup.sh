@@ -35,6 +35,15 @@ fi
 echo "Setting executable permissions on scripts..."
 find . -regex "^.+.\(sh\|py\)" | xargs chmod a+x
 
+echo "RSYNC'ing /root/spark-ec2 to other cluster nodes..."
+for node in $SLAVES $OTHER_MASTERS; do
+  echo $node
+  rsync -e "ssh $SSH_OPTS" -az /root/spark-ec2 $node:/root &
+  scp $SSH_OPTS ~/.ssh/id_rsa $node:.ssh &
+  sleep 0.3
+done
+wait
+
 echo "Running setup-slave on master to mount filesystems, etc..."
 source ./setup-slave.sh
 
@@ -80,15 +89,6 @@ while [ "e$TODO" != "e" ] && [ $TRIES -lt 4 ] ; do
       break;
   fi
 done
-
-echo "RSYNC'ing /root/spark-ec2 to other cluster nodes..."
-for node in $SLAVES $OTHER_MASTERS; do
-  echo $node
-  rsync -e "ssh $SSH_OPTS" -az /root/spark-ec2 $node:/root &
-  scp $SSH_OPTS ~/.ssh/id_rsa $node:.ssh &
-  sleep 0.3
-done
-wait
 
 # Set environment variables required by templates
 # TODO: Make this general by using a init.sh per module ?
