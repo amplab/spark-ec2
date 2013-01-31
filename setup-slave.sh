@@ -16,7 +16,7 @@ echo "Setting up slave on `hostname`..."
 
 # Install scala
 pushd /root
-wget http://www.scala-lang.org/downloads/distrib/files/scala-2.9.2.tgz
+wget -N -S http://www.scala-lang.org/downloads/distrib/files/scala-2.9.2.tgz
 tar -xf /root/scala-2.9.2.tgz
 popd
 
