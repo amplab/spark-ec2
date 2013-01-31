@@ -5,6 +5,8 @@ cd /root/spark-ec2
 
 source ec2-variables.sh
 
+echo "export JAVA_HOME=/usr/lib/jvm/java-openjdk " >> ~/.bash_profile
+
 # Set hostname based on EC2 private DNS name, so that it is set correctly
 # even if the instance is restarted with a different private DNS name
 PRIVATE_DNS=`wget -q -O - http://instance-data.ec2.internal/latest/meta-data/local-hostname`
