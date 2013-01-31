@@ -3,6 +3,7 @@
 pushd /root
 git clone git://github.com/amplab/shark.git 
 pushd /root/shark
+export HIVE_HOME=/root/hive/build/dist/
 ./sbt/sbt package
 
 popd
