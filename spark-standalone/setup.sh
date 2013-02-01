@@ -9,6 +9,8 @@ echo "spark://""`cat /root/spark-ec2/masters`"":7077" > /root/spark-ec2/cluster-
 # The Spark master seems to take time to start and workers crash if
 # they start before the master. Try to see if waiting makes the master start up
 # more reliably.
-sleep 60
+sleep 15
 
 /root/spark/bin/start-all.sh
+
+sleep 15
