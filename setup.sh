@@ -19,6 +19,11 @@ echo "Setting up Spark on `hostname`..."
 echo "$MESOS_MASTERS" > masters
 echo "$MESOS_SLAVES" > slaves
 
+# TODO(shivaram): Clean this up after docs have been updated ?
+# This ensures /root/mesos-ec2/copy-dir still works
+cp -f slaves /root/mesos-ec2/
+cp -f masters /root/mesos-ec2/
+
 MASTERS=`cat masters`
 NUM_MASTERS=`cat masters | wc -l`
 OTHER_MASTERS=`cat masters | sed '1d'`
