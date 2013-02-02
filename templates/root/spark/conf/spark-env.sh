@@ -22,3 +22,5 @@ SPARK_JAVA_OPTS+=" -Dspark.local.dir={{spark_local_dirs}}"
 export SPARK_JAVA_OPTS
 
 export SPARK_MASTER_IP={{active_master}}
+export MASTER=`cat /root/spark-ec2/cluster-url`
+export SPARK_CLASSPATH="/root/ephemeral-hdfs/conf"
