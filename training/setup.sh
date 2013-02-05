@@ -9,13 +9,16 @@ git clone git@github.com:amplab/training.git
 pushd training
 cp -r streaming /root/
 cp -r kmeans /root/
-# TODO: Move java-app-template, scala-app-template also here ?
+cp -r java-app-template /root/
+cp -r scala-app-template /root/
 
 popd
 popd
 
 /root/spark-ec2/copy-dir /root/streaming
 /root/spark-ec2/copy-dir /root/kmeans
+/root/spark-ec2/copy-dir /root/java-app-template
+/root/spark-ec2/copy-dir /root/scala-app-template
 
 # Training specific hacks
 
