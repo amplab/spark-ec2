@@ -22,10 +22,10 @@ ln -s /root/training/scala-app-template /root/scala-app-template
 popd
 popd
 
-/root/spark-ec2/copy-dir /root/streaming
-/root/spark-ec2/copy-dir /root/kmeans
-/root/spark-ec2/copy-dir /root/java-app-template
-/root/spark-ec2/copy-dir /root/scala-app-template
+#/root/spark-ec2/copy-dir /root/streaming
+#/root/spark-ec2/copy-dir /root/kmeans
+#/root/spark-ec2/copy-dir /root/java-app-template
+#/root/spark-ec2/copy-dir /root/scala-app-template
 
 # Training specific hacks
 
