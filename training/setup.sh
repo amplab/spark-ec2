@@ -2,6 +2,7 @@
 
 pushd /root
 
+ssh-keyscan -H github.com >> /root/.ssh/known_hosts
 rm -rf training
 git clone git@github.com:amplab/training.git
 
