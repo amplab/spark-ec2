@@ -7,10 +7,17 @@ rm -rf training
 git clone git@github.com:amplab/training.git
 
 pushd training
-cp -r streaming /root/
-cp -r kmeans /root/
-cp -r java-app-template /root/
-cp -r scala-app-template /root/
+/root/spark-ec2/copy-dir /root/training 
+
+#cp -r streaming /root/
+#cp -r kmeans /root/
+#cp -r java-app-template /root/
+#cp -r scala-app-template /root/
+
+ln -s /root/training/streaming /root/streaming
+ln -s /root/training/kmeans /root/kmeans
+ln -s /root/training/java-app-template /root/java-app-template
+ln -s /root/training/scala-app-template /root/scala-app-template
 
 popd
 popd
