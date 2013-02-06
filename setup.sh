@@ -100,6 +100,8 @@ wait
 # TODO: Make this general by using a init.sh per module ?
 ./mesos/compute_cluster_url.py > ./cluster-url
 export MESOS_CLUSTER_URL=`cat ./cluster-url`
+# TODO(shivaram): Clean this up after docs have been updated ?
+cp -f cluster-url /root/mesos-ec2/
 
 # Install / Init module before templates if required
 for module in $MODULES; do
