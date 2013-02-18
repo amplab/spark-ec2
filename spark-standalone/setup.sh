@@ -1,7 +1,5 @@
 #!/bin/bash
 
-pushd /root/spark-ec2/spark-standalone
-
 # Copy the slaves to spark conf
 cp /root/spark-ec2/slaves /root/spark/conf/
 /root/spark-ec2/copy-dir /root/spark/conf
@@ -29,5 +27,3 @@ sleep 20
 
 # Start Workers
 /root/spark/bin/start-slaves.sh
-
-popd
