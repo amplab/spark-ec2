@@ -1,5 +1,8 @@
 #!/bin/bash
 
+pushd /root/spark-ec2/spark-standalone
+
+# Copy the slaves to spark conf
 cp /root/spark-ec2/slaves /root/spark/conf/
 
 # Set cluster-url to standalone master
@@ -8,10 +11,22 @@ cp -f /root/spark-ec2/cluster-url /root/mesos-ec2/cluster-url
 /root/spark-ec2/copy-dir /root/spark/conf
 
 # The Spark master seems to take time to start and workers crash if
-# they start before the master. Try to see if waiting makes the master start up
-# more reliably.
-sleep 15
+# they start before the master. Retry a few times with a health check
 
-/root/spark/bin/start-all.sh
+NUM_RETRIES=3
+STATUS=1
+ATTEMPTS=1
 
-sleep 15
+while [ $STATUS -ne 0 ] && [ $ATTEMPTS -le $NUM_RETRIES ]
+do
+  echo "Starting Spark...Attempt $ATTEMPTS/$NUM_RETRIES" 
+  /root/spark/bin/stop-all.sh
+  sleep 2
+  /root/spark/bin/start-all.sh
+  sleep 5
+  python ./check_spark.py `cat /root/spark-ec2/masters` `wc -l /root/spark/conf/slaves`
+  STATUS=$?
+  ATTEMPTS=$(( $ATTEMPTS + 1 ))
+done
+
+popd
