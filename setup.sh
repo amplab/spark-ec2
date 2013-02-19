@@ -44,15 +44,6 @@ find . -regex "^.+.\(sh\|py\)" | xargs chmod a+x
 echo "Running setup-slave on master to mount filesystems, etc..."
 source ./setup-slave.sh
 
-# NOTE: We clear known_hosts in setup-slave, so this should be done before
-# we ssh to add keys.
-echo "Running slave setup script on other cluster nodes..."
-for node in $SLAVES $OTHER_MASTERS; do
-  echo $node
-  ssh -t -t $SSH_OPTS root@$node "spark-ec2/setup-slave.sh" & sleep 0.3
-done
-wait
-
 echo "SSH'ing to master machine(s) to approve key(s)..."
 for master in $MASTERS; do
   echo $master
@@ -93,6 +84,15 @@ for node in $SLAVES $OTHER_MASTERS; do
   rsync -e "ssh $SSH_OPTS" -az /root/spark-ec2 $node:/root &
   scp $SSH_OPTS ~/.ssh/id_rsa $node:.ssh &
   sleep 0.3
+done
+wait
+
+# NOTE: We need to rsync spark-ec2 before we can run setup-slave.sh
+# on other cluster nodes
+echo "Running slave setup script on other cluster nodes..."
+for node in $SLAVES $OTHER_MASTERS; do
+  echo $node
+  ssh -t -t $SSH_OPTS root@$node "spark-ec2/setup-slave.sh" & sleep 0.3
 done
 wait
 
