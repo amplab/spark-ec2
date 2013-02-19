@@ -127,3 +127,5 @@ for module in $MODULES; do
   source ./$module/setup.sh
   sleep 1
 done
+
+echo "Cluster is started at http://$PUBLIC_DNS:8080"
