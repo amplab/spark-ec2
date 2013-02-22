@@ -19,9 +19,9 @@ master_ram_kb = int(
 # This is the master's memory. Try to find slave's memory as well
 first_slave = os.popen("cat /root/spark-ec2/slaves | head -1").read().strip()
 
-slave_ram_kb = int(subprocess.check_output(
-    "ssh -t -o StrictHostKeyChecking=no %s '%s'" %
-        (first_slave, mem_command), shell=True).strip())
+slave_mem_command = "ssh -t -o StrictHostKeyChecking=no %s %s" %\
+        (first_slave, mem_command)
+slave_ram_kb = int(os.popen(slave_mem_command).read().strip())
 
 system_ram_kb = min(slave_ram_kb, master_ram_kb)
 
