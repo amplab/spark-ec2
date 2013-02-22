@@ -5,7 +5,6 @@ from __future__ import with_statement
 
 import os
 import sys
-import subprocess
 
 # Deploy the configuration file templates in the spark-ec2/templates directory
 # to the root filesystem, substituting variables such as the master hostname,
