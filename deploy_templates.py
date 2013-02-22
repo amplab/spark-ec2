@@ -5,15 +5,26 @@ from __future__ import with_statement
 
 import os
 import sys
+import subprocess
 
 # Deploy the configuration file templates in the spark-ec2/templates directory
 # to the root filesystem, substituting variables such as the master hostname,
 # ZooKeeper URL, etc as read from the environment.
 
 # Find system memory in KB and compute Spark's default limit from that
-system_ram_kb = int(
-  os.popen("cat /proc/meminfo | grep MemTotal | awk '{print $2}'")
-    .read().strip())
+mem_command = "cat /proc/meminfo | grep MemTotal | awk '{print $2}'"
+
+master_ram_kb = int(
+  os.popen(mem_command).read().strip())
+# This is the master's memory. Try to find slave's memory as well
+first_slave = os.popen("cat /root/spark-ec2/slaves | head -1").read().strip()
+
+slave_ram_kb = int(subprocess.check_output(
+    "ssh -t -o StrictHostKeyChecking=no %s '%s'" %
+        (first_slave, mem_command), shell=True).strip())
+
+system_ram_kb = min(slave_ram_kb, master_ram_kb)
+
 system_ram_mb = system_ram_kb / 1024
 if system_ram_mb > 20*1024:
   # Leave 3 GB for the OS, HDFS and buffer cache
