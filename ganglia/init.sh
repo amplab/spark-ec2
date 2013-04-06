@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# NOTE: Hack to remove all rrds which might be around from an earlier run
+rm -rf /var/lib/ganglia/rrds/spark/*
+
 # Install ganglia
 # TODO: Remove this once the AMI has ganglia by default
 
