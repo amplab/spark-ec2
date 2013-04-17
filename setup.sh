@@ -30,7 +30,7 @@ NUM_MASTERS=`cat masters | wc -l`
 OTHER_MASTERS=`cat masters | sed '1d'`
 SLAVES=`cat slaves`
 
-JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk.x86_64
+JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk.x86_64
 SSH_OPTS="-o StrictHostKeyChecking=no -o ConnectTimeout=5"
 
 if [[ `tty` == "not a tty" ]] ; then
