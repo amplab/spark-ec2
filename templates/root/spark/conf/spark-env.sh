@@ -21,6 +21,7 @@ export SPARK_MEM={{default_spark_mem}}
 SPARK_JAVA_OPTS+=" -Dspark.local.dir={{spark_local_dirs}}"
 export SPARK_JAVA_OPTS
 
+export SPARK_LIBRARY_PATH="/root/ephemeral-hdfs/lib/native/"
 export SPARK_MASTER_IP={{active_master}}
 
 # Uncomment the following to connect shells to the cluster by default
