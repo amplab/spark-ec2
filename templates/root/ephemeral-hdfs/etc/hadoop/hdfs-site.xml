@@ -35,12 +35,12 @@
 
   <property>
     <name>dfs.client.read.shortcircuit</name>
-    <value>true</value>
+    <value>false</value>
   </property>
 
   <property>
     <name>dfs.client.read.shortcircuit.skip.checksum</name>
-    <value>true</value>
+    <value>false</value>
   </property>
 
   <property>
