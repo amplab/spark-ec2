@@ -32,7 +32,7 @@ from sys import stderr
 from boto.ec2.connection import EC2Connection
 from boto import ec2
 
-DEST_REGIONS = ["us-west-1", "us-west-1", "eu-west-1", "ap-southeast-1",
+DEST_REGIONS = ["us-west-1", "us-west-2", "eu-west-1", "ap-southeast-1",
                 "ap-southeast-2", "ap-northeast-1", "sa-east-1"]
 
 def parse_args():
