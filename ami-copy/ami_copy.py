@@ -64,7 +64,14 @@ def parse_args():
   
 def main():
   (opts, source_region, source_image_id, image_name) = parse_args()
-  dest_regions = ["us-west-1"]
+  # Validate AMI
+  conn = EC2Connection(region=ec2.get_region(source_region))
+  image = conn.get_image(source_image_id)
+  if not image.is_public:
+    print >> stderr, ("Image %s is not public, no one will be able to " \
+                      "use it!" % source_image_id)
+    sys.exit(1)                       
+
   for dest_region in DEST_REGIONS:
     try:
       region = ec2.get_region(dest_region)
