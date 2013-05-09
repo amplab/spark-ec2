@@ -19,7 +19,11 @@
 
 """A script for deploying Spark images to multiple EC2 datacenters.
 
-Note: this requires boto 2.9.2 or later: `pip install boto`.
+Example usage:
+python ami_copy.py us-east-1 ami-8bdcb0e2 spark_0.7.0_20130508_x86_64_pvm pvm --files -d ../ami-list/0.7.0/
+
+Note: 
+This requires boto 2.9.2 or later: `pip install boto`.
 """
 
 from __future__ import with_statement
@@ -37,15 +41,21 @@ DEST_REGIONS = ["us-west-1", "us-west-2", "eu-west-1", "ap-southeast-1",
 
 def parse_args():
   parser = OptionParser(
-      usage="image-copy <source-region> <source-image-id> <image-name>",
+      usage="image-copy <source-region> <source-image-id> <image-name> <image-arhc>",
       add_help_option=False)
   parser.add_option("-h", "--help", action="help",
                     help="Show this help message and exit")
+
+  parser.add_option("-f", "--files", action="store_true", default=False,
+                    help="Whether to create files storing new image IDs")
+  parser.add_option("-d", "--base-directory", default="/tmp",
+                    help="Directory where files should be created")
+
   (opts, args) = parser.parse_args()
-  if len(args) != 3:
+  if len(args) != 4:
     parser.print_help()
     sys.exit(1)
-  (source_region, source_image_id, image_name) = args
+  (source_region, source_image_id, image_name, image_arch) = args
   
   # Boto config check
   # http://boto.cloudhackers.com/en/latest/boto_config_tut.html
@@ -60,10 +70,10 @@ def parse_args():
         print >> stderr, ("ERROR: The environment variable " +
                           "AWS_SECRET_ACCESS_KEY must be set")
         sys.exit(1)
-  return (opts, source_region, source_image_id, image_name)
+  return (opts, source_region, source_image_id, image_name, image_arch)
   
 def main():
-  (opts, source_region, source_image_id, image_name) = parse_args()
+  (opts, source_region, source_image_id, image_name, image_arch) = parse_args()
   # Validate AMI
   conn = EC2Connection(region=ec2.get_region(source_region))
   image = conn.get_image(source_image_id)
@@ -71,6 +81,11 @@ def main():
     print >> stderr, ("Image %s is not public, no one will be able to " \
                       "use it!" % source_image_id)
     sys.exit(1)                       
+
+
+  if opts.files:
+    if not os.path.exists(opts.base_directory):
+      os.mkdir(opts.base_directory)
 
   for dest_region in DEST_REGIONS:
     try:
@@ -81,6 +96,13 @@ def main():
       sys.exit(1)
     new_image = conn.copy_image(source_region, source_image_id, image_name)
     print "Created new image: %s in %s" % (new_image.image_id, dest_region)
+    if opts.files:
+      dest_dir = os.path.join(opts.base_directory, dest_region)
+      if not os.path.exists(dest_dir):
+        os.mkdir(dest_dir) 
+      f = open(os.path.join(dest_dir, image_arch), 'w')
+      f.write(new_image.image_id)
+      f.close()
 
 if __name__ == "__main__":
   logging.basicConfig()
