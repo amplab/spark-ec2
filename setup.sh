@@ -103,18 +103,18 @@ export MESOS_CLUSTER_URL=`cat ./cluster-url`
 # TODO(shivaram): Clean this up after docs have been updated ?
 cp -f cluster-url /root/mesos-ec2/
 
-# Install / Init module before templates if required
+# Deploy templates
+# TODO: Move configuring templates to a per-module ?
+echo "Creating local config files..."
+./deploy_templates.py
+
+# Install / Init module
 for module in $MODULES; do
   echo "Initializing $module"
   if [[ -e $module/init.sh ]]; then
     source $module/init.sh
   fi
 done
-
-# Deploy templates
-# TODO: Move configuring templates to a per-module ?
-echo "Creating local config files..."
-./deploy_templates.py
 
 # Copy spark conf by default
 echo "Deploying Spark config files..."

@@ -19,8 +19,12 @@
 
 """A script for deploying Spark images to multiple EC2 datacenters.
 
-Example usage:
-python ami_copy.py us-east-1 ami-8bdcb0e2 spark_0.7.0_20130508_x86_64_pvm pvm --files -d ../ami-list/0.7.0/
+Usage:
+python ami_copy.py <source-region> <source-image-id> <image-name> <image-arch>
+
+Example:
+python ami_copy.py us-east-1 ami-8bdcb0e2 spark_0.7.0_20130508_x86_64_pvm \
+  pvm --files -d ../ami-list/0.7.0/
 
 Note: 
 This requires boto 2.9.2 or later: `pip install boto`.
@@ -41,7 +45,7 @@ DEST_REGIONS = ["us-west-1", "us-west-2", "eu-west-1", "ap-southeast-1",
 
 def parse_args():
   parser = OptionParser(
-      usage="image-copy <source-region> <source-image-id> <image-name> <image-arhc>",
+      usage="image-copy <source-region> <source-image-id> <image-name> <image-arch>",
       add_help_option=False)
   parser.add_option("-h", "--help", action="help",
                     help="Show this help message and exit")

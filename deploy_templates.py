@@ -45,7 +45,10 @@ template_vars = {
   "hdfs_data_dirs": os.getenv("MESOS_HDFS_DATA_DIRS"),
   "mapred_local_dirs": os.getenv("MESOS_MAPRED_LOCAL_DIRS"),
   "spark_local_dirs": os.getenv("MESOS_SPARK_LOCAL_DIRS"),
-  "default_spark_mem": "%dm" % spark_mb
+  "default_spark_mem": "%dm" % spark_mb,
+  "spark_version": os.getenv("SPARK_VERSION"),
+  "shark_version": os.getenv("SHARK_VERSION"),
+  "hadoop_major_version": os.getenv("HADOOP_MAJOR_VERSION")
 }
 
 template_dir="/root/spark-ec2/templates"

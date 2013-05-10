@@ -2,6 +2,8 @@
 
 EPHEMERAL_HDFS=/root/ephemeral-hdfs
 
+/root/spark-ec2/copy-dir $EPHEMERAL_HDFS
+
 # Set hdfs url to make it easier
 HDFS_URL="hdfs://$PUBLIC_DNS:9000"
 echo "export HDFS_URL=$HDFS_URL" >> ~/.bash_profile
@@ -23,10 +25,12 @@ if [ -f "$NAMENODE_DIR/current/VERSION" ] && [ -f "$NAMENODE_DIR/current/fsimage
   echo "Hadoop namenode appears to be formatted: skipping"
 else
   echo "Formatting ephemeral HDFS namenode..."
-  $EPHEMERAL_HDFS/bin/hdfs namenode -format
+  $EPHEMERAL_HDFS/bin/hadoop namenode -format
 fi
 
 echo "Starting ephemeral HDFS..."
+# This is different depending on version. Simple hack: just try both.
 $EPHEMERAL_HDFS/sbin/start-dfs.sh
+$EPHEMERAL_HDFS/bin/start-dfs.sh
 
 popd

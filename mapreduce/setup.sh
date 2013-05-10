@@ -1,6 +1,7 @@
 #!/bin/bash
-
 MAPREDUCE=/root/mapreduce
+
+/root/spark-ec2/copy-dir $MAPREDUCE
 
 mkdir -p /mnt/mapreduce/logs
 for node in $SLAVES $OTHER_MASTERS; do
