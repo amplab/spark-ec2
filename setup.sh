@@ -3,6 +3,9 @@
 # Make sure we are in the spark-ec2 directory
 cd /root/spark-ec2
 
+# Load the environment variables specific to this AMI
+source /root/.bash_profile
+
 # Load the cluster variables set by the deploy script
 source ec2-variables.sh
 
@@ -29,9 +32,17 @@ MASTERS=`cat masters`
 NUM_MASTERS=`cat masters | wc -l`
 OTHER_MASTERS=`cat masters | sed '1d'`
 SLAVES=`cat slaves`
-
-JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk.x86_64
 SSH_OPTS="-o StrictHostKeyChecking=no -o ConnectTimeout=5"
+
+if [[ "x$JAVA_HOME" == "x" ]] ; then
+    echo "Expected JAVA_HOME to be set in .bash_profile!"
+    exit 1
+fi
+
+if [[ "x$SCALA_HOME" == "x" ]] ; then
+    echo "Expected SCALA_HOME to be set in .bash_profile!"
+    exit 1
+fi
 
 if [[ `tty` == "not a tty" ]] ; then
     echo "Expecting a tty or pty! (use the ssh -t option)."
