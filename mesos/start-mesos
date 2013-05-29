@@ -15,7 +15,7 @@ fi
 
 SSH_OPTS="-o StrictHostKeyChecking=no -o ConnectTimeout=5"
 
-cluster_url=`cat cluster-url`
+cluster_url=`cat cluster-url | sed -e s%^mesos://%%`
 
 echo "Running with cluster URL: "$cluster_url
 

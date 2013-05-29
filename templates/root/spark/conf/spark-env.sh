@@ -10,7 +10,7 @@
 #   be in the same format as the JVM's -Xmx option, e.g. 300m or 1g).
 # - SPARK_LIBRARY_PATH, to add extra search paths for native libraries.
 
-export SCALA_HOME=/root/scala-2.9.2
+export SCALA_HOME={{scala_home}}
 export MESOS_NATIVE_LIBRARY=/usr/local/lib/libmesos.so
 
 # Set Spark's memory per machine; note that you can also comment this out
