@@ -9,6 +9,11 @@
   </property>
 
   <property>
+    <name>dfs.block.size</name>
+    <value>134217728</value>
+  </property>
+
+  <property>
     <name>dfs.blocksize</name>
     <value>134217728</value>
   </property>

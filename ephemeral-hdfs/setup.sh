@@ -2,8 +2,6 @@
 
 EPHEMERAL_HDFS=/root/ephemeral-hdfs
 
-/root/spark-ec2/copy-dir $EPHEMERAL_HDFS
-
 # Set hdfs url to make it easier
 HDFS_URL="hdfs://$PUBLIC_DNS:9000"
 echo "export HDFS_URL=$HDFS_URL" >> ~/.bash_profile
@@ -17,7 +15,7 @@ for node in $SLAVES $OTHER_MASTERS; do
 done
 wait
 
-/root/spark-ec2/copy-dir $EPHEMERAL_HDFS/etc/hadoop
+/root/spark-ec2/copy-dir $EPHEMERAL_HDFS/conf
 
 NAMENODE_DIR=/mnt/ephemeral-hdfs/dfs/name
 

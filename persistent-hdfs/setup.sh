@@ -2,15 +2,13 @@
 
 PERSISTENT_HDFS=/root/persistent-hdfs
 
-/root/spark-ec2/copy-dir $PERSISTENT_HDFS
-
 mkdir -p /mnt/persistent-hdfs/logs
 for node in $SLAVES $OTHER_MASTERS; do
   ssh -t $SSH_OPTS root@$node "mkdir -p /mnt/persistent-hdfs/logs" & sleep 0.3
 done
 wait
 
-/root/spark-ec2/copy-dir $PERSISTENT_HDFS/etc/hadoop
+/root/spark-ec2/copy-dir $PERSISTENT_HDFS/conf
 
 if [[ ! -e /vol/persistent-hdfs/dfs/name ]] ; then
   echo "Formatting persistent HDFS namenode..."

@@ -23,6 +23,5 @@ export SPARK_JAVA_OPTS
 
 export SPARK_LIBRARY_PATH="/root/ephemeral-hdfs/lib/native/"
 export SPARK_MASTER_IP={{active_master}}
-
-# Uncomment the following to connect shells to the cluster by default
-#export MASTER=`cat /root/spark-ec2/cluster-url`
+export MASTER=`cat /root/spark-ec2/cluster-url`
+export SPARK_CLASSPATH=$SPARK_CLASSPATH":/root/ephemeral-hdfs/conf"
