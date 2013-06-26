@@ -17,13 +17,8 @@ export HOSTNAME=$PRIVATE_DNS  # Fix the bash built-in hostname variable too
 echo "Setting up Spark on `hostname`..."
 
 # Set up the masters, slaves, etc files based on cluster env variables
-echo "$MESOS_MASTERS" > masters
-echo "$MESOS_SLAVES" > slaves
-
-# TODO(shivaram): Clean this up after docs have been updated ?
-# This ensures /root/mesos-ec2/copy-dir still works
-cp -f slaves /root/mesos-ec2/
-cp -f masters /root/mesos-ec2/
+echo "$MASTERS" > masters
+echo "$SLAVES" > slaves
 
 MASTERS=`cat masters`
 NUM_MASTERS=`cat masters | wc -l`
@@ -96,17 +91,7 @@ for node in $SLAVES $OTHER_MASTERS; do
 done
 wait
 
-# Set environment variables required by templates
 # TODO: Make this general by using a init.sh per module ?
-./mesos/compute_cluster_url.py > ./cluster-url
-export MESOS_CLUSTER_URL=`cat ./cluster-url`
-# TODO(shivaram): Clean this up after docs have been updated ?
-cp -f cluster-url /root/mesos-ec2/
-
-# Deploy templates
-# TODO: Move configuring templates to a per-module ?
-echo "Creating local config files..."
-./deploy_templates.py
 
 # Install / Init module
 for module in $MODULES; do
@@ -115,6 +100,11 @@ for module in $MODULES; do
     source $module/init.sh
   fi
 done
+
+# Deploy templates
+# TODO: Move configuring templates to a per-module ?
+echo "Creating local config files..."
+./deploy_templates.py
 
 # Copy spark conf by default
 echo "Deploying Spark config files..."

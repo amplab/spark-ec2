@@ -1,22 +1,12 @@
 #!/bin/bash
-SHARK_VERSION=`cat /root/shark/shark.version`
-HADOOP_MAJOR_VERSION=`cat /root/spark/hadoop.version`
 
 pushd /root
 
 # Github tag:
 if [[ "$SHARK_VERSION" == *\|* ]]
 then
-  pushd shark
-  git init
-  repo=`python -c "print '$SHARK_VERSION'.split('|')[0]"`
-  git_hash=`python -c "print '$SHARK_VERSION'.split('|')[1]"`
-  git remote add origin $repo
-  git fetch origin
-  git checkout $git_hash
-  sbt/sbt clean products
-  popd
-
+  # Not yet supported
+  echo ""
 # Pre-package shark version
 else
   case "$SHARK_VERSION" in
@@ -32,10 +22,10 @@ else
       exit -1
   esac
 
-  tar xvzf shark-*.tgz
+  echo "Unpacking Shark"
+  tar xvzf shark-*.tgz > /tmp/spark-ec2_shark.log
   rm shark-*.tgz
-  # Copy to 'shark' folder and delete shark-X.X.X folder
-  ls -d */ |grep shark- | xargs -I {}  bash -c "cp -r {}* shark/ && rm -rf {}"
+  mv `ls -d shark-*` shark
 fi
 
 popd

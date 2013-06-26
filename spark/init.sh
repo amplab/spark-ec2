@@ -1,12 +1,11 @@
 #!/bin/bash
-SPARK_VERSION=`cat /root/spark/spark.version`
-HADOOP_MAJOR_VERSION=`cat /root/spark/hadoop.version`
 
 pushd /root
 
 # Github tag:
 if [[ "$SPARK_VERSION" == *\|* ]]
 then
+  mkdir spark
   pushd spark
   git init
   repo=`python -c "print '$SPARK_VERSION'.split('|')[0]"` 
@@ -32,10 +31,10 @@ else
       exit -1
   esac
 
-  tar xvzf spark-*.tgz
+  echo "Unpacking Spark"
+  tar xvzf spark-*.tgz > /tmp/spark-ec2_spark.log
   rm spark-*.tgz
-  # Copy to 'spark' folder and delete spark-X.X.X folder
-  ls -d */ |grep spark- |grep -v ec2 | xargs -I {}  bash -c "cp -r {}* spark/ && rm -rf {}"
+  mv `ls -d spark-* | grep -v ec2` spark
 fi
 
 popd
