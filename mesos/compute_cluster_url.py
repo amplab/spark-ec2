@@ -11,7 +11,7 @@ active_master = os.getenv("MESOS_MASTERS").split("\n")[0]
 zoo_list = os.getenv("MESOS_ZOO_LIST")
 
 if zoo_list.strip() == "NONE":
-  print active_master + ":5050"
+  print "mesos://" + active_master + ":5050"
 else:
   zoo_nodes = zoo_list.trim().split("\n")
   print "zoo://" + ",".join(["%s:2181/mesos" % node for node in zoo_nodes])

@@ -10,7 +10,7 @@
 #   be in the same format as the JVM's -Xmx option, e.g. 300m or 1g).
 # - SPARK_LIBRARY_PATH, to add extra search paths for native libraries.
 
-export SCALA_HOME=/root/scala-2.9.2
+export SCALA_HOME={{scala_home}}
 export MESOS_NATIVE_LIBRARY=/usr/local/lib/libmesos.so
 
 # Set Spark's memory per machine; note that you can also comment this out
@@ -22,5 +22,6 @@ SPARK_JAVA_OPTS+=" -Dspark.local.dir={{spark_local_dirs}}"
 export SPARK_JAVA_OPTS
 
 export SPARK_MASTER_IP={{active_master}}
-export MASTER=`cat /root/spark-ec2/cluster-url`
-export SPARK_CLASSPATH=$SPARK_CLASSPATH":/root/ephemeral-hdfs/conf"
+
+# Uncomment the following to connect shells to the cluster by default
+#export MASTER=`cat /root/spark-ec2/cluster-url`
