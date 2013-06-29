@@ -43,8 +43,7 @@ fi
 # Format and mount EBS volume (/dev/sdv) as /vol if the device exists
 if [[ -e /dev/sdv ]]; then
   # Check if /dev/sdv is already formatted
-  EBS_VOL_FORMATTED=`blkid /dev/sdv; echo $?`
-  if [ $EBS_VOL_FORMATTED -ne 0 ]; then
+  if ! blkid /dev/sdv; then
     mkdir /vol
     if mkfs.xfs -q /dev/sdv; then
       mount -o $XFS_MOUNT_OPTS /dev/sdv /vol
