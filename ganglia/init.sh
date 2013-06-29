@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # NOTE: Remove all rrds which might be around from an earlier run
-rm -rf /var/lib/ganglia/rrds/spark/*
-rm -rf /mnt/ganglia/rrds/spark/*
+rm -rf /var/lib/ganglia/rrds/*
+rm -rf /mnt/ganglia/rrds/*
 
 # Make sure rrd storage directory has right permissions
 mkdir -p /mnt/ganglia/rrds
