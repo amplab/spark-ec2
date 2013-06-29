@@ -6,7 +6,7 @@
 # remote nodes.
 
 # The java implementation to use.  Required.
-export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk.x86_64
+export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk.x86_64
 
 # Mesos build directory, useful for finding JARs and the native library.
 export MESOS_BUILD_DIR=/root/mesos/build
