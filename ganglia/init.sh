@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# NOTE: Remove all rrds which might be around from an earlier run
+rm -rf /var/lib/ganglia/rrds/*
+rm -rf /mnt/ganglia/rrds/*
+
+# Make sure rrd storage directory has right permissions
+mkdir -p /mnt/ganglia/rrds
+chown -R nobody:nobody /mnt/ganglia/rrds
+
 # Install ganglia
 # TODO: Remove this once the AMI has ganglia by default
 
