@@ -1,0 +1,40 @@
+#!/bin/bash
+
+pushd /root
+
+# Github tag:
+if [[ "$SPARK_VERSION" == *\|* ]]
+then
+  mkdir spark
+  pushd spark
+  git init
+  repo=`python -c "print '$SPARK_VERSION'.split('|')[0]"` 
+  git_hash=`python -c "print '$SPARK_VERSION'.split('|')[1]"`
+  git remote add origin $repo
+  git fetch origin
+  git checkout $git_hash
+  sbt/sbt clean publish-local
+  popd
+
+# Pre-packaged spark version:
+else 
+  case "$SPARK_VERSION" in
+    0.7.2)
+      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
+        wget http://spark-project.org/files/spark-0.7.2-prebuilt-hadoop1.tgz
+      else
+        wget http://spark-project.org/files/spark-0.7.2-prebuilt-cdh4.tgz
+      fi
+      ;;    
+    *)
+      echo "ERROR: Unknown Spark version"
+      exit -1
+  esac
+
+  echo "Unpacking Spark"
+  tar xvzf spark-*.tgz > /tmp/spark-ec2_spark.log
+  rm spark-*.tgz
+  mv `ls -d spark-* | grep -v ec2` spark
+fi
+
+popd

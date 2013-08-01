@@ -14,6 +14,11 @@
   </property>
 
   <property>
+    <name>dfs.blocksize</name>
+    <value>134217728</value>
+  </property>
+
+  <property>
     <name>dfs.secondary.http.address</name>
     <value>0.0.0.0:60090</value>
     <description>
@@ -71,6 +76,26 @@
   <property>
     <name>dfs.permissions</name>
     <value>false</value>
+  </property>
+
+  <property>
+    <name>dfs.client.read.shortcircuit</name>
+    <value>false</value>
+  </property>
+
+  <property>
+    <name>dfs.client.read.shortcircuit.skip.checksum</name>
+    <value>false</value>
+  </property>
+
+  <property>
+    <name>dfs.domain.socket.path</name>
+    <value>/var/run/hadoop-hdfs/dn._PORT</value>
+  </property>
+
+  <property>
+    <name>dfs.client.file-block-storage-locations.timeout</name>
+    <value>3000</value>
   </property>
 
 </configuration>
