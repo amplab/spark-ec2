@@ -2,9 +2,11 @@
 
 PERSISTENT_HDFS=/root/persistent-hdfs
 
-mkdir -p /mnt/persistent-hdfs/logs
+pushd /root/spark-ec2/persistent-hdfs
+source ./setup-slave.sh
+
 for node in $SLAVES $OTHER_MASTERS; do
-  ssh -t $SSH_OPTS root@$node "mkdir -p /mnt/persistent-hdfs/logs" & sleep 0.3
+  ssh -t $SSH_OPTS root@$node "/root/spark-ec2/persistent-hdfs/setup-slave.sh" & sleep 0.3
 done
 wait
 
@@ -16,3 +18,5 @@ if [[ ! -e /vol/persistent-hdfs/dfs/name ]] ; then
 fi
 
 echo "Persistent HDFS installed, won't start by default..."
+
+popd

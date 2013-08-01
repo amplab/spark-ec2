@@ -41,23 +41,27 @@ if [[ ! -e /cgroup ]]; then
 fi
 
 # Format and mount EBS volume (/dev/sdv) as /vol if the device exists
-# and we have not already created /vol
-if [[ -e /dev/sdv && ! -e /vol ]]; then
-  mkdir /vol
-  if mkfs.xfs -q /dev/sdv; then
-    mount -o $XFS_MOUNT_OPTS /dev/sdv /vol
-    echo "/dev/sdv /vol xfs $XFS_MOUNT_OPTS 0 0" >> /etc/fstab
-    chmod -R a+w /vol
+if [[ -e /dev/sdv ]]; then
+  # Check if /dev/sdv is already formatted
+  if ! blkid /dev/sdv; then
+    mkdir /vol
+    if mkfs.xfs -q /dev/sdv; then
+      mount -o $XFS_MOUNT_OPTS /dev/sdv /vol
+      chmod -R a+w /vol
+    else
+      # mkfs.xfs is not installed on this machine or has failed;
+      # delete /vol so that the user doesn't think we successfully
+      # mounted the EBS volume
+      rmdir /vol
+    fi
   else
-    # mkfs.xfs is not installed on this machine or has failed;
-    # delete /vol so that the user doesn't think we successfully
-    # mounted the EBS volume
-    rmdir /vol
+    # EBS volume is already formatted. Mount it if its not mounted yet.
+    if ! grep -qs '/vol' /proc/mounts; then
+      mkdir /vol
+      mount -o $XFS_MOUNT_OPTS /dev/sdv /vol
+      chmod -R a+w /vol
+    fi
   fi
-elif [[ ! -e /vol ]]; then
-  # Not using EBS, but let's mkdir /vol so that we can chmod it
-  mkdir /vol
-  chmod -R a+w /vol
 fi
 
 # Make data dirs writable by non-root users, such as CDH's hadoop user
