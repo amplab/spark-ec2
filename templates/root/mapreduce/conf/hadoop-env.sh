@@ -11,6 +11,9 @@ export JAVA_HOME=/usr/lib/jvm/java-1.7.0
 # Extra Java CLASSPATH elements.  Optional.
 # export HADOOP_CLASSPATH=
 
+export HADOOP_HOME="/root/ephemeral-hdfs"
+export HADOOP_MAPREDUCE_HOME="/root/mapreduce"
+
 # The maximum amount of heap to use, in MB. Default is 1000.
 export HADOOP_HEAPSIZE=1000
 
