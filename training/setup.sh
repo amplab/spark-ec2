@@ -17,5 +17,8 @@ ln -T -f -s /root/training/kmeans /root/kmeans
 ln -T -f -s /root/training/java-app-template /root/java-app-template
 ln -T -f -s /root/training/scala-app-template /root/scala-app-template
 
+# Add hdfs to the classpath
+cp /root/ephemeral-hdfs/conf/core-site.xml /root/spark/conf/
+
 popd
 popd
