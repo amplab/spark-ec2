@@ -33,12 +33,14 @@ popd
 pushd /root/MLI
 git pull
 ./sbt/sbt assembly
+/root/spark-ec2/copy-dir /root/MLI
 popd
 
 # Pull and rebuild blinkdb
 pushd /root/hive_blinkdb
 git pull
 ant package
+/root/spark-ec2/copy-dir /root/hive_blinkdb
 popd
 
 pushd /root/blinkdb
@@ -47,6 +49,8 @@ git pull
 
 # Uncomment to make blinkdb use Spark 0.7.1
 # sed -i 's/export SPARK_HOME.*/export SPARK_HOME=\"\/root\/spark-0.7.1\"/g conf/shark-env.sh
+
+/root/spark-ec2/copy-dir /root/blinkdb
 popd
 
 popd
