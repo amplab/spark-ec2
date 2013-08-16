@@ -31,6 +31,7 @@ popd
 
 # Build MLI assembly
 pushd /root/MLI
+git pull
 ./sbt/sbt assembly
 popd
 
