@@ -29,6 +29,11 @@ cp /root/spark/conf/spark-env.sh /root/spark-0.7.1/conf/
 cp /root/ephemeral-hdfs/conf/core-site.xml /root/spark/conf/
 popd
 
+# Build MLI assembly
+pushd /root/MLI
+./sbt/sbt assembly
+popd
+
 # Pull and rebuild blinkdb
 pushd /root/hive_blinkdb
 git pull
