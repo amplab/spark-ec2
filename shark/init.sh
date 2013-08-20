@@ -12,9 +12,9 @@ else
   case "$SHARK_VERSION" in
     0.7.0)
       if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://spark-project.org/files/shark/shark-0.7.0-hadoop1-bin.tgz
+        wget http://d3kbcqa49mib13.cloudfront.net/shark-0.7.0-hadoop1-bin.tgz
       else
-        wget http://spark-project.org/files/shark/shark-0.7.0-hadoop2-bin.tgz
+        wget http://d3kbcqa49mib13.cloudfront.net/shark-0.7.0-hadoop2-bin.tgz
       fi
       ;;    
     *)

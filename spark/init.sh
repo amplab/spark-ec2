@@ -21,9 +21,9 @@ else
   case "$SPARK_VERSION" in
     0.7.2)
       if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://spark-project.org/files/spark-0.7.2-prebuilt-hadoop1.tgz
+        wget http://d3kbcqa49mib13.cloudfront.net/spark-0.7.2-prebuilt-hadoop1.tgz
       else
-        wget http://spark-project.org/files/spark-0.7.2-prebuilt-cdh4.tgz
+        wget http://d3kbcqa49mib13.cloudfront.net/spark-0.7.2-prebuilt-cdh4.tgz
       fi
       ;;    
     *)
