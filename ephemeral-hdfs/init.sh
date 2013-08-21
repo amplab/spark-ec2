@@ -3,7 +3,7 @@
 pushd /root
 case "$HADOOP_MAJOR_VERSION" in
   1)
-    wget http://archive.apache.org/dist/hadoop/common/hadoop-1.0.4/hadoop-1.0.4.tar.gz
+    wget http://d3kbcqa49mib13.cloudfront.net/hadoop-1.0.4.tar.gz
     echo "Unpacking Hadoop"
     tar xvzf hadoop-1.0.4.tar.gz > /tmp/spark-ec2_hadoop.log
     rm hadoop-*.tar.gz
@@ -11,7 +11,7 @@ case "$HADOOP_MAJOR_VERSION" in
     sed -i 's/-jvm server/-server/g' /root/ephemeral-hdfs/bin/hadoop
     ;;
   2) 
-    wget http://archive.cloudera.com/cdh4/cdh/4/hadoop-2.0.0-cdh4.2.0.tar.gz  
+    wget http://d3kbcqa49mib13.cloudfront.net/hadoop-2.0.0-cdh4.2.0.tar.gz  
     echo "Unpacking Hadoop"
     tar xvzf hadoop-*.tar.gz > /tmp/spark-ec2_hadoop.log
     rm hadoop-*.tar.gz
