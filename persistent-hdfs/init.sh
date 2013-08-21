@@ -1,6 +1,12 @@
 #!/bin/bash
 
 pushd /root
+
+if [ -d "persistent-hdfs" ]; then
+  echo "Persistent HDFS seems to be installed. Exiting."
+  exit 0
+fi
+
 case "$HADOOP_MAJOR_VERSION" in
   1)
     wget http://d3kbcqa49mib13.cloudfront.net/hadoop-1.0.4.tar.gz

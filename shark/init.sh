@@ -2,6 +2,11 @@
 
 pushd /root
 
+if [ -d "shark" ]; then
+  echo "Shark seems to be installed. Exiting."
+  exit 0
+fi
+
 # Github tag:
 if [[ "$SHARK_VERSION" == *\|* ]]
 then

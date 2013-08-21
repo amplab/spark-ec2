@@ -2,6 +2,11 @@
 
 pushd /root
 
+if [ -d "spark" ]; then
+  echo "Spark seems to be installed. Exiting."
+  exit 0
+fi
+
 # Github tag:
 if [[ "$SPARK_VERSION" == *\|* ]]
 then
