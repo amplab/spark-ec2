@@ -16,29 +16,7 @@ echo "Setting up slave on `hostname`..."
 
 # Mount options to use for ext3 and xfs disks (the ephemeral disks
 # are ext3, but we use xfs for EBS volumes to format them faster)
-EXT3_MOUNT_OPTS="defaults,noatime,nodiratime"
 XFS_MOUNT_OPTS="defaults,noatime,nodiratime,allocsize=8m"
-
-# Mount any ephemeral volumes we might have beyond /mnt
-function setup_extra_volume {
-  device=$1
-  mount_point=$2
-  if [[ -e $device && ! -e $mount_point ]]; then
-    mkdir -p $mount_point
-    mount -o $EXT3_MOUNT_OPTS $device $mount_point
-    echo "$device $mount_point auto $EXT3_MOUNT_OPTS 0 0" >> /etc/fstab
-  fi
-}
-setup_extra_volume /dev/xvdc /mnt2
-setup_extra_volume /dev/xvdd /mnt3
-setup_extra_volume /dev/xvde /mnt4
-
-# Mount cgroup file system
-if [[ ! -e /cgroup ]]; then
-  mkdir -p /cgroup
-  mount -t cgroup none /cgroup
-  echo "none /cgroup cgroup defaults 0 0" >> /etc/fstab
-fi
 
 # Format and mount EBS volume (/dev/sdv) as /vol if the device exists
 if [[ -e /dev/sdv ]]; then
