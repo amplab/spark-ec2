@@ -10,6 +10,8 @@ fi
 # Github tag:
 if [[ "$SPARK_VERSION" == *\|* ]]
 then
+  # Add github to known hosts to get git@github.com clone to work
+  ssh-keyscan -H github.com >> /root/.ssh/known_hosts
   mkdir spark
   pushd spark
   git init
