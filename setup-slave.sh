@@ -54,3 +54,7 @@ rm -f /root/.ssh/known_hosts
 
 # Allow memory to be over committed. Helps in pyspark where we fork
 echo 1 > /proc/sys/vm/overcommit_memory
+
+# Add github to known hosts to get git@github.com clone to work
+# TODO(shivaram): Avoid duplicate entries ?
+cat /root/spark-ec2/github.hostkey >> /root/.ssh/known_hosts
