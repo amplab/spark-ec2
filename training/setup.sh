@@ -18,7 +18,6 @@ ln -T -f -s /root/training/kmeans /root/kmeans
 ln -T -f -s /root/training/java-app-template /root/java-app-template
 ln -T -f -s /root/training/scala-app-template /root/scala-app-template
 
-
 # DRY RUN HACK
 # Copy spark-env.sh and slave to 0.7.1 from master
 #cp /root/spark/conf/slaves /root/spark-0.7.1/conf/
@@ -55,12 +54,17 @@ popd
 
 # Tar and copy hadoop, spark
 pushd /root
+echo "Copying Hadoop executor for Mesos"
 tar czf /mnt/ephemeral-hdfs.tar.gz ephemeral-hdfs
-tar czf /mnt/spark.tar.gz spark
 ~/ephemeral-hdfs/bin/hadoop fs -put /mnt/ephemeral-hdfs.tar.gz /
+echo "Copying Spark executor for Mesos"
+tar czf /mnt/spark.tar.gz spark
 ~/ephemeral-hdfs/bin/hadoop fs -put /mnt/spark.tar.gz /
 rm /mnt/spark.tar.gz
 rm /mnt/ephemeral-hdfs.tar.gz
 popd
+
+#echo "Starting Hadoop Job tracker on Mesos"
+#nohup ~/ephemeral-hdfs/bin/hadoop jobtracker 2>&1 >/mnt/job-tracker.out &
 
 popd
