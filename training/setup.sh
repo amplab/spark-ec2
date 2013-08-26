@@ -43,8 +43,11 @@ ant package
 popd
 
 pushd /root/blinkdb
-git pull
-./sbt/sbt package
+git fetch --all
+git checkout origin/alpha-0.1.0
+git checkout -b alpha-0.1.0
+#git pull
+./sbt/sbt clean package
 
 # Uncomment to make blinkdb use Spark 0.7.1
 # sed -i 's/export SPARK_HOME.*/export SPARK_HOME=\"\/root\/spark-0.7.1\"/g conf/shark-env.sh
