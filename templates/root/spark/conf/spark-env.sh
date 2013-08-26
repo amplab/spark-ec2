@@ -25,3 +25,4 @@ export SPARK_MASTER_IP={{active_master}}
 
 # Uncomment the following to connect shells to the cluster by default
 export MASTER=`cat /root/spark-ec2/cluster-url`
+export SPARK_EXECUTOR_URI=hdfs://{{active_master}}:9000/spark.tar.gz

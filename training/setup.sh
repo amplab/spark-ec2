@@ -53,4 +53,14 @@ git pull
 /root/spark-ec2/copy-dir /root/blinkdb
 popd
 
+# Tar and copy hadoop, spark
+pushd /root
+tar czf /mnt/ephemeral-hdfs.tar.gz ephemeral-hdfs
+tar czf /mnt/spark.tar.gz spark
+~/ephemeral-hdfs/bin/hadoop fs -put /mnt/ephemeral-hdfs.tar.gz /
+~/ephemeral-hdfs/bin/hadoop fs -put /mnt/spark.tar.gz /
+rm /mnt/spark.tar.gz
+rm /mnt/ephemeral-hdfs.tar.gz
+popd
+
 popd

@@ -5,6 +5,8 @@
 # set JAVA_HOME in this file, so that it is correctly defined on
 # remote nodes.
 
+export MESOS_NATIVE_LIBRARY=/usr/local/lib/libmesos.so
+
 # The java implementation to use.  Required.
 export JAVA_HOME={{java_home}}
 

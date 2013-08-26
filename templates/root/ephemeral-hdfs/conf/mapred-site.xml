@@ -26,4 +26,24 @@
     </description>
   </property>
 
+  <property>
+    <name>mapred.jobtracker.taskScheduler</name>
+    <value>org.apache.hadoop.mapred.MesosScheduler</value>
+  </property>
+
+  <property>
+    <name>mapred.mesos.taskScheduler</name>
+    <value>org.apache.hadoop.mapred.JobQueueTaskScheduler</value>
+  </property>
+
+  <property>
+    <name>mapred.mesos.master</name>
+    <value>{{active_master}}:5050</value>
+  </property>
+  <property>
+    <name>mapred.mesos.executor.uri</name>
+    <value>hdfs://{{active_master}}:9000/ephemeral-hdfs.tar.gz</value>
+  </property>
+
+
 </configuration>
