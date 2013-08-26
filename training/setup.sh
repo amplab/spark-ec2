@@ -21,9 +21,9 @@ ln -T -f -s /root/training/scala-app-template /root/scala-app-template
 
 # DRY RUN HACK
 # Copy spark-env.sh and slave to 0.7.1 from master
-cp /root/spark/conf/slaves /root/spark-0.7.1/conf/
-cp /root/spark/conf/spark-env.sh /root/spark-0.7.1/conf/
-/root/spark-ec2/copy-dir /root/spark-0.7.1/conf
+#cp /root/spark/conf/slaves /root/spark-0.7.1/conf/
+#cp /root/spark/conf/spark-env.sh /root/spark-0.7.1/conf/
+#/root/spark-ec2/copy-dir /root/spark-0.7.1/conf
 
 # Add hdfs to the classpath
 cp /root/ephemeral-hdfs/conf/core-site.xml /root/spark/conf/
