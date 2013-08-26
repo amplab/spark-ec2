@@ -9,6 +9,12 @@ CPUS=`grep processor /proc/cpuinfo | wc -l`
 MEM_KB=`cat /proc/meminfo | grep MemTotal | awk '{print $2}'`
 MEM=$[(MEM_KB - 1024 * 1024) / 1024]
 
+# Kill any slaves already running
+killall mesos-slave
+
+echo "Starting mesos slave on `hostname`"
+
+
 nohup mesos-slave \
   --master=zk://`cat /root/spark-ec2/masters`:2181/mesos \
   --resources="cpus:$CPUS;mem:$MEM" \
