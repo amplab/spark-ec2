@@ -3,6 +3,8 @@
 # Set HADOOP_HOME variable to allow slaves to get executors from HDFS
 export HADOOP_HOME=/root/ephemeral-hdfs
 
+export MESOS_PUBLIC_DNS=`curl http://169.254.169.254/latest/meta-data/public-hostname`
+
 ulimit -n 8192
 
 CPUS=`grep processor /proc/cpuinfo | wc -l`
