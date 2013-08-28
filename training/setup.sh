@@ -14,7 +14,7 @@ pushd training
 /root/spark-ec2/copy-dir /root/training
 
 ln -T -f -s /root/training/streaming /root/streaming
-ln -T -f -s /root/training/kmeans /root/kmeans
+#ln -T -f -s /root/training/kmeans /root/kmeans
 ln -T -f -s /root/training/java-app-template /root/java-app-template
 ln -T -f -s /root/training/scala-app-template /root/scala-app-template
 
@@ -43,10 +43,10 @@ ant package
 popd
 
 pushd /root/blinkdb
-git fetch --all
-git checkout origin/alpha-0.1.0
-git checkout -b alpha-0.1.0
-#git pull
+#git fetch --all
+#git checkout origin/alpha-0.1.0
+#git checkout -b alpha-0.1.0
+git pull
 ./sbt/sbt clean package
 
 # Uncomment to make blinkdb use Spark 0.7.1
