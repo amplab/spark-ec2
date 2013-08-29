@@ -31,8 +31,8 @@ popd
 # Build MLI assembly
 #
 pushd /root/MLI
-#git remote set-url origin https://github.com/amplab/MLI.git
-#git pull
+git remote set-url origin https://github.com/amplab/MLI.git
+git pull
 ./sbt/sbt assembly
 /root/spark-ec2/copy-dir /root/MLI
 popd
