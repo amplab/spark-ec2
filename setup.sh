@@ -132,6 +132,10 @@ echo "Deploying Spark config files..."
 chmod u+x /root/spark/conf/spark-env.sh
 /root/spark-ec2/copy-dir /root/spark/conf
 
+# Add SPARK_PUBLIC_DNS to bash_profile to have it be found by user apps
+SPARK_PUBLIC_DNS=`wget -q -O - http://instance-data.ec2.internal/latest/meta-data/public-hostname`
+echo "export SPARK_PUBLIC_DNS=$SPARK_PUBLIC_DNS" >> ~/.bash_profile
+
 # Setup each module
 for module in $MODULES; do
   echo "Setting up $module"
