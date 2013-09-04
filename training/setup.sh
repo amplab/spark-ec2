@@ -2,6 +2,9 @@
 
 pushd /root
 
+# Make sure screen is installed in the master node
+yum install -y screen
+
 # Mount ampcamp-data volume
 mount -t ext4 /dev/sdf /ampcamp-data
 
