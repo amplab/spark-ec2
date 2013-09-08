@@ -18,7 +18,8 @@ then
   git remote add origin $repo
   git fetch origin
   git checkout $git_hash
-  sbt/sbt clean publish-local
+  sbt/sbt clean assembly
+  sbt/sbt publish-local
   popd
 
 # Pre-packaged spark version:
