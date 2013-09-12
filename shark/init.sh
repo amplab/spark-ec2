@@ -22,6 +22,9 @@ else
         wget http://d3kbcqa49mib13.cloudfront.net/shark-0.7.0-hadoop2-bin.tgz
       fi
       ;;    
+    0.8.0)
+      echo "Shark 0.8.0 not released, launching cluster without Shark"
+      ;;
     *)
       echo "ERROR: Unknown Shark version"
       exit -1
