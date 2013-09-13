@@ -36,6 +36,8 @@ popd
 pushd /root/MLI
 git remote set-url origin https://github.com/amplab/MLI.git
 git pull
+# NOTE: This is the commit from Aug 28, 2013 that was used during AMP Camp 3
+git checkout -b ampcamp3 a238c6ed96a78d349e274397b835d72c3a60ad94
 ./sbt/sbt assembly
 /root/spark-ec2/copy-dir /root/MLI
 popd
@@ -52,6 +54,8 @@ pushd /root/blinkdb
 #git checkout origin/alpha-0.1.0
 #git checkout -b alpha-0.1.0
 git pull
+# NOTE: This is the commit from Aug 27 2013 that was used for AMP Camp 3
+git checkout -b ampcamp3 f843491084777e4af1cd12cc9cf4b585118cbd30
 ./sbt/sbt clean package
 
 # Uncomment to make blinkdb use Spark 0.7.1
