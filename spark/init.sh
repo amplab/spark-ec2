@@ -32,6 +32,13 @@ else
         wget http://d3kbcqa49mib13.cloudfront.net/spark-0.7.3-prebuilt-cdh4.tgz
       fi
       ;;    
+    0.8.0)
+      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
+        wget http://d3kbcqa49mib13.cloudfront.net/spark-0.8.0-incubating-bin-hadoop1.tgz
+      else
+        wget http://d3kbcqa49mib13.cloudfront.net/spark-0.8.0-incubating-bin-cdh4.tgz
+      fi
+      ;;    
     *)
       echo "ERROR: Unknown Spark version"
       exit -1
