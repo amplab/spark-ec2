@@ -23,7 +23,12 @@ else
       fi
       ;;    
     0.8.0)
-      echo "Shark 0.8.0 not released, launching cluster without Shark"
+      # NOTE - this is a SNAPSHOT version of Shark for now.
+      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
+        wget http://d3kbcqa49mib13.cloudfront.net/shark-0.8.0-incubating-SNAPSHOT-bin-hadoop1.tgz
+      else
+        wget http://d3kbcqa49mib13.cloudfront.net/shark-0.8.0-incubating-SNAPSHOT-bin-cdh4.tgz
+      fi
       ;;
     *)
       echo "ERROR: Unknown Shark version"
