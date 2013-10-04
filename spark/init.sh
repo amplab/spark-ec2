@@ -4,7 +4,7 @@ pushd /root
 
 if [ -d "spark" ]; then
   echo "Spark seems to be installed. Exiting."
-  exit 0
+  return 0
 fi
 
 # Github tag:
@@ -41,7 +41,7 @@ else
       ;;    
     *)
       echo "ERROR: Unknown Spark version"
-      exit -1
+      return -1
   esac
 
   echo "Unpacking Spark"

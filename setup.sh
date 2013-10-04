@@ -110,6 +110,7 @@ for module in $MODULES; do
   if [[ -e $module/init.sh ]]; then
     source $module/init.sh
   fi
+  cd /root/spark-ec2  # guard against init.sh changing the cwd
 done
 
 # Deploy templates
@@ -127,4 +128,5 @@ for module in $MODULES; do
   echo "Setting up $module"
   source ./$module/setup.sh
   sleep 1
+  cd /root/spark-ec2  # guard against setup.sh changing the cwd
 done
