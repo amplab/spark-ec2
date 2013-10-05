@@ -4,7 +4,7 @@ pushd /root
 
 if [ -d "persistent-hdfs" ]; then
   echo "Persistent HDFS seems to be installed. Exiting."
-  exit 0
+  return 0
 fi
 
 case "$HADOOP_MAJOR_VERSION" in
@@ -29,7 +29,7 @@ case "$HADOOP_MAJOR_VERSION" in
 
   *)
      echo "ERROR: Unknown Hadoop version"
-     exit -1
+     return -1
 esac
 cp /root/hadoop-native/* /root/persistent-hdfs/lib/native/
 /root/spark-ec2/copy-dir /root/persistent-hdfs
