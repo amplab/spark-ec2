@@ -25,3 +25,6 @@ export SPARK_LIBRARY_PATH="/root/ephemeral-hdfs/lib/native/"
 export SPARK_MASTER_IP={{active_master}}
 export MASTER=`cat /root/spark-ec2/cluster-url`
 export SPARK_CLASSPATH=$SPARK_CLASSPATH":/root/ephemeral-hdfs/conf"
+
+# Bind Spark's web UIs to this machine's public EC2 hostname:
+export SPARK_PUBLIC_DNS=`wget -q -O - http://instance-data.ec2.internal/latest/meta-data/public-hostname`
