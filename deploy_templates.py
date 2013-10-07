@@ -28,11 +28,11 @@ system_ram_mb = system_ram_kb / 1024
 # Leave some RAM for the OS, Hadoop daemons, and system caches
 if system_ram_mb > 100*1024:
   spark_mb = system_ram_mb - 15 * 1024 # Leave 15 GB RAM
-if system_ram_mb > 60*1024:
+elif system_ram_mb > 60*1024:
   spark_mb = system_ram_mb - 10 * 1024 # Leave 10 GB RAM
-if system_ram_mb > 40*1024:
+elif system_ram_mb > 40*1024:
   spark_mb = system_ram_mb - 6 * 1024 # Leave 6 GB RAM
-if system_ram_mb > 20*1024:
+elif system_ram_mb > 20*1024:
   spark_mb = system_ram_mb - 3 * 1024 # Leave 3 GB RAM
 elif system_ram_mb > 10*1024:
   spark_mb = system_ram_mb - 2 * 1024 # Leave 2 GB RAM
