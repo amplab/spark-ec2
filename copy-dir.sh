@@ -1,8 +1,31 @@
 #!/bin/bash
 
-if [[ "$#" != "1" ]] ; then
-  echo "Usage: copy-dir <dir>"
+DELETE_FLAG=""
+
+usage() {
+  echo "Usage: copy-dir [--delete] <dir>"
   exit 1
+}
+
+while :
+do
+  case $1 in
+    --delete)
+      DELETE_FLAG="--delete"
+      shift
+      ;;
+    -*)
+      echo "ERROR: Unknown option: $1" >&2
+      usage
+      ;;
+    *) # End of options
+      break
+      ;;
+  esac
+done
+
+if [[ "$#" != "1" ]] ; then
+  usage
 fi
 
 DIR=`readlink -f "$1"`
@@ -16,6 +39,6 @@ SSH_OPTS="-o StrictHostKeyChecking=no -o ConnectTimeout=5"
 echo "RSYNC'ing $DIR to slaves..."
 for slave in $SLAVES; do
     echo $slave
-    rsync -e "ssh $SSH_OPTS" -az "$DIR" "$slave:$DEST" & sleep 0.5
+    rsync -e "ssh $SSH_OPTS" -az $DELETE_FLAG "$DIR" "$slave:$DEST" & sleep 0.5
 done
 wait
