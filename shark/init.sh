@@ -32,9 +32,9 @@ else
     0.8.0)
       # NOTE - this is a SNAPSHOT version of Shark for now.
       if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://d3kbcqa49mib13.cloudfront.net/shark-0.8.0-incubating-SNAPSHOT-bin-hadoop1.tgz
+        wget http://d3kbcqa49mib13.cloudfront.net/shark-0.8.0-bin-hadoop1-ec2.tgz
       else
-        wget http://d3kbcqa49mib13.cloudfront.net/shark-0.8.0-incubating-SNAPSHOT-bin-cdh4.tgz
+        wget http://d3kbcqa49mib13.cloudfront.net/shark-0.8.0-bin-cdh4-ec2.tgz
       fi
       ;;
     *)
