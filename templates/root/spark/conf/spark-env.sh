@@ -28,3 +28,6 @@ export SPARK_CLASSPATH=$SPARK_CLASSPATH":/root/ephemeral-hdfs/conf"
 
 # Bind Spark's web UIs to this machine's public EC2 hostname:
 export SPARK_PUBLIC_DNS=`wget -q -O - http://instance-data.ec2.internal/latest/meta-data/public-hostname`
+
+# Set a high ulimit for large shuffles
+ulimit -n 1000000
