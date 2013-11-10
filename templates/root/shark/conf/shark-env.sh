@@ -15,4 +15,7 @@ export HIVE_CONF_DIR=/root/ephemeral-hdfs/conf
 export MASTER=`cat /root/spark-ec2/cluster-url`
 export SPARK_HOME=/root/spark
 
+export TACHYON_MASTER="{{active_master}}:19998"
+export TACHYON_WAREHOUSE_PATH="/sharktables"
+
 source $SPARK_HOME/conf/spark-env.sh
