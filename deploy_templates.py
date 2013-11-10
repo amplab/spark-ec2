@@ -36,6 +36,9 @@ else:
   # 1 GB because Mesos leaves 1 GB free and requires 32 MB/task.
   spark_mb = max(512, system_ram_mb - 1300)
 
+# Make tachyon_mb as spark_mb for now.
+tachyon_mb = spark_mb
+
 template_vars = {
   "master_list": os.getenv("MESOS_MASTERS"),
   "active_master": os.getenv("MESOS_MASTERS").split("\n")[0],
@@ -47,7 +50,8 @@ template_vars = {
   "spark_local_dirs": os.getenv("MESOS_SPARK_LOCAL_DIRS"),
   "default_spark_mem": "%dm" % spark_mb,
   "scala_home": os.getenv("SCALA_HOME"),
-  "java_home": os.getenv("JAVA_HOME")
+  "java_home": os.getenv("JAVA_HOME"),
+  "default_tachyon_mem": "%dMB" % tachyon_mb,
 }
 
 template_dir="/root/spark-ec2/templates"

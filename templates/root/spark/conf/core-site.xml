@@ -7,12 +7,12 @@
 
   <property>
     <name>hadoop.tmp.dir</name>
-    <value>/vol/persistent-hdfs</value>
+    <value>/mnt/ephemeral-hdfs</value>
   </property>
 
   <property>
     <name>fs.default.name</name>
-    <value>hdfs://{{active_master}}:9010</value>
+    <value>hdfs://{{active_master}}:9000</value>
   </property>
 
   <property>
@@ -20,8 +20,6 @@
     <value>65536</value>
   </property>
 
-<<<<<<< HEAD
-=======
   <property>
     <name>dfs.client.read.shortcircuit</name>
     <value>false</value>
@@ -47,5 +45,4 @@
     <value>tachyon.hadoop.TFS</value>
   </property>
 
->>>>>>> 6c378a3... add tachyon module
 </configuration>
