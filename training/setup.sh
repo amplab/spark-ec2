@@ -11,7 +11,7 @@ mount -t ext4 /dev/sdf /ampcamp-data
 # Clone and copy training repo
 ssh-keyscan -H github.com >> /root/.ssh/known_hosts
 rm -rf training
-git clone https://github.com/amplab/training.git
+git clone https://github.com/amplab/training.git -b sparksummit1
 
 pushd training
 /root/spark-ec2/copy-dir /root/training
