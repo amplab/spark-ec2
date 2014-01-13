@@ -18,7 +18,7 @@ export MESOS_NATIVE_LIBRARY=/usr/local/lib/libmesos.so
 export SPARK_MEM={{default_spark_mem}}
 
 # Use the public hostname of this EC2 machine for web UIs
-export SPARK_PUBLIC_DNS=`wget -q -O - http://instance-data.ec2.internal/latest/meta-data/public-hostname`
+export SPARK_PUBLIC_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/public-hostname`
 
 # Set JVM options and Spark Java properties
 SPARK_JAVA_OPTS+=" -Dspark.local.dir={{spark_local_dirs}}"
