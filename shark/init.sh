@@ -30,11 +30,19 @@ else
       fi
       ;;    
     0.8.0)
-      # NOTE - this is a SNAPSHOT version of Shark for now.
+      wget http://s3.amazonaws.com/spark-related-packages/hive-0.9.0-bin.tgz
       if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/shark-0.8.0-bin-hadoop1-ec2.tgz
+        wget http://s3.amazonaws.com/spark-related-packages/shark-0.8.0-bin-hadoop1.tgz
       else
-        wget http://s3.amazonaws.com/spark-related-packages/shark-0.8.0-bin-cdh4-ec2.tgz
+        wget http://s3.amazonaws.com/spark-related-packages/shark-0.8.0-bin-cdh4.tgz
+      fi
+      ;;
+    0.8.1)
+      wget http://s3.amazonaws.com/spark-related-packages/hive-0.9.0-bin.tgz
+      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
+        wget http://s3.amazonaws.com/spark-related-packages/shark-0.8.1-bin-hadoop1.tgz
+      else
+        wget http://s3.amazonaws.com/spark-related-packages/shark-0.8.1-bin-cdh4.tgz
       fi
       ;;
     *)
@@ -46,6 +54,15 @@ else
   tar xvzf shark-*.tgz > /tmp/spark-ec2_shark.log
   rm shark-*.tgz
   mv `ls -d shark-*` shark
+
+  if stat -t hive*tgz >/dev/null 2>&1; then
+    echo "Unpacking Hive"
+    # NOTE: don't rename this because currently HIVE_HOME is set to "hive-0.9-bin".
+    #       Could be renamed to "hive" in the future to support multiple hive
+    #       versions associated with different shark versions.
+    tar xvzf hive-*.tgz > /tmp/spark-ec2_hive.log
+    rm hive-*.tgz
+  fi
 fi
 
 popd
