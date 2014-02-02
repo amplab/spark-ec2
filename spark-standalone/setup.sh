@@ -1,5 +1,11 @@
 #!/bin/bash
 
+BIN_FOLDER="/root/spark/sbin"
+
+if [[ "0.7.3 0.8.0 0.8.1" =~ $SPARK_VERSION ]]; then
+  BIN_FOLDER="/root/spark/bin"
+fi
+
 # Copy the slaves to spark conf
 cp /root/spark-ec2/slaves /root/spark/conf/
 /root/spark-ec2/copy-dir /root/spark/conf
@@ -13,15 +19,15 @@ echo "spark://""`cat /root/spark-ec2/masters`"":7077" > /root/spark-ec2/cluster-
 # workers.
 
 # Stop anything that is running
-/root/spark/bin/stop-all.sh
+$BIN_FOLDER/stop-all.sh
 
 sleep 2
 
 # Start Master
-/root/spark/bin/start-master.sh
+$BIN_FOLDER/start-master.sh
 
 # Pause
 sleep 20
 
 # Start Workers
-/root/spark/bin/start-slaves.sh
+$BIN_FOLDER/start-slaves.sh
