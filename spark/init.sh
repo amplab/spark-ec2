@@ -4,7 +4,7 @@ pushd /root
 
 if [ -d "spark" ]; then
   echo "Spark seems to be installed. Exiting."
-  return 0
+  return
 fi
 
 # Github tag:
@@ -46,9 +46,16 @@ else
         wget http://s3.amazonaws.com/spark-related-packages/spark-0.8.1-incubating-bin-cdh4.tgz
       fi
       ;;    
+    0.9.0)
+      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
+        wget http://s3.amazonaws.com/spark-related-packages/spark-0.9.0-incubating-bin-hadoop1.tgz
+      else
+        wget http://s3.amazonaws.com/spark-related-packages/spark-0.9.0-incubating-bin-cdh4.tgz
+      fi
+      ;;
     *)
       echo "ERROR: Unknown Spark version"
-      return -1
+      return
   esac
 
   echo "Unpacking Spark"
