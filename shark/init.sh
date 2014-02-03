@@ -4,7 +4,7 @@ pushd /root
 
 if [ -d "shark" ]; then
   echo "Shark seems to be installed. Exiting."
-  return 0
+  return
 fi
 
 # Github tag:
@@ -47,7 +47,7 @@ else
       ;;
     *)
       echo "ERROR: Unknown Shark version"
-      return -1
+      return
   esac
 
   echo "Unpacking Shark"
