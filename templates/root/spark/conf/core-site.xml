@@ -21,6 +21,26 @@
   </property>
 
   <property>
+    <name>dfs.client.read.shortcircuit</name>
+    <value>false</value>
+  </property>
+
+  <property>
+    <name>dfs.client.read.shortcircuit.skip.checksum</name>
+    <value>false</value>
+  </property>
+
+  <property>
+    <name>dfs.domain.socket.path</name>
+    <value>/var/run/hadoop-hdfs/dn._PORT</value>
+  </property>
+
+  <property>
+    <name>dfs.client.file-block-storage-locations.timeout</name>
+    <value>3000</value>
+  </property>
+
+  <property>
     <name>fs.tachyon.impl</name>
     <value>tachyon.hadoop.TFS</value>
   </property>
