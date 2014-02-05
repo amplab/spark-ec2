@@ -7,7 +7,7 @@ if [ -d "tachyon" ]; then
   return 0
 fi
 
-TACHYON_VERSION=0.3.0
+TACHYON_VERSION=0.4.0
 
 # Github tag:
 if [[ "$TACHYON_VERSION" == *\|* ]]
@@ -19,6 +19,9 @@ else
   case "$TACHYON_VERSION" in
     0.3.0)
       wget https://github.com/amplab/tachyon/releases/download/v0.3.0/tachyon-0.3.0-bin.tar.gz
+      ;;
+    0.4.0)
+      wget http://tachyon-project.org/downloads/tachyon-0.4.0-bin.tar.gz
       ;;
     *)
       echo "ERROR: Unknown Tachyon version"
