@@ -14,18 +14,23 @@
 
 if [[ `uname -a` == Darwin* ]]; then
   # Assuming Mac OS X
+  export JAVA_HOME=$(/usr/libexec/java_home)
   export TACHYON_RAM_FOLDER=/Volumes/ramdisk
   export TACHYON_JAVA_OPTS="-Djava.security.krb5.realm= -Djava.security.krb5.kdc="
-  export JAVA_HOME=$(/usr/libexec/java_home)
 else
   # Assuming Linux
+  if [ -z "$JAVA_HOME" ]; then
+    export JAVA_HOME=/usr/lib/jvm/java-1.7.0
+  fi
   export TACHYON_RAM_FOLDER=/mnt/ramdisk
-  export JAVA_HOME=/usr/lib/jvm/java-1.7.0
 fi
 
+export JAVA="$JAVA_HOME/bin/java"
 export TACHYON_MASTER_ADDRESS={{active_master}}
 export TACHYON_UNDERFS_ADDRESS=hdfs://{{active_master}}:9000
+#export TACHYON_UNDERFS_ADDRESS=hdfs://localhost:9000
 export TACHYON_WORKER_MEMORY_SIZE={{default_tachyon_mem}}
+export TACHYON_UNDERFS_HDFS_IMPL=org.apache.hadoop.hdfs.DistributedFileSystem
 
 CONF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -33,6 +38,9 @@ export TACHYON_JAVA_OPTS+="
   -Dlog4j.configuration=file:$CONF_DIR/log4j.properties
   -Dtachyon.debug=false
   -Dtachyon.underfs.address=$TACHYON_UNDERFS_ADDRESS
+  -Dtachyon.underfs.hdfs.impl=$TACHYON_UNDERFS_HDFS_IMPL
+  -Dtachyon.data.folder=$TACHYON_UNDERFS_ADDRESS/tachyon/data
+  -Dtachyon.workers.folder=$TACHYON_UNDERFS_ADDRESS/tachyon/workers
   -Dtachyon.worker.memory.size=$TACHYON_WORKER_MEMORY_SIZE
   -Dtachyon.worker.data.folder=$TACHYON_RAM_FOLDER/tachyonworker/
   -Dtachyon.master.worker.timeout.ms=60000
