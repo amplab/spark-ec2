@@ -21,7 +21,7 @@ else
       wget https://github.com/amplab/tachyon/releases/download/v0.3.0/tachyon-0.3.0-bin.tar.gz
       ;;
     0.4.0)
-      wget http://tachyon-project.org/downloads/tachyon-0.4.0-bin.tar.gz
+      wget https://s3.amazonaws.com/Tachyon/tachyon-0.4.0-bin.tar.gz
       ;;
     *)
       echo "ERROR: Unknown Tachyon version"
