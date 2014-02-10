@@ -17,7 +17,7 @@ pushd training
 /root/spark-ec2/copy-dir /root/training
 
 ln -T -f -s /root/training/streaming /root/streaming
-ln -T -f -s /root/training/kmeans /root/kmeans
+ln -T -f -s /root/training/machine-learning /root/machine-learning
 ln -T -f -s /root/training/java-app-template /root/java-app-template
 ln -T -f -s /root/training/scala-app-template /root/scala-app-template
 
