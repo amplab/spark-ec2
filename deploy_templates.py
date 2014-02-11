@@ -49,7 +49,6 @@ template_vars = {
   "mapred_local_dirs": os.getenv("MESOS_MAPRED_LOCAL_DIRS"),
   "spark_local_dirs": os.getenv("MESOS_SPARK_LOCAL_DIRS"),
   "default_spark_mem": "%dm" % spark_mb,
-  "scala_home": os.getenv("SCALA_HOME"),
   "java_home": os.getenv("JAVA_HOME"),
   "default_tachyon_mem": "%dMB" % tachyon_mb,
 }
