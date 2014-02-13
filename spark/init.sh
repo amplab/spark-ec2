@@ -4,7 +4,7 @@ pushd /root
 
 if [ -d "spark" ]; then
   echo "Spark seems to be installed. Exiting."
-  return 0
+  return
 fi
 
 # Github tag:
@@ -27,21 +27,35 @@ else
   case "$SPARK_VERSION" in
     0.7.3)
       if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://d3kbcqa49mib13.cloudfront.net/spark-0.7.3-prebuilt-hadoop1.tgz
+        wget http://s3.amazonaws.com/spark-related-packages/spark-0.7.3-prebuilt-hadoop1.tgz
       else
-        wget http://d3kbcqa49mib13.cloudfront.net/spark-0.7.3-prebuilt-cdh4.tgz
+        wget http://s3.amazonaws.com/spark-related-packages/spark-0.7.3-prebuilt-cdh4.tgz
       fi
       ;;    
     0.8.0)
       if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://d3kbcqa49mib13.cloudfront.net/spark-0.8.0-incubating-bin-hadoop1.tgz
+        wget http://s3.amazonaws.com/spark-related-packages/spark-0.8.0-incubating-bin-hadoop1.tgz
       else
-        wget http://d3kbcqa49mib13.cloudfront.net/spark-0.8.0-incubating-bin-cdh4.tgz
+        wget http://s3.amazonaws.com/spark-related-packages/spark-0.8.0-incubating-bin-cdh4.tgz
       fi
       ;;    
+    0.8.1)
+      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
+        wget http://s3.amazonaws.com/spark-related-packages/spark-0.8.1-incubating-bin-hadoop1.tgz
+      else
+        wget http://s3.amazonaws.com/spark-related-packages/spark-0.8.1-incubating-bin-cdh4.tgz
+      fi
+      ;;    
+    0.9.0)
+      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
+        wget http://s3.amazonaws.com/spark-related-packages/spark-0.9.0-incubating-bin-hadoop1.tgz
+      else
+        wget http://s3.amazonaws.com/spark-related-packages/spark-0.9.0-incubating-bin-cdh4.tgz
+      fi
+      ;;
     *)
       echo "ERROR: Unknown Spark version"
-      return -1
+      return
   esac
 
   echo "Unpacking Spark"

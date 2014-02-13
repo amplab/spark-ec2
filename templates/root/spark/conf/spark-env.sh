@@ -10,7 +10,7 @@
 #   be in the same format as the JVM's -Xmx option, e.g. 300m or 1g).
 # - SPARK_LIBRARY_PATH, to add extra search paths for native libraries.
 
-export SCALA_HOME={{scala_home}}
+export SCALA_HOME="/root/scala"
 
 # Set Spark's memory per machine; note that you can also comment this out
 # and have the master's SPARK_MEM variable get passed to the workers.
@@ -27,7 +27,7 @@ export MASTER=`cat /root/spark-ec2/cluster-url`
 export SPARK_CLASSPATH=$SPARK_CLASSPATH":/root/ephemeral-hdfs/conf"
 
 # Bind Spark's web UIs to this machine's public EC2 hostname:
-export SPARK_PUBLIC_DNS=`wget -q -O - http://instance-data.ec2.internal/latest/meta-data/public-hostname`
+export SPARK_PUBLIC_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/public-hostname`
 
 # Set a high ulimit for large shuffles
 ulimit -n 1000000

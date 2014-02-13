@@ -9,14 +9,14 @@ fi
 
 case "$HADOOP_MAJOR_VERSION" in
   1)
-    wget http://d3kbcqa49mib13.cloudfront.net/hadoop-1.0.4.tar.gz
+    wget http://s3.amazonaws.com/spark-related-packages/hadoop-1.0.4.tar.gz
     echo "Unpacking Hadoop"
     tar xvzf hadoop-1.0.4.tar.gz > /tmp/spark-ec2_hadoop.log
     rm hadoop-*.tar.gz
     mv hadoop-1.0.4/ persistent-hdfs/
     ;;
   2)
-    wget http://d3kbcqa49mib13.cloudfront.net/hadoop-2.0.0-cdh4.2.0.tar.gz
+    wget http://s3.amazonaws.com/spark-related-packages/hadoop-2.0.0-cdh4.2.0.tar.gz
     echo "Unpacking Hadoop"
     tar xvzf hadoop-*.tar.gz > /tmp/spark-ec2_hadoop.log
     rm hadoop-*.tar.gz
