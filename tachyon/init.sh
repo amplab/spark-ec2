@@ -18,13 +18,13 @@ then
 else
   case "$TACHYON_VERSION" in
     0.3.0)
-      wget https://github.com/amplab/tachyon/releases/download/v0.3.0/tachyon-0.3.0-bin.tar.gz
+      wget https://s3.amazonaws.com/Tachyon/tachyon-0.3.0-bin.tar.gz
       ;;
     0.4.0)
       wget https://s3.amazonaws.com/Tachyon/tachyon-0.4.0-bin.tar.gz
       ;;
     0.4.1)
-      wget https://github.com/amplab/tachyon/releases/download/v0.4.1/tachyon-0.4.1-bin.tar.gz
+      wget https://s3.amazonaws.com/Tachyon/tachyon-0.4.1-bin.tar.gz
       ;;
     *)
       echo "ERROR: Unknown Tachyon version"
