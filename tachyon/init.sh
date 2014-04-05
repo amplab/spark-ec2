@@ -4,6 +4,7 @@ pushd /root
 
 if [ -d "tachyon" ]; then
   echo "Tachyon seems to be installed. Exiting."
+  popd
   return 0
 fi
 

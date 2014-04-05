@@ -25,6 +25,7 @@ echo "$MESOS_SLAVES" > slaves
 
 # TODO(shivaram): Clean this up after docs have been updated ?
 # This ensures /root/mesos-ec2/copy-dir still works
+mkdir -p /root/mesos-ec2
 cp -f slaves /root/mesos-ec2/
 cp -f masters /root/mesos-ec2/
 
