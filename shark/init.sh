@@ -45,6 +45,13 @@ else
         wget http://s3.amazonaws.com/spark-related-packages/shark-0.8.1-bin-cdh4.tgz
       fi
       ;;
+    0.9.0 | 0.9.1)
+      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
+        wget https://s3.amazonaws.com/spark-related-packages/shark-0.9.1-bin-hadoop1.tgz
+      else
+        wget https://s3.amazonaws.com/spark-related-packages/shark-0.9.1-bin-hadoop2.tgz
+      fi
+      ;;
     *)
       echo "ERROR: Unknown Shark version"
       return
