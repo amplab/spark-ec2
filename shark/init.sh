@@ -4,6 +4,7 @@ pushd /root
 
 if [ -d "shark" ]; then
   echo "Shark seems to be installed. Exiting."
+  popd
   return
 fi
 
@@ -54,6 +55,7 @@ else
       ;;
     *)
       echo "ERROR: Unknown Shark version"
+      popd
       return
   esac
 
