@@ -12,6 +12,7 @@ import sys
 
 # Find system memory in KB and compute Spark's default limit from that
 mem_command = "cat /proc/meminfo | grep MemTotal | awk '{print $2}'"
+cpu_command = "nproc"
 
 master_ram_kb = int(
   os.popen(mem_command).read().strip())
@@ -20,7 +21,13 @@ first_slave = os.popen("cat /root/spark-ec2/slaves | head -1").read().strip()
 
 slave_mem_command = "ssh -t -o StrictHostKeyChecking=no %s %s" %\
         (first_slave, mem_command)
+
+slave_cpu_command = "ssh -t -o StrictHostKeyChecking=no %s %s" %\
+        (first_slave, cpu_command)
+
 slave_ram_kb = int(os.popen(slave_mem_command).read().strip())
+
+slave_cpus = int(os.popen(slave_cpu_command).read().strip())
 
 system_ram_kb = min(slave_ram_kb, master_ram_kb)
 
@@ -42,6 +49,10 @@ else:
 # Make tachyon_mb as spark_mb for now.
 tachyon_mb = spark_mb
 
+worker_instances = int(os.getenv("SPARK_WORKER_INSTANCES", 1))
+# Distribute equally cpu cores among worker instances
+worker_cores = slave_cpus / worker_instances
+
 template_vars = {
   "master_list": os.getenv("MASTERS"),
   "active_master": os.getenv("MASTERS").split("\n")[0],
@@ -50,6 +61,8 @@ template_vars = {
   "mapred_local_dirs": os.getenv("MAPRED_LOCAL_DIRS"),
   "spark_local_dirs": os.getenv("SPARK_LOCAL_DIRS"),
   "default_spark_mem": "%dm" % spark_mb,
+  "spark_worker_instances": "%d" %  worker_instances,
+  "spark_worker_cores": "%d" %  worker_cores,
   "spark_version": os.getenv("SPARK_VERSION"),
   "shark_version": os.getenv("SHARK_VERSION"),
   "hadoop_major_version": os.getenv("HADOOP_MAJOR_VERSION"),
