@@ -20,6 +20,8 @@ export SPARK_MEM={{default_spark_mem}}
 SPARK_JAVA_OPTS+=" -Dspark.local.dir={{spark_local_dirs}}"
 export SPARK_JAVA_OPTS
 
+export SPARK_MASTER_OPTS="{{spark_master_opts}}"
+
 export HADOOP_HOME="/root/ephemeral-hdfs"
 export SPARK_LIBRARY_PATH="/root/ephemeral-hdfs/lib/native/"
 export SPARK_MASTER_IP={{active_master}}
