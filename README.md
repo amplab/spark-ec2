@@ -36,6 +36,7 @@ and can be used to install any pre-requisites.
       {{default_spark_mem}}
       {{spark_worker_instances}}
       {{spark_worker_cores}}
+      {{spark_master_opts}}
       
    You can add new variables by modifying `deploy_templates.py`
    
