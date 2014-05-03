@@ -51,7 +51,7 @@ tachyon_mb = spark_mb
 
 worker_instances = int(os.getenv("SPARK_WORKER_INSTANCES", 1))
 # Distribute equally cpu cores among worker instances
-worker_cores = slave_cpus / worker_instances
+worker_cores = max(slave_cpus / worker_instances, 1)
 
 template_vars = {
   "master_list": os.getenv("MASTERS"),
