@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export SPARK_LOCAL_DIR="{{spark_local_dirs}}"
+export SPARK_LOCAL_DIRS="{{spark_local_dirs}}"
 
 # Standalone cluster options
 export SPARK_MASTER_OPTS="{{spark_master_opts}}"
