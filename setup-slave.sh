@@ -14,6 +14,23 @@ HOSTNAME=$PRIVATE_DNS  # Fix the bash built-in hostname variable too
 
 echo "Setting up slave on `hostname`..."
 
+# Work around for R3 instances without pre-formatted disks
+instance_type=$(curl http://169.254.169.254/latest/meta-data/instance-type 2> /dev/null)
+if [[ $instance_type == r3* ]]; then
+  EXT3_MOUNT_OPTS="defaults,noatime,nodiratime"
+  rm -rf /mnt*
+
+  mkdir /mnt
+  mkfs.ext3 -E lazy_itable_init=0,lazy_journal_init=0 /dev/sdb
+  mount -o $EXT3_MOUNT_OPTS /dev/sdb /mnt
+
+  if [[ $instance_type == "r3.8xlarge" ]]; then
+    mkdir /mnt2
+    mkfs.ext3 -E lazy_itable_init=0,lazy_journal_init=0 /dev/sdc
+    mount -o $EXT3_MOUNT_OPTS /dev/sdb /mnt2
+  fi
+fi
+
 # Mount options to use for ext3 and xfs disks (the ephemeral disks
 # are ext3, but we use xfs for EBS volumes to format them faster)
 XFS_MOUNT_OPTS="defaults,noatime,nodiratime,allocsize=8m"
