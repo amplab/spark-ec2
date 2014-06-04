@@ -18,6 +18,23 @@ echo "Setting up slave on `hostname`..."
 # are ext3, but we use xfs for EBS volumes to format them faster)
 XFS_MOUNT_OPTS="defaults,noatime,nodiratime,allocsize=8m"
 
+# Work around for R3 instances without pre-formatted ext3 disks
+instance_type=$(curl http://169.254.169.254/latest/meta-data/instance-type 2> /dev/null)
+if [[ $instance_type == r3* ]]; then
+  yum install -y xfsprogs
+
+  rm -rf /mnt*
+  mkdir /mnt
+  mkfs.xfs /dev/sdb
+  mount -o $XFS_MOUNT_OPTS /dev/sdb /mnt
+
+  if [[ $instance_type == "r3.8xlarge" ]]; then
+    mkdir /mnt2
+    mkfs.xfs /dev/sdc
+    mount -o $XFS_MOUNT_OPTS /dev/sdc /mnt2
+  fi
+fi
+
 # Format and mount EBS volume (/dev/sdv) as /vol if the device exists
 if [[ -e /dev/sdv ]]; then
   # Check if /dev/sdv is already formatted
