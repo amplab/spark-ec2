@@ -31,7 +31,7 @@ if [[ $instance_type == r3* ]]; then
   if [[ $instance_type == "r3.8xlarge" ]]; then
     mkdir /mnt2
     mkfs.xfs /dev/sdc
-    mount -o $XFS_MOUNT_OPTS /dev/sdb /mnt2
+    mount -o $XFS_MOUNT_OPTS /dev/sdc /mnt2
   fi
 fi
 
