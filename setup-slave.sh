@@ -14,26 +14,29 @@ HOSTNAME=$PRIVATE_DNS  # Fix the bash built-in hostname variable too
 
 echo "Setting up slave on `hostname`..."
 
-# Mount options to use for ext3 and xfs disks (the ephemeral disks
-# are ext3, but we use xfs for EBS volumes to format them faster)
-XFS_MOUNT_OPTS="defaults,noatime,nodiratime,allocsize=8m"
-
 # Work around for R3 instances without pre-formatted ext3 disks
 instance_type=$(curl http://169.254.169.254/latest/meta-data/instance-type 2> /dev/null)
 if [[ $instance_type == r3* ]]; then
-  yum install -y xfsprogs
-
+  # Format & mount using ext4, which has the best performance among ext3, ext4, and xfs based
+  # on our shuffle heavy benchmark
+  EXT4_MOUNT_OPTS="defaults,noatime,nodiratime"
   rm -rf /mnt*
   mkdir /mnt
-  mkfs.xfs /dev/sdb
-  mount -o $XFS_MOUNT_OPTS /dev/sdb /mnt
+  #echo '/dev/sdb /mnt  ext4  defaults,noatime,nodiratime,discard 0 0' >> /etc/fstab
+  mkfs.ext4 -E lazy_itable_init=0,lazy_journal_init=0 /dev/sdb
+  mount -o $EXT4_MOUNT_OPTS /dev/sdb /mnt
 
   if [[ $instance_type == "r3.8xlarge" ]]; then
     mkdir /mnt2
-    mkfs.xfs /dev/sdc
-    mount -o $XFS_MOUNT_OPTS /dev/sdc /mnt2
+    #echo '/dev/sdc /mnt2  ext4  defaults,noatime,nodiratime,discard 0 0' >> /etc/fstab
+    mkfs.ext4 -E lazy_itable_init=0,lazy_journal_init=0 /dev/sdc
+    mount -o $EXT4_MOUNT_OPTS /dev/sdc /mnt2
   fi
 fi
+
+# Mount options to use for ext3 and xfs disks (the ephemeral disks
+# are ext3, but we use xfs for EBS volumes to format them faster)
+XFS_MOUNT_OPTS="defaults,noatime,nodiratime,allocsize=8m"
 
 # Format and mount EBS volume (/dev/sdv) as /vol if the device exists
 if [[ -e /dev/sdv ]]; then
