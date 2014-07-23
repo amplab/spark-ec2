@@ -46,7 +46,7 @@ else
         wget http://s3.amazonaws.com/spark-related-packages/shark-0.8.1-bin-cdh4.tgz
       fi
       ;;
-    0.9.0 | 0.9.1)
+    0.9.0 | 0.9.1 | 0.9.2) # TODO: Change the mapping after Shark 0.9.2 release.
       if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
         wget https://s3.amazonaws.com/spark-related-packages/shark-0.9.1-bin-hadoop1.tgz
       else
