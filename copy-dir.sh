@@ -28,6 +28,11 @@ if [[ "$#" != "1" ]] ; then
   usage
 fi
 
+if [[ ! -e "$1" ]] ; then
+  echo "File or directory $1 doesn't exist!"
+  exit 1
+fi
+
 DIR=`readlink -f "$1"`
 DIR=`echo "$DIR"|sed 's@/$@@'`
 DEST=`dirname "$DIR"`
