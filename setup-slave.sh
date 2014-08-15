@@ -45,6 +45,7 @@ if [[ -e /dev/sdv ]]; then
   # Check if /dev/sdv is already formatted
   if ! blkid /dev/sdv; then
     mkdir /vol
+    yum install -q -y xfsprogs
     if mkfs.xfs -q /dev/sdv; then
       mount -o $XFS_MOUNT_OPTS /dev/sdv /vol
       chmod -R a+w /vol
