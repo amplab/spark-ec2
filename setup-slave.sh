@@ -40,29 +40,44 @@ fi
 # are ext3, but we use xfs for EBS volumes to format them faster)
 XFS_MOUNT_OPTS="defaults,noatime,nodiratime,allocsize=8m"
 
-# Format and mount EBS volume (/dev/sdv) as /vol if the device exists
-if [[ -e /dev/sdv ]]; then
-  # Check if /dev/sdv is already formatted
-  if ! blkid /dev/sdv; then
-    mkdir /vol
-    yum install -q -y xfsprogs
-    if mkfs.xfs -q /dev/sdv; then
-      mount -o $XFS_MOUNT_OPTS /dev/sdv /vol
-      chmod -R a+w /vol
+function setup_ebs_volume {
+  device=$1
+  mount_point=$2
+  if [[ -e $device ]]; then
+    # Check if device is already formatted
+    if ! blkid $device; then
+      mkdir $mount_point
+      yum install -q -y xfsprogs
+      if mkfs.xfs -q $device; then
+        mount -o $XFS_MOUNT_OPTS $device $mount_point
+        chmod -R a+w $mount_point
+      else
+        # mkfs.xfs is not installed on this machine or has failed;
+        # delete /vol so that the user doesn't think we successfully
+        # mounted the EBS volume
+        rmdir $mount_point
+      fi
     else
-      # mkfs.xfs is not installed on this machine or has failed;
-      # delete /vol so that the user doesn't think we successfully
-      # mounted the EBS volume
-      rmdir /vol
-    fi
-  else
-    # EBS volume is already formatted. Mount it if its not mounted yet.
-    if ! grep -qs '/vol' /proc/mounts; then
-      mkdir /vol
-      mount -o $XFS_MOUNT_OPTS /dev/sdv /vol
-      chmod -R a+w /vol
+      # EBS volume is already formatted. Mount it if its not mounted yet.
+      if ! grep -qs '$mount_point' /proc/mounts; then
+        mkdir $mount_point
+        mount -o $XFS_MOUNT_OPTS $device $mount_point
+        chmod -R a+w $mount_point
+      fi
     fi
   fi
+}
+
+# Format and mount EBS volume (/dev/sd[v, w, x, y, z]) as /vol[x] if the device exists
+setup_ebs_volume /dev/sdv /vol0
+setup_ebs_volume /dev/sdw /vol1
+setup_ebs_volume /dev/sdx /vol2
+setup_ebs_volume /dev/sdy /vol3
+setup_ebs_volume /dev/sdz /vol4
+
+# Alias vol to vol0 for backward compatibility
+if [[ -e /vol0 && ! -e /vol ]]; then
+  ln -s /vol0 /vol
 fi
 
 # Make data dirs writable by non-root users, such as CDH's hadoop user
