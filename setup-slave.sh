@@ -40,7 +40,7 @@ fi
 # are ext3, but we use xfs for EBS volumes to format them faster)
 XFS_MOUNT_OPTS="defaults,noatime,nodiratime,allocsize=8m"
 
-function setup_ebs_volumn {
+function setup_ebs_volume {
   device=$1
   mount_point=$2
   if [[ -e $device ]]; then
@@ -69,14 +69,16 @@ function setup_ebs_volumn {
 }
 
 # Format and mount EBS volume (/dev/sd[v, w, x, y, z]) as /vol[x] if the device exists
-setup_ebs_volumn /dev/sdv /vol0
-setup_ebs_volumn /dev/sdw /vol1
-setup_ebs_volumn /dev/sdx /vol2
-setup_ebs_volumn /dev/sdy /vol3
-setup_ebs_volumn /dev/sdz /vol4
+setup_ebs_volume /dev/sdv /vol0
+setup_ebs_volume /dev/sdw /vol1
+setup_ebs_volume /dev/sdx /vol2
+setup_ebs_volume /dev/sdy /vol3
+setup_ebs_volume /dev/sdz /vol4
 
 # Alias vol to vol0 for backward compatibility
-ln -s /vol /vol0
+if [[ -e /vol0 && ! -e /vol ]]; then
+  ln -s /vol0 /vol
+fi
 
 # Make data dirs writable by non-root users, such as CDH's hadoop user
 chmod -R a+w /mnt*
