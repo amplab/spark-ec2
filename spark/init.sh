@@ -67,7 +67,6 @@ else
         wget http://s3.amazonaws.com/spark-related-packages/spark-0.9.2-bin-cdh4.tgz
       fi
       ;;
-    *)
     1.1.0)
       if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
         wget http://s3.amazonaws.com/spark-related-packages/spark-1.1.0-bin-hadoop1.tgz
