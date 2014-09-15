@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Disable Transparent Huge Pages (THP)
+# THP can result in system thrashing (high sys usage) due to frequent defrags of memory.
+# Most systems recommends turning THP off.
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+
 # Make sure we are in the spark-ec2 directory
 cd /root/spark-ec2
 
