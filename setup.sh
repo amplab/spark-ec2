@@ -34,11 +34,6 @@ if [[ "x$JAVA_HOME" == "x" ]] ; then
     exit 1
 fi
 
-if [[ "x$SCALA_HOME" == "x" ]] ; then
-    echo "Expected SCALA_HOME to be set in .bash_profile!"
-    exit 1
-fi
-
 if [[ `tty` == "not a tty" ]] ; then
     echo "Expecting a tty or pty! (use the ssh -t option)."
     exit 1
