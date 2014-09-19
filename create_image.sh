@@ -19,7 +19,7 @@ sudo yum install -y  python-matplotlib python-tornado scipy libgfortran\
 # SparkR deps
 sudo yum install -y R
 # Ganglia
-sudo yum install -y ganglia ganglia-web ganglia-gmond ganglia-gmetad
+sudo yum install -y ganglia ganglia-web ganglia-gmond ganglia-gmetad httpd
 
 # Root ssh config
 sudo sed -i 's/PermitRootLogin.*/PermitRootLogin without-password/g' \
