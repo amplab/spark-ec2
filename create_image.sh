@@ -13,11 +13,17 @@ fi
 # Dev tools
 sudo yum install -y java-1.7.0-openjdk-devel gcc gcc-c++ ant git
 # Perf tools
-sudo yum install -y dstat iotop strace
+sudo yum install -y dstat iotop strace sysstat htop perf
+sudo debuginfo-install -q -y glibc
+sudo debuginfo-install -q -y kernel
+sudo yum --enablerepo='*-debug*' install -q -y java-1.7.0-openjdk-debuginfo.x86_64
+
 # PySpark and MLlib deps
 sudo yum install -y  python-matplotlib python-tornado scipy libgfortran
 # SparkR deps
 sudo yum install -y R
+# Other useful tool
+sudo yum install -y pssh
 # Ganglia
 sudo yum install -y ganglia ganglia-web ganglia-gmond ganglia-gmetad httpd
 
