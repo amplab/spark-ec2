@@ -22,7 +22,7 @@ sudo yum --enablerepo='*-debug*' install -q -y java-1.7.0-openjdk-debuginfo.x86_
 sudo yum install -y  python-matplotlib python-tornado scipy libgfortran
 # SparkR deps
 sudo yum install -y R
-# Other useful tool
+# Other handy tools
 sudo yum install -y pssh
 # Ganglia
 sudo yum install -y ganglia ganglia-web ganglia-gmond ganglia-gmetad httpd
