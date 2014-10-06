@@ -25,7 +25,7 @@ sudo yum install -y R
 # Other handy tools
 sudo yum install -y pssh
 # Ganglia
-sudo yum install -y ganglia ganglia-web ganglia-gmond ganglia-gmetad httpd
+sudo yum install -y ganglia ganglia-web ganglia-gmond ganglia-gmetad
 
 # Root ssh config
 sudo sed -i 's/PermitRootLogin.*/PermitRootLogin without-password/g' \
