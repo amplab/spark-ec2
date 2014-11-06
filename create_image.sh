@@ -65,8 +65,7 @@ source ~/.bash_profile
 sudo mkdir /root/hadoop-native
 cd /tmp
 sudo yum install -y protobuf-compiler cmake openssl-devel
-wget "http://apache.mirrors.tds.net/hadoop/common/"\
-"hadoop-2.4.1/hadoop-2.4.1-src.tar.gz"
+wget "http://archive.apache.org/dist/hadoop/common/hadoop-2.4.1/hadoop-2.4.1-src.tar.gz"
 tar xvzf hadoop-2.4.1-src.tar.gz
 cd hadoop-2.4.1-src
 mvn package -Pdist,native -DskipTests -Dtar
