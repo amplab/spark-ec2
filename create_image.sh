@@ -48,8 +48,7 @@ done
 
 # Install Maven (for Hadoop)
 cd /tmp
-wget "http://apache.osuosl.org/maven/maven-3/3.2.3/binaries/"\
-"apache-maven-3.2.3-bin.tar.gz"
+wget "http://archive.apache.org/dist/maven/maven-3/3.2.3/binaries/apache-maven-3.2.3-bin.tar.gz"
 tar xvzf apache-maven-3.2.3-bin.tar.gz
 mv apache-maven-3.2.3 /opt/
 
@@ -65,8 +64,7 @@ source ~/.bash_profile
 sudo mkdir /root/hadoop-native
 cd /tmp
 sudo yum install -y protobuf-compiler cmake openssl-devel
-wget "http://apache.mirrors.tds.net/hadoop/common/"\
-"hadoop-2.4.1/hadoop-2.4.1-src.tar.gz"
+wget "http://archive.apache.org/dist/hadoop/common/hadoop-2.4.1/hadoop-2.4.1-src.tar.gz"
 tar xvzf hadoop-2.4.1-src.tar.gz
 cd hadoop-2.4.1-src
 mvn package -Pdist,native -DskipTests -Dtar
