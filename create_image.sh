@@ -48,8 +48,7 @@ done
 
 # Install Maven (for Hadoop)
 cd /tmp
-wget "http://apache.osuosl.org/maven/maven-3/3.2.3/binaries/"\
-"apache-maven-3.2.3-bin.tar.gz"
+wget "http://archive.apache.org/dist/maven/maven-3/3.2.3/binaries/apache-maven-3.2.3-bin.tar.gz"
 tar xvzf apache-maven-3.2.3-bin.tar.gz
 mv apache-maven-3.2.3 /opt/
 
