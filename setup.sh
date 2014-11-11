@@ -46,7 +46,7 @@ find . -regex "^.+.\(sh\|py\)" | xargs chmod a+x
 
 echo "SSH-ing to all cluster nodes to approve keys..."
 pssh --inline \
-    --host "localhost $MASTERS $SLAVES" \
+    --host "localhost $(hostname) $MASTERS $SLAVES" \
     --user root \
     --extra-args "$SSH_OPTS" \
     ":"
