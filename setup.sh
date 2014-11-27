@@ -12,14 +12,11 @@ source /root/.bash_profile
 source ec2-variables.sh
 
 function approve_ssh_keys () {
-  time {
-    pssh --inline \
-        --host "localhost $(hostname) $MASTERS $SLAVES" \
-        --user root \
-        --extra-args "$SSH_OPTS" \
-        ":"
-  }
-  echo " ✝ approve_ssh_keys"
+  pssh --inline \
+      --host "localhost $(hostname) $MASTERS $SLAVES" \
+      --user root \
+      --extra-args "$SSH_OPTS" \
+      ":"
 }
 
 # Set hostname based on EC2 private DNS name, so that it is set correctly
@@ -68,14 +65,11 @@ done
 wait
 
 echo "Running setup-slave on all cluster nodes to mount filesystems, etc..."
-time {
-  pssh --inline \
-      --host "$MASTERS $SLAVES" \
-      --user root \
-      --extra-args "-t -t $SSH_OPTS" \
-      "spark-ec2/setup-slave.sh"
-}
-echo " ✝ setup-slave"
+pssh --inline \
+    --host "$MASTERS $SLAVES" \
+    --user root \
+    --extra-args "-t -t $SSH_OPTS" \
+    "spark-ec2/setup-slave.sh"
 
 echo "SSH-ing to all cluster nodes to re-approve keys..."
 # We do this again because setup-slave.sh clears out .ssh/known_hosts.
