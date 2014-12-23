@@ -73,3 +73,10 @@ sudo mv hadoop-dist/target/hadoop-2.4.1/lib/native/* /root/hadoop-native
 # Install Snappy lib (for Hadoop)
 yum install -y snappy
 ln -sf /usr/lib64/libsnappy.so.1 /root/hadoop-native/.
+
+# Create /usr/bin/realpath which is used by R to find Java installations
+# NOTE: /usr/bin/realpath is missing in CentOS AMIs. See
+# http://superuser.com/questions/771104/usr-bin-realpath-not-found-in-centos-6-5
+echo '#!/bin/bash' > /usr/bin/realpath
+echo 'readlink -e "$@"' >> /usr/bin/realpath
+chmod a+x /usr/bin/realpath
