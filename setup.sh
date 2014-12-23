@@ -52,8 +52,8 @@ fi
 echo "Setting executable permissions on scripts..."
 find . -regex "^.+.\(sh\|py\)" | xargs chmod a+x
 
-echo "SSH-ing to all cluster nodes to approve keys..."
-approve_ssh_keys
+# echo "SSH-ing to all cluster nodes to approve keys..."
+# approve_ssh_keys
 
 echo "RSYNC'ing /root/spark-ec2 to other cluster nodes..."
 for node in $SLAVES $OTHER_MASTERS; do
@@ -71,9 +71,9 @@ pssh --inline \
     --extra-args "-t -t $SSH_OPTS" \
     "spark-ec2/setup-slave.sh"
 
-echo "SSH-ing to all cluster nodes to re-approve keys..."
+# echo "SSH-ing to all cluster nodes to re-approve keys..."
 # We do this again because setup-slave.sh clears out .ssh/known_hosts.
-approve_ssh_keys
+# approve_ssh_keys
 
 # Always include 'scala' module if it's not defined as a work around
 # for older versions of the scripts.
