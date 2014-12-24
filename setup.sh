@@ -1,6 +1,6 @@
 #!/bin/bash
 
-yum install -y pssh
+sudo yum install -y pssh
 
 # Make sure we are in the spark-ec2 directory
 pushd /root/spark-ec2
