@@ -11,14 +11,6 @@ source /root/.bash_profile
 # Load the cluster variables set by the deploy script
 source ec2-variables.sh
 
-function approve_ssh_keys () {
-  pssh --inline \
-      --host "localhost $(hostname) $MASTERS $SLAVES" \
-      --user root \
-      --extra-args "$SSH_OPTS" \
-      ":"
-}
-
 # Set hostname based on EC2 private DNS name, so that it is set correctly
 # even if the instance is restarted with a different private DNS name
 PRIVATE_DNS=`wget -q -O - http://instance-data.ec2.internal/latest/meta-data/local-hostname`
@@ -52,9 +44,6 @@ fi
 echo "Setting executable permissions on scripts..."
 find . -regex "^.+.\(sh\|py\)" | xargs chmod a+x
 
-# echo "SSH-ing to all cluster nodes to approve keys..."
-# approve_ssh_keys
-
 echo "RSYNC'ing /root/spark-ec2 to other cluster nodes..."
 for node in $SLAVES $OTHER_MASTERS; do
   echo $node
@@ -70,10 +59,6 @@ pssh --inline \
     --user root \
     --extra-args "-t -t $SSH_OPTS" \
     "spark-ec2/setup-slave.sh"
-
-# echo "SSH-ing to all cluster nodes to re-approve keys..."
-# We do this again because setup-slave.sh clears out .ssh/known_hosts.
-# approve_ssh_keys
 
 # Always include 'scala' module if it's not defined as a work around
 # for older versions of the scripts.
