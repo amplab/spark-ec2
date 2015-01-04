@@ -1,10 +1,10 @@
 #!/bin/bash
 
-pushd /root
+pushd /root > /dev/null
 
 if [ -d "shark" ]; then
   echo "Shark seems to be installed. Exiting."
-  popd
+  popd > /dev/null
   return
 fi
 
@@ -55,7 +55,7 @@ else
       ;;
     *)
       echo "ERROR: Unknown Shark version"
-      popd
+      popd > /dev/null
       return
   esac
 
@@ -74,4 +74,4 @@ else
   fi
 fi
 
-popd
+popd > /dev/null

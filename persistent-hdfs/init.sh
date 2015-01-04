@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pushd /root
+pushd /root > /dev/null
 
 if [ -d "persistent-hdfs" ]; then
   echo "Persistent HDFS seems to be installed. Exiting."
@@ -33,4 +33,5 @@ case "$HADOOP_MAJOR_VERSION" in
 esac
 cp /root/hadoop-native/* /root/persistent-hdfs/lib/native/
 /root/spark-ec2/copy-dir /root/persistent-hdfs
-popd
+
+popd > /dev/null

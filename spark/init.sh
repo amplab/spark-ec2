@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pushd /root
+pushd /root > /dev/null
 
 if [ -d "spark" ]; then
   echo "Spark seems to be installed. Exiting."
@@ -11,7 +11,7 @@ fi
 if [[ "$SPARK_VERSION" == *\|* ]]
 then
   mkdir spark
-  pushd spark
+  pushd spark > /dev/null
   git init
   repo=`python -c "print '$SPARK_VERSION'.split('|')[0]"` 
   git_hash=`python -c "print '$SPARK_VERSION'.split('|')[1]"`
@@ -20,7 +20,7 @@ then
   git checkout $git_hash
   sbt/sbt clean assembly
   sbt/sbt publish-local
-  popd
+  popd > /dev/null
 
 # Pre-packaged spark version:
 else 
@@ -120,4 +120,4 @@ else
   mv `ls -d spark-* | grep -v ec2` spark
 fi
 
-popd
+popd > /dev/null
