@@ -8,7 +8,7 @@ if [[ -e /sys/kernel/mm/transparent_hugepage/enabled ]]; then
 fi
 
 # Make sure we are in the spark-ec2 directory
-pushd /root/spark-ec2
+pushd /root/spark-ec2 > /dev/null
 
 source ec2-variables.sh
 
@@ -115,4 +115,4 @@ echo '#!/bin/bash' > /usr/bin/realpath
 echo 'readlink -e "$@"' >> /usr/bin/realpath
 chmod a+x /usr/bin/realpath
 
-popd
+popd > /dev/null

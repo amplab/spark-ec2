@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pushd /root
+pushd /root > /dev/null
 case "$HADOOP_MAJOR_VERSION" in
   1)
     echo "Nothing to initialize for MapReduce in Hadoop 1"
@@ -17,4 +17,4 @@ case "$HADOOP_MAJOR_VERSION" in
      return -1
 esac
 /root/spark-ec2/copy-dir /root/mapreduce
-popd
+popd > /dev/null

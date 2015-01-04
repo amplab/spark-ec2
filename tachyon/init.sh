@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pushd /root
+pushd /root > /dev/null
 
 if [ -d "tachyon" ]; then
   echo "Tachyon seems to be installed. Exiting."
@@ -37,4 +37,4 @@ else
   mv `ls -d tachyon-*` tachyon
 fi
 
-popd
+popd > /dev/null

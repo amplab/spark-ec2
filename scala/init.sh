@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pushd /root
+pushd /root > /dev/null
 
 if [ -d "scala" ]; then
   echo "Scala seems to be installed. Exiting."
@@ -19,4 +19,4 @@ tar xvzf scala-*.tgz > /tmp/spark-ec2_scala.log
 rm scala-*.tgz
 mv `ls -d scala-* | grep -v ec2` scala
 
-popd
+popd > /dev/null

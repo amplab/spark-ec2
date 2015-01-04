@@ -3,7 +3,7 @@
 sudo yum install -y pssh
 
 # Make sure we are in the spark-ec2 directory
-pushd /root/spark-ec2
+pushd /root/spark-ec2 > /dev/null
 
 # Load the environment variables specific to this AMI
 source /root/.bash_profile
@@ -93,4 +93,4 @@ for module in $MODULES; do
   cd /root/spark-ec2  # guard against setup.sh changing the cwd
 done
 
-popd
+popd > /dev/null
