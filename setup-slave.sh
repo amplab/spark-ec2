@@ -19,6 +19,8 @@ hostname $PRIVATE_DNS
 echo $PRIVATE_DNS > /etc/hostname
 HOSTNAME=$PRIVATE_DNS  # Fix the bash built-in hostname variable too
 
+bash /root/spark-ec2/resolve-hostname.sh
+
 echo "Setting up slave on `hostname`..."
 
 # Work around for R3 instances without pre-formatted ext3 disks
