@@ -6,11 +6,11 @@
 # This script maps private ip to such hostname via '/etc/hosts'.
 #
 
-#Are we in VPC?
+# Are we in VPC?
 MAC=`wget -q -O - http://169.254.169.254/latest/meta-data/mac`
 VCP_ID=`wget -q -O - http://169.254.169.254/latest/meta-data/network/interfaces/macs/${MAC}/vpc-id`
 if [ -n "${VCP_ID}" ]; then
-    #echo "nothing to do - instance is not in VPC"
+    # echo "nothing to do - instance is not in VPC"
     exit 0
 fi
 
@@ -22,9 +22,9 @@ PRIVATE_IP=`wget -q -O - http://169.254.169.254/latest/meta-data/local-ipv4`
 if ( ! ping -c 1 -q "${SHORT_HOSTNAME}" > /dev/null 2>&1 ); then
     echo -e "\n ${PRIVATE_IP} ${SHORT_HOSTNAME}\n" >> /etc/hosts
 
-    #let's make sure that it got fixed
+    # let's make sure that it got fixed
     if ( ! ping -c 1 -q "${SHORT_HOSTNAME}" > /dev/null 2>&1 ); then
-        #return some non-zero code to indicate problem
+        # return some non-zero code to indicate problem
         echo "Possible bug: unable to fix resolution of local hostname"
         return 62
     fi
