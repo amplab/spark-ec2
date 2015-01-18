@@ -9,7 +9,7 @@
 # Are we in VPC?
 MAC=`wget -q -O - http://169.254.169.254/latest/meta-data/mac`
 VCP_ID=`wget -q -O - http://169.254.169.254/latest/meta-data/network/interfaces/macs/${MAC}/vpc-id`
-if [ -n "${VCP_ID}" ]; then
+if [ -z "${VCP_ID}" ]; then
     # echo "nothing to do - instance is not in VPC"
     exit 0
 fi
