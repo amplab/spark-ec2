@@ -21,10 +21,11 @@ HOSTNAME=$PRIVATE_DNS  # Fix the bash built-in hostname variable too
 
 bash /root/spark-ec2/resolve-hostname.sh
 
-echo "Setting up slave on `hostname`..."
-
-# Work around for R3 instances without pre-formatted ext3 disks
+# Work around for R3 or I2 instances without pre-formatted ext3 disks
 instance_type=$(curl http://169.254.169.254/latest/meta-data/instance-type 2> /dev/null)
+
+echo "Setting up slave on `hostname`... of type $instance_type"
+
 if [[ $instance_type == r3* ]]; then
   # Format & mount using ext4, which has the best performance among ext3, ext4, and xfs based
   # on our shuffle heavy benchmark
@@ -43,6 +44,18 @@ if [[ $instance_type == r3* ]]; then
     mkfs.ext4 -E lazy_itable_init=0,lazy_journal_init=0 /dev/sdc
     mount -o $EXT4_MOUNT_OPTS /dev/sdc /mnt2
   fi
+fi
+
+if [[ $instance_type == i2* ]]; then
+  # Format & mount using ext4, which has the best performance among ext3, ext4, and xfs based
+  # on our shuffle heavy benchmark
+  EXT4_MOUNT_OPTS="defaults,noatime,nodiratime"
+  rm -rf /mnt*
+  mkdir /mnt
+  # To turn TRIM support on, uncomment the following line.
+  #echo '/dev/sdb /mnt  ext4  defaults,noatime,nodiratime,discard 0 0' >> /etc/fstab
+  mkfs.ext4 -E lazy_itable_init=0,lazy_journal_init=0 /dev/sdb
+  mount -o $EXT4_MOUNT_OPTS /dev/sdb /mnt
 fi
 
 # Mount options to use for ext3 and xfs disks (the ephemeral disks
