@@ -21,11 +21,12 @@ HOSTNAME=$PRIVATE_DNS  # Fix the bash built-in hostname variable too
 
 bash /root/spark-ec2/resolve-hostname.sh
 
-echo "Setting up slave on `hostname`..."
-
-# Work around for R3 instances without pre-formatted ext3 disks
+# Work around for R3 or I2 instances without pre-formatted ext3 disks
 instance_type=$(curl http://169.254.169.254/latest/meta-data/instance-type 2> /dev/null)
-if [[ $instance_type == r3* ]]; then
+
+echo "Setting up slave on `hostname`... of type $instance_type"
+
+if [[ $instance_type == r3* || $instance_type == i2* ]]; then
   # Format & mount using ext4, which has the best performance among ext3, ext4, and xfs based
   # on our shuffle heavy benchmark
   EXT4_MOUNT_OPTS="defaults,noatime,nodiratime"
