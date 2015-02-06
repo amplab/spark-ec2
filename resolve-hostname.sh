@@ -19,11 +19,13 @@ SHORT_HOSTNAME=`hostname`
 PRIVATE_IP=`wget -q -O - http://169.254.169.254/latest/meta-data/local-ipv4`
 
 # do changes only if short hostname does not resolve
-if [ ! ping -c 1 -q "${SHORT_HOSTNAME}" > /dev/null 2>&1 ]; then
-    echo -e "\n ${PRIVATE_IP} ${SHORT_HOSTNAME}\n" >> /etc/hosts
+ping -c 1 -q "${SHORT_HOSTNAME}" > /dev/null 2>&1
+if [ $? -ne 0  ]; then
+    echo -e "\n# fixed by resolve-hostname.sh \n${PRIVATE_IP} ${SHORT_HOSTNAME}\n" >> /etc/hosts
 
     # let's make sure that it got fixed
-    if [ ! ping -c 1 -q "${SHORT_HOSTNAME}" > /dev/null 2>&1 ]; then
+    ping -c 1 -q "${SHORT_HOSTNAME}" > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
         # return some non-zero code to indicate problem
         echo "Possible bug: unable to fix resolution of local hostname"
         return 62

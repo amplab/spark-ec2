@@ -19,6 +19,7 @@ hostname $PRIVATE_DNS
 echo $PRIVATE_DNS > /etc/hostname
 HOSTNAME=$PRIVATE_DNS  # Fix the bash built-in hostname variable too
 
+echo "checking/fixing resolution of hostname"
 bash /root/spark-ec2/resolve-hostname.sh
 
 # Work around for R3 or I2 instances without pre-formatted ext3 disks
