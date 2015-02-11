@@ -4,13 +4,11 @@ Contributions via GitHub pull requests are gladly accepted from their original a
 
 ## Which branch to open your patch against
 
-Please open your pull request against the correct branch.
-
-The branches in this repo line up with [the branches in the Apache Spark repo](https://github.com/apache/spark/branches), with the exception of `master`, which this repo doesn't use. So, for example, `branch-1.3` here corresponds to `branch-1.3` in the main Spark repo.
-
 Generally, you want to open PRs against the branch here that corresponds to the latest branch of Spark, unless you are backporting fixes for older versions.
 
-If you are backporting fixes for older versions of Spark, note that prior to 1.3.0 there was [non-obvious branch mapping](https://cwiki.apache.org/confluence/display/SPARK/spark-ec2+AMI+list+and+install+file+version+mappings) between this repo and the main Spark repo.
+The branches in this repo line up with [the branches in the Apache Spark repo](https://github.com/apache/spark/branches), with the exception of `master`, which this repo doesn't use. So, for example, `branch-1.3` here corresponds to `branch-1.3` in the main Spark repo. If `branch-1.3` is the latest Spark branch, then that's the branch you want to open your PR against here.
+
+If you are backporting fixes for older versions of Spark, note that prior to 1.3.0 there was a [non-obvious branch mapping](https://cwiki.apache.org/confluence/display/SPARK/spark-ec2+AMI+list+and+install+file+version+mappings) between this repo and the main Spark repo.
 
 ## Testing your patch
 
