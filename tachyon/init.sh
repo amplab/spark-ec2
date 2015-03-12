@@ -7,13 +7,11 @@ if [ -d "tachyon" ]; then
   return 0
 fi
 
-TACHYON_VERSION=0.5.0
-
 # Github tag:
 if [[ "$TACHYON_VERSION" == *\|* ]]
 then
   # Not yet supported
-  echo ""
+  echo "Tachyon git hashes are not yet supported. Please specify a Tachyon release version."
 # Pre-package tachyon version
 else
   case "$TACHYON_VERSION" in
@@ -41,8 +39,15 @@ else
       fi
       ;;
     *)
-      echo "ERROR: Unknown Tachyon version"
-      return -1
+      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
+        wget https://s3.amazonaws.com/Tachyon/tachyon-$TACHYON_VERSION-bin.tar.gz
+      else
+        wget https://s3.amazonaws.com/Tachyon/tachyon-$TACHYON_VERSION-cdh4-bin.tar.gz
+      fi
+      if [ $? != 0 ]; then
+        echo "ERROR: Unknown Tachyon version"
+        return -1
+      fi
   esac
 
   echo "Unpacking Tachyon"
