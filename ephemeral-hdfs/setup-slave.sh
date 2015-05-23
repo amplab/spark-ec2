@@ -4,6 +4,10 @@
 mkdir -p /mnt/ephemeral-hdfs/logs
 mkdir -p /mnt/hadoop-logs
 
+# Setup yarn logs, local dirs
+mkdir -p /mnt/yarn-local
+mkdir -p /mnt/yarn-logs
+
 # Create Hadoop and HDFS directories in a given parent directory
 # (for example /mnt, /mnt2, and so on)
 function create_hadoop_dirs {

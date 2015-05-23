@@ -6,6 +6,11 @@
 <configuration>
 
   <property>
+    <name>mapreduce.framework.name</name>
+    <value>yarn</value>
+  </property>
+
+  <property>
     <name>mapred.job.tracker</name>
     <value>{{active_master}}:9001</value>
   </property>

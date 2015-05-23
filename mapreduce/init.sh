@@ -11,6 +11,9 @@ case "$HADOOP_MAJOR_VERSION" in
     rm mr1-*.tar.gz
     mv hadoop-2.0.0-mr1-cdh4.2.0/ mapreduce/
     ;;
+  yarn)
+    echo "Nothing to initialize for MapReduce in Hadoop 2 YARN"
+    ;;
 
   *)
      echo "ERROR: Unknown Hadoop version"

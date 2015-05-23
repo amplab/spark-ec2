@@ -21,5 +21,8 @@ if [[ -z "$SPARK_PUBLIC_DNS" ]]; then
 fi
 export SPARK_PUBLIC_DNS
 
+# Used for YARN model
+export YARN_CONF_DIR="/root/ephemeral-hdfs/conf"
+
 # Set a high ulimit for large shuffles
 ulimit -n 1000000
