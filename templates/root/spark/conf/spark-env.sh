@@ -4,7 +4,9 @@ export SPARK_LOCAL_DIRS="{{spark_local_dirs}}"
 
 # Standalone cluster options
 export SPARK_MASTER_OPTS="{{spark_master_opts}}"
-export SPARK_WORKER_INSTANCES={{spark_worker_instances}}
+if [ -n {{spark_worker_instances}} ]; then
+  export SPARK_WORKER_INSTANCES={{spark_worker_instances}}
+fi
 export SPARK_WORKER_CORES={{spark_worker_cores}}
 
 export HADOOP_HOME="/root/ephemeral-hdfs"
@@ -20,6 +22,9 @@ if [[ -z "$SPARK_PUBLIC_DNS" ]]; then
   SPARK_PUBLIC_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/local-ipv4`
 fi
 export SPARK_PUBLIC_DNS
+
+# Used for YARN model
+export YARN_CONF_DIR="/root/ephemeral-hdfs/conf"
 
 # Set a high ulimit for large shuffles
 ulimit -n 1000000

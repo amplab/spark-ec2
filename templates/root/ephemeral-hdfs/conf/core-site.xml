@@ -16,6 +16,11 @@
   </property>
 
   <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://{{active_master}}:9000</value>
+  </property>
+
+  <property>
     <name>io.file.buffer.size</name>
     <value>65536</value>
   </property>
@@ -53,6 +58,11 @@
   <property>
     <name>fs.s3n.awsSecretAccessKey</name>
     <value>{{aws_secret_access_key}}</value>
+  </property>
+
+  <property>
+    <name>hadoop.security.group.mapping</name>
+    <value>org.apache.hadoop.security.ShellBasedUnixGroupsMapping</value>
   </property>
 
 </configuration>
