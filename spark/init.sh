@@ -59,6 +59,11 @@ else
       else
         wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-bin-cdh4.tgz
       fi
+
+      if [ $? != 0 ]; then
+        echo "ERROR: Unknown Spark version"
+        return -1
+      fi
       ;;
   esac
 
