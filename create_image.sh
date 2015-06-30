@@ -18,10 +18,6 @@ sudo debuginfo-install -q -y glibc
 sudo debuginfo-install -q -y kernel
 sudo yum --enablerepo='*-debug*' install -q -y java-1.7.0-openjdk-debuginfo.x86_64
 
-# Add EPEL to yum 
-sudo yum install -y epel-release
-sudo yum update -y 
-
 # PySpark and MLlib deps
 sudo yum install -y  python-matplotlib python-tornado scipy libgfortran
 # SparkR deps
