@@ -48,3 +48,9 @@ export TACHYON_JAVA_OPTS+="
   -Dtachyon.master.journal.folder=$TACHYON_HOME/journal/
   -Dtachyon.master.pinlist=/pinfiles;/pindata
 "
+
+# Master specific parameters. Default to TACHYON_JAVA_OPTS.
+export TACHYON_MASTER_JAVA_OPTS="$TACHYON_JAVA_OPTS"
+
+# Worker specific parameters that will be shared to all workers. Default to TACHYON_JAVA_OPTS.
+export TACHYON_WORKER_JAVA_OPTS="$TACHYON_JAVA_OPTS"
