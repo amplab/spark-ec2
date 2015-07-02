@@ -33,7 +33,7 @@ and can be used to install any pre-requisites.
       {{hdfs_data_dirs}}
       {{mapred_local_dirs}}
       {{spark_local_dirs}}
-      {{default_spark_mem}}
+      {{spark_worker_mem}}
       {{spark_worker_instances}}
       {{spark_worker_cores}}
       {{spark_master_opts}}
