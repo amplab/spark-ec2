@@ -18,16 +18,21 @@ sudo chmod a+w /mnt/spark2
 # create a Rscript that connects to Spark, to help starting user
 echo "cat('Now connecting to Spark for you.') 
  
-	spark_link <- system('cat /root/spark-ec2/cluster-url', intern=TRUE)
- 
-	.libPaths(c(.libPaths(), '/root/spark/R/lib')) 
-	Sys.setenv(SPARK_HOME = '/root/spark') 
-	Sys.setenv(PATH = paste(Sys.getenv(c('PATH')), '/root/spark/bin', sep=':')) 
-	library(SparkR) 
- 
-	sc <- sparkR.init(spark_link) 
-	sqlContext <- sparkRSQL.init(sc) 
+spark_link <- system('cat /root/spark-ec2/cluster-url', intern=TRUE)
 
-	cat('Spark Context available as \"sc\". \\n')
-	cat('Spark SQL Context available as \"sqlContext\". \\n')
+.libPaths(c(.libPaths(), '/root/spark/R/lib')) 
+Sys.setenv(SPARK_HOME = '/root/spark') 
+Sys.setenv(PATH = paste(Sys.getenv(c('PATH')), '/root/spark/bin', sep=':')) 
+library(SparkR) 
+
+sc <- sparkR.init(spark_link) 
+sqlContext <- sparkRSQL.init(sc) 
+
+cat('Spark Context available as \"sc\". \\n')
+cat('Spark SQL Context available as \"sqlContext\". \\n')
 "  > /home/rstudio/startSpark.R
+
+# need to remove the 'ulimit', only root can do this
+sed -e 's/^ulimit/#ulimit/g' /root/spark/conf/spark-env.sh > /root/spark/conf/spark-env2.sh
+mv /root/spark/conf/spark-env2.sh /root/spark/conf/spark-env.sh
+ulimit -n 1000000
