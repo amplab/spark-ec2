@@ -17,9 +17,8 @@ sudo chmod a+w /mnt/spark2
 
 # create a Rscript that connects to Spark, to help starting user
 echo "cat('Now connecting to Spark for you.') 
-	region_ip <- system('curl http://169.254.169.254/latest/meta-data/public-hostname', intern=TRUE) 
  
-	spark_link <- paste0('spark://', region_ip, ':7077') 
+	spark_link <- system('cat /root/spark-ec2/cluster-url', intern=TRUE)
  
 	.libPaths(c(.libPaths(), '/root/spark/R/lib')) 
 	Sys.setenv(SPARK_HOME = '/root/spark') 
