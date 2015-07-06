@@ -32,7 +32,6 @@ cat('Spark Context available as \"sc\". \\n')
 cat('Spark SQL Context available as \"sqlContext\". \\n')
 "  > /home/rstudio/startSpark.R
 
-# need to remove the 'ulimit', only root can do this
-sed -e 's/^ulimit/#ulimit/g' /root/spark/conf/spark-env.sh > /root/spark/conf/spark-env2.sh
-mv /root/spark/conf/spark-env2.sh /root/spark/conf/spark-env.sh
-ulimit -n 1000000
+# this is to set the ulimit for root and rstudio user 
+echo '* soft nofile 1000000' >> /etc/security/limits.conf
+echo '* hard nofile 1000000' >> /etc/security/limits.conf
