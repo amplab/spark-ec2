@@ -8,10 +8,6 @@ rstudio-server restart
 # add user for rstudio 
 adduser rstudio
 
-# maybe have the user set the password themselves instead of this? 
-# otherwise this might be a security issue. 
-echo 'rstudio' | passwd  --stdin rstudio
-
 # create a Rscript that connects to Spark, to help starting user
 echo "cat('Now connecting to Spark for you.') 
  
