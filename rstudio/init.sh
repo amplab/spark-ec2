@@ -12,9 +12,6 @@ adduser rstudio
 # otherwise this might be a security issue. 
 echo 'rstudio' | passwd  --stdin rstudio
 
-sudo chmod a+w /mnt/spark
-sudo chmod a+w /mnt/spark2
-
 # create a Rscript that connects to Spark, to help starting user
 echo "cat('Now connecting to Spark for you.') 
  
@@ -32,6 +29,6 @@ cat('Spark Context available as \"sc\". \\n')
 cat('Spark SQL Context available as \"sqlContext\". \\n')
 "  > /home/rstudio/startSpark.R
 
-# this is to set the ulimit for root and rstudio user 
-echo '* soft nofile 1000000' >> /etc/security/limits.conf
-echo '* hard nofile 1000000' >> /etc/security/limits.conf
+# make sure that the temp dirs can be written to by any user
+sudo chmod a+w /mnt/spark
+sudo chmod a+w /mnt/spark2

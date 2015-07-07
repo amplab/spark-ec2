@@ -26,5 +26,8 @@ export SPARK_PUBLIC_DNS
 # Used for YARN model
 export YARN_CONF_DIR="/root/ephemeral-hdfs/conf"
 
-# Set a high ulimit for large shuffles
-ulimit -n 1000000
+# Set a high ulimit for large shuffles, only root can do this
+if [ $(id -u) == "0" ]
+then
+    ulimit -n 1000000
+fi
