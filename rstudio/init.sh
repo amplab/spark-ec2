@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # download rstudio 
 wget http://download2.rstudio.org/rstudio-server-rhel-0.99.446-x86_64.rpm
 sudo yum install --nogpgcheck -y rstudio-server-rhel-0.99.446-x86_64.rpm
@@ -5,26 +7,23 @@ sudo yum install --nogpgcheck -y rstudio-server-rhel-0.99.446-x86_64.rpm
 # restart rstudio 
 rstudio-server restart 
 
-# add user for rstudio 
+# add user for rstudio, user needs to supply password later on
 adduser rstudio
 
 # create a Rscript that connects to Spark, to help starting user
-echo "cat('Now connecting to Spark for you.') 
- 
-spark_link <- system('cat /root/spark-ec2/cluster-url', intern=TRUE)
+cp /root/spark-ec2/rstudio/startSpark.R /home/rstudio
 
-.libPaths(c(.libPaths(), '/root/spark/R/lib')) 
-Sys.setenv(SPARK_HOME = '/root/spark') 
-Sys.setenv(PATH = paste(Sys.getenv(c('PATH')), '/root/spark/bin', sep=':')) 
-library(SparkR) 
+# make sure that the temp dirs exist and can be written to by any user
+# otherwise this will create a conflict for the rstudio user
+function create_temp_dirs {
+  location=$1
+  if [[ -e $location ]]; then
+    mkdir -p $location
+    sudo chmod a+w $location
+  fi
+}
 
-sc <- sparkR.init(spark_link) 
-sqlContext <- sparkRSQL.init(sc) 
-
-cat('Spark Context available as \"sc\". \\n')
-cat('Spark SQL Context available as \"sqlContext\". \\n')
-"  > /home/rstudio/startSpark.R
-
-# make sure that the temp dirs can be written to by any user
-sudo chmod a+w /mnt/spark
-sudo chmod a+w /mnt/spark2
+create_temp_dirs /mnt/spark
+create_temp_dirs /mnt2/spark
+create_temp_dirs /mnt3/spark
+create_temp_dirs /mnt4/spark
