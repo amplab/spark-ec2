@@ -17,10 +17,10 @@ cp /root/spark-ec2/rstudio/startSpark.R /home/rstudio
 # otherwise this will create a conflict for the rstudio user
 function create_temp_dirs {
   location=$1
-  if [[ -e $location ]]; then
+  if [[! -e $location ]]; then
     mkdir -p $location
-    sudo chmod a+w $location
   fi
+  chmod a+w $location
 }
 
 create_temp_dirs /mnt/spark
