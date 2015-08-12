@@ -24,3 +24,6 @@ wait
 # Post-package installation : Symlink /var/lib/ganglia/rrds to /mnt/ganglia/rrds
 rmdir /var/lib/ganglia/rrds
 ln -s /mnt/ganglia/rrds /var/lib/ganglia/rrds
+
+# Set the httpd listen port to 5080
+sed -i 's/Listen 80/Listen 5080/g' /etc/httpd/conf/httpd.conf
