@@ -17,11 +17,9 @@ export SPARK_SUBMIT_LIBRARY_PATH="$SPARK_SUBMIT_LIBRARY_PATH:/root/ephemeral-hdf
 export SPARK_SUBMIT_CLASSPATH="$SPARK_CLASSPATH:$SPARK_SUBMIT_CLASSPATH:/root/ephemeral-hdfs/conf"
 
 # Bind Spark's web UIs to this machine's public EC2 hostname otherwise fallback to private IP:
-SPARK_PUBLIC_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/public-hostname`
-if [[ -z "$SPARK_PUBLIC_DNS" ]]; then
-  SPARK_PUBLIC_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/local-ipv4`
-fi
-export SPARK_PUBLIC_DNS
+export SPARK_PUBLIC_DNS=`
+wget -q -O - http://169.254.169.254/latest/meta-data/public-hostname ||\
+wget -q -O - http://169.254.169.254/latest/meta-data/local-ipv4`
 
 # Used for YARN model
 export YARN_CONF_DIR="/root/ephemeral-hdfs/conf"
