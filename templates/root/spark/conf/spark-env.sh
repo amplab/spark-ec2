@@ -4,7 +4,7 @@ export SPARK_LOCAL_DIRS="{{spark_local_dirs}}"
 
 # Standalone cluster options
 export SPARK_MASTER_OPTS="{{spark_master_opts}}"
-if [ -n {{spark_worker_instances}} ]; then
+if [ -n "{{spark_worker_instances}}" ]; then
   export SPARK_WORKER_INSTANCES={{spark_worker_instances}}
 fi
 export SPARK_WORKER_CORES={{spark_worker_cores}}
