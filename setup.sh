@@ -127,9 +127,12 @@ cd /home/hadoop
 #install pip
 curl -O https://bootstrap.pypa.io/get-pip.py
 python27 get-pip.py
-
+echo "installed Pip"
 #set up venv
-sudo pip install virtualenv
+echo "changed directory to /home/hadoop"
+cd /home/hadoop
+echo "trying to install virtualenv"
+pip install virtualenv
 mkdir IPythonNB
 cd IPythonNB
 /usr/local/bin/virtualenv -p /usr/bin/python2.7 venv
