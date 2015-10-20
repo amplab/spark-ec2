@@ -119,8 +119,8 @@ source /root/spark/conf/spark-env.sh
 
 #install prereqs
 yum install -y python27-devel.x86_64
-yum install -y libpng-devel
-yum install -y freetype-devel
+#yum install -y libpng-devel
+#yum install -y freetype-devel
 
 cd /home/hadoop
 
@@ -141,9 +141,9 @@ source venv/bin/activate
 #install python packages
 pip install "ipython[notebook]"
 pip install requests numpy
-pip install matplotlib
-pip install nltk
-pip install mllib
+#pip install matplotlib
+#pip install nltk
+#pip install mllib
 
 #set up Ipython Notebook config
 echo "c = get_config()" >  /root/.ipython/profile_default/ipython_config.py
