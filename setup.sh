@@ -158,8 +158,13 @@ export IPYTHON_HOME=/home/hadoop/IPythonNB/venv/
 export PATH=$PATH:$IPYTHON_HOME/bin
 export IPYTHON_OPTS="notebook --no-browser --config=/root/.ipython/profile_default/ipython_config.py"
 export MASTER=spark://$SPARK_MASTER_IP:7077
+echo $MASTER
 #start Ipython Notebook through pyspark
 nohup /root/spark/bin/pyspark --master yarn-client > /var/log/python_notebook.log &
+echo "Ipython Notebook started?"
+
+echo "emrssh -ND 8157 root@"$SPARK_MASTER_IP
+echo "http://"$SPARK_MASTER_IP":8192"
 
 cd /root/spark-ec2  # guard against setup.sh changing the cwd
 popd > /dev/null
