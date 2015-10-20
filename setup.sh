@@ -114,4 +114,39 @@ for module in $MODULES; do
   cd /root/spark-ec2  # guard against setup.sh changing the cwd
 done
 
+#setup Ipython Notebook and any extra software
+source /root/spark/conf/spark-env.sh
+
+cd /home/hadoop
+sudo pip install virtualenv
+mkdir IPythonNB
+cd IPythonNB
+/usr/local/bin/virtualenv -p /usr/bin/python2.7 venv
+source venv/bin/activate
+
+yum install -y python27-devel.x86_64
+yum install -y libpng-devel
+yum install -y freetype-devel
+
+pip install "ipython[notebook]"
+pip install requests numpy
+pip install matplotlib
+
+pip install nltk
+pip install mllib
+
+
+echo "c = get_config()" >  /root/.ipython/profile_default/ipython_config.py
+echo "c.NotebookApp.ip = '*'" >>  /root/.ipython/profile_default/ipython_config.py
+echo "c.NotebookApp.open_browser = False"  >> /root/.ipython/profile_default/ipython_config.py
+echo "c.NotebookApp.port = 8192" >> /root/.ipython/profile_default/ipython_config.py
+
+source ./spark/conf/spark-env.sh
+
+export IPYTHON_HOME=/home/hadoop/IPythonNB/venv/
+export PATH=$PATH:$IPYTHON_HOME/bin
+export IPYTHON_OPTS="notebook --no-browser --config=/root/.ipython/profile_default/ipython_config.py"
+export MASTER=spark://$SPARK_MASTER_IP:7077
+
+cd /root/spark-ec2  # guard against setup.sh changing the cwd
 popd > /dev/null
