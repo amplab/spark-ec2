@@ -160,7 +160,7 @@ export IPYTHON_OPTS="notebook --no-browser --config=/root/.ipython/profile_defau
 export MASTER=spark://$SPARK_MASTER_IP:7077
 echo $MASTER
 #start Ipython Notebook through pyspark
-nohup /root/spark/bin/pyspark --master yarn-client > /var/log/python_notebook.log &
+nohup /root/spark/bin/pyspark --master $MASTER > /var/log/python_notebook.log &
 echo "Ipython Notebook started?"
 
 echo "emrssh -ND 8157 root@"$SPARK_MASTER_IP
