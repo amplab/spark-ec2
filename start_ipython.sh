@@ -3,8 +3,8 @@ source /root/spark/conf/spark-env.sh
 
 #install prereqs
 yum install -y python27-devel.x86_64
-#yum install -y libpng-devel
-#yum install -y freetype-devel
+yum install -y libpng-devel
+yum install -y freetype-devel
 
 cd /home/hadoop
 
@@ -13,9 +13,8 @@ curl -O https://bootstrap.pypa.io/get-pip.py
 python27 get-pip.py
 echo "installed Pip"
 #set up venv
-echo "changed directory to /home/hadoop"
+echo "setting up venv"
 cd /home/hadoop
-echo "trying to install virtualenv"
 pip install virtualenv
 mkdir IPythonNB
 cd IPythonNB
@@ -25,11 +24,13 @@ source venv/bin/activate
 #install python packages
 pip install "ipython[notebook]"
 pip install requests numpy
-#pip install matplotlib
-#pip install nltk
-#pip install mllib
+pip install matplotlib
+pip install nltk
+pip install mllib
+
 
 #set up Ipython Notebook config
+echo "Configuring Ipython NoteBook Settings"
 echo "c = get_config()" >  /root/.ipython/profile_default/ipython_config.py
 echo "c.NotebookApp.ip = '*'" >>  /root/.ipython/profile_default/ipython_config.py
 echo "c.NotebookApp.open_browser = False"  >> /root/.ipython/profile_default/ipython_config.py
@@ -45,12 +46,14 @@ export MASTER=spark://$SPARK_MASTER_IP:7077
 echo $MASTER
 #start Ipython Notebook through pyspark
 nohup /root/spark/bin/pyspark --master $MASTER > /var/log/python_notebook.log &
-echo "Ipython Notebook started?"
-
-echo "emrssh -ND 8157 root@"$SPARK_MASTER_IP
+echo "Ipython Notebook Started."
+echo "Be sure to turn on port forwarding"
+echo "ssh -i ~/.ssh/emr_spark.pem -ND 8157 root@"$SPARK_MASTER_IP
+echo "--------------------------------------"
+echo" Then visit:"
 echo "http://"$SPARK_MASTER_IP":8192"
 
 
 
-# TODO Check this in and start cluster then run 
-# emrssh root@ip 'path/to/start_ipython.sh'
+# Start cluster then run 
+# emrssh root@ip '/root/spark-ec2/start_ipython.sh'
