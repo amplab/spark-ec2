@@ -27,7 +27,7 @@ pip install requests numpy
 pip install matplotlib
 pip install nltk
 pip install mllib
-
+pip install boto3
 
 #set up Ipython Notebook config
 echo "Configuring Ipython NoteBook Settings"
