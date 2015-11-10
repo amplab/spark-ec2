@@ -45,15 +45,14 @@ export IPYTHON_OPTS="notebook --no-browser --config=/root/.ipython/profile_defau
 export MASTER=spark://$SPARK_MASTER_IP:7077
 echo $MASTER
 #start Ipython Notebook through pyspark
-nohup /root/spark/bin/pyspark --master $MASTER > /var/log/python_notebook.log &
+# --packages com.databricks:spark-csv_2.10:1.1.0 --master spark://spark_master_hostname:7077 --executor-memory 6400M --driver-memory 6400M
+# /root/spark/bin/pyspark --master $MASTER --packages com.databricks:spark-csv_2.10:1.1.0 --total-executor-cores 3 --executor-memory 5024m > /var/log/pyspark.log &
+nohup /root/spark/bin/pyspark --master $MASTER --packages com.databricks:spark-csv_2.10:1.1.0 --total-executor-cores 3 --executor-memory 5024m >> /var/log/python_notebook.log &
 echo "Ipython Notebook Started."
 echo "Be sure to turn on port forwarding"
 echo "ssh -i ~/.ssh/emr_spark.pem -ND 8157 root@"$SPARK_MASTER_IP
 echo "--------------------------------------"
-echo" Then visit:"
+echo "Then visit:"
 echo "http://"$SPARK_MASTER_IP":8192"
 
 
-
-# Start cluster then run 
-# emrssh root@ip '/root/spark-ec2/start_ipython.sh'
