@@ -232,5 +232,4 @@ the set of variables that can be used in a template are:
 after the templates have been configured. You can use the environment variables `$SLAVES` to
 get a list of slave hostnames and `/root/spark-ec2/copy-dir` to sync a directory across machines.
 
-5. Modify https://github.com/mesos/spark/blob/master/ec2/spark_ec2.py to add your module to
-the list of enabled modules.
+5. Modify `spark_ec2.py` to add your module to the list of enabled modules.
