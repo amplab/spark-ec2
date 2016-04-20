@@ -40,7 +40,7 @@ import textwrap
 import time
 import warnings
 from datetime import datetime
-from optparse import OptionParser
+from argparse import ArgumentParser
 from sys import stderr
 
 if sys.version < "3":
@@ -169,62 +169,66 @@ class UsageError(Exception):
 
 # Configure and parse our command-line arguments
 def parse_args():
-    parser = OptionParser(
+    parser = ArgumentParser(
         prog="spark-ec2",
-        version="%prog {v}".format(v=SPARK_EC2_VERSION),
-        usage="%prog [options] <action> <cluster_name>\n\n"
+        usage="%(prog)s [options] <action> <cluster_name>\n\n"
         + "<action> can be: launch, destroy, login, stop, start, get-master, reboot-slaves")
 
-    parser.add_option(
-        "-s", "--slaves", type="int", default=1,
-        help="Number of slaves to launch (default: %default)")
-    parser.add_option(
-        "-w", "--wait", type="int",
+    # Positional arguments
+    parser.add_argument('action')
+    parser.add_argument('cluster_name')
+
+    # Optional arguments
+    parser.add_argument(
+        "-s", "--slaves", type=int, default=1,
+        help="Number of slaves to launch (default: %(default)s)")
+    parser.add_argument(
+        "-w", "--wait", type=int,
         help="DEPRECATED (no longer necessary) - Seconds to wait for nodes to start")
-    parser.add_option(
+    parser.add_argument(
         "-k", "--key-pair",
         help="Key pair to use on instances")
-    parser.add_option(
+    parser.add_argument(
         "-i", "--identity-file",
         help="SSH private key file to use for logging into instances")
-    parser.add_option(
+    parser.add_argument(
         "-p", "--profile", default=None,
         help="If you have multiple profiles (AWS or boto config), you can configure " +
-             "additional, named profiles by using this option (default: %default)")
-    parser.add_option(
+             "additional, named profiles by using this option (default: %(default)s)")
+    parser.add_argument(
         "-t", "--instance-type", default="m1.large",
-        help="Type of instance to launch (default: %default). " +
+        help="Type of instance to launch (default: %(default)s). " +
              "WARNING: must be 64-bit; small instances won't work")
-    parser.add_option(
+    parser.add_argument(
         "-m", "--master-instance-type", default="",
         help="Master instance type (leave empty for same as instance-type)")
-    parser.add_option(
+    parser.add_argument(
         "-r", "--region", default="us-east-1",
-        help="EC2 region used to launch instances in, or to find them in (default: %default)")
-    parser.add_option(
+        help="EC2 region used to launch instances in, or to find them in (default: %(default)s)")
+    parser.add_argument(
         "-z", "--zone", default="",
         help="Availability zone to launch instances in, or 'all' to spread " +
              "slaves across multiple (an additional $0.01/Gb for bandwidth" +
              "between zones applies) (default: a single zone chosen at random)")
-    parser.add_option(
+    parser.add_argument(
         "-a", "--ami",
         help="Amazon Machine Image ID to use")
-    parser.add_option(
+    parser.add_argument(
         "-v", "--spark-version", default=DEFAULT_SPARK_VERSION,
-        help="Version of Spark to use: 'X.Y.Z' or a specific git hash (default: %default)")
-    parser.add_option(
+        help="Version of Spark to use: 'X.Y.Z' or a specific git hash (default: %(default)s)")
+    parser.add_argument(
         "--spark-git-repo",
         default=DEFAULT_SPARK_GITHUB_REPO,
-        help="Github repo from which to checkout supplied commit hash (default: %default)")
-    parser.add_option(
+        help="Github repo from which to checkout supplied commit hash (default: %(default)s)")
+    parser.add_argument(
         "--spark-ec2-git-repo",
         default=DEFAULT_SPARK_EC2_GITHUB_REPO,
-        help="Github repo from which to checkout spark-ec2 (default: %default)")
-    parser.add_option(
+        help="Github repo from which to checkout spark-ec2 (default: %(default)s)")
+    parser.add_argument(
         "--spark-ec2-git-branch",
         default=DEFAULT_SPARK_EC2_BRANCH,
-        help="Github repo branch of spark-ec2 to use (default: %default)")
-    parser.add_option(
+        help="Github repo branch of spark-ec2 to use (default: %(default)s)")
+    parser.add_argument(
         "--deploy-root-dir",
         default=None,
         help="A directory to copy into / on the first master. " +
@@ -232,107 +236,106 @@ def parse_args():
              "If you omit it, the last directory of the --deploy-root-dir path will be created " +
              "in / before copying its contents. If you append the trailing slash, " +
              "the directory is not created and its contents are copied directly into /. " +
-             "(default: %default).")
-    parser.add_option(
+             "(default: %(default)s).")
+    parser.add_argument(
         "--hadoop-major-version", default="1",
         help="Major version of Hadoop. Valid options are 1 (Hadoop 1.0.4), 2 (CDH 4.2.0), yarn " +
-             "(Hadoop 2.4.0) (default: %default)")
-    parser.add_option(
+             "(Hadoop 2.4.0) (default: %(default)s)")
+    parser.add_argument(
         "-D", metavar="[ADDRESS:]PORT", dest="proxy_port",
         help="Use SSH dynamic port forwarding to create a SOCKS proxy at " +
              "the given local address (for use with login)")
-    parser.add_option(
+    parser.add_argument(
         "--resume", action="store_true", default=False,
         help="Resume installation on a previously launched cluster " +
              "(for debugging)")
-    parser.add_option(
-        "--ebs-vol-size", metavar="SIZE", type="int", default=0,
+    parser.add_argument(
+        "--ebs-vol-size", metavar="SIZE", type=int, default=0,
         help="Size (in GB) of each EBS volume.")
-    parser.add_option(
+    parser.add_argument(
         "--ebs-vol-type", default="standard",
         help="EBS volume type (e.g. 'gp2', 'standard').")
-    parser.add_option(
-        "--ebs-vol-num", type="int", default=1,
+    parser.add_argument(
+        "--ebs-vol-num", type=int, default=1,
         help="Number of EBS volumes to attach to each node as /vol[x]. " +
              "The volumes will be deleted when the instances terminate. " +
              "Only possible on EBS-backed AMIs. " +
              "EBS volumes are only attached if --ebs-vol-size > 0. " +
              "Only support up to 8 EBS volumes.")
-    parser.add_option(
-        "--placement-group", type="string", default=None,
+    parser.add_argument(
+        "--placement-group", type=str, default=None,
         help="Which placement group to try and launch " +
              "instances into. Assumes placement group is already " +
              "created.")
-    parser.add_option(
-        "--swap", metavar="SWAP", type="int", default=1024,
-        help="Swap space to set up per node, in MB (default: %default)")
-    parser.add_option(
-        "--spot-price", metavar="PRICE", type="float",
+    parser.add_argument(
+        "--swap", metavar="SWAP", type=int, default=1024,
+        help="Swap space to set up per node, in MB (default: %(default)s)")
+    parser.add_argument(
+        "--spot-price", metavar="PRICE", type=float,
         help="If specified, launch slaves as spot instances with the given " +
              "maximum price (in dollars)")
-    parser.add_option(
+    parser.add_argument(
         "--ganglia", action="store_true", default=True,
-        help="Setup Ganglia monitoring on cluster (default: %default). NOTE: " +
+        help="Setup Ganglia monitoring on cluster (default: %(default)s). NOTE: " +
              "the Ganglia page will be publicly accessible")
-    parser.add_option(
+    parser.add_argument(
         "--no-ganglia", action="store_false", dest="ganglia",
         help="Disable Ganglia monitoring for the cluster")
-    parser.add_option(
+    parser.add_argument(
         "-u", "--user", default="root",
-        help="The SSH user you want to connect as (default: %default)")
-    parser.add_option(
+        help="The SSH user you want to connect as (default: %(default)s)")
+    parser.add_argument(
         "--delete-groups", action="store_true", default=False,
         help="When destroying a cluster, delete the security groups that were created")
-    parser.add_option(
+    parser.add_argument(
         "--use-existing-master", action="store_true", default=False,
         help="Launch fresh slaves, but use an existing stopped master if possible")
-    parser.add_option(
-        "--worker-instances", type="int", default=1,
+    parser.add_argument(
+        "--worker-instances", type=int, default=1,
         help="Number of instances per worker: variable SPARK_WORKER_INSTANCES. Not used if YARN " +
-             "is used as Hadoop major version (default: %default)")
-    parser.add_option(
-        "--master-opts", type="string", default="",
+             "is used as Hadoop major version (default: %(default)s)")
+    parser.add_argument(
+        "--master-opts", type=str, default="",
         help="Extra options to give to master through SPARK_MASTER_OPTS variable " +
              "(e.g -Dspark.worker.timeout=180)")
-    parser.add_option(
-        "--user-data", type="string", default="",
+    parser.add_argument(
+        "--user-data", type=str, default="",
         help="Path to a user-data file (most AMIs interpret this as an initialization script)")
-    parser.add_option(
-        "--authorized-address", type="string", default="0.0.0.0/0",
-        help="Address to authorize on created security groups (default: %default)")
-    parser.add_option(
-        "--additional-security-group", type="string", default="",
+    parser.add_argument(
+        "--authorized-address", type=str, default="0.0.0.0/0",
+        help="Address to authorize on created security groups (default: %(default)s)")
+    parser.add_argument(
+        "--additional-security-group", type=str, default="",
         help="Additional security group to place the machines in")
-    parser.add_option(
-        "--additional-tags", type="string", default="",
+    parser.add_argument(
+        "--additional-tags", type=str, default="",
         help="Additional tags to set on the machines; tags are comma-separated, while name and " +
              "value are colon separated; ex: \"Task:MySparkProject,Env:production\"")
-    parser.add_option(
+    parser.add_argument(
         "--copy-aws-credentials", action="store_true", default=False,
         help="Add AWS credentials to hadoop configuration to allow Spark to access S3")
-    parser.add_option(
+    parser.add_argument(
         "--subnet-id", default=None,
         help="VPC subnet to launch instances in")
-    parser.add_option(
+    parser.add_argument(
         "--vpc-id", default=None,
         help="VPC to launch instances in")
-    parser.add_option(
+    parser.add_argument(
         "--private-ips", action="store_true", default=False,
         help="Use private IPs for instances rather than public if VPC/subnet " +
              "requires that.")
-    parser.add_option(
+    parser.add_argument(
         "--instance-initiated-shutdown-behavior", default="stop",
         choices=["stop", "terminate"],
         help="Whether instances should terminate when shut down or just stop")
-    parser.add_option(
+    parser.add_argument(
         "--instance-profile-name", default=None,
         help="IAM profile name to launch instances under")
 
-    (opts, args) = parser.parse_args()
-    if len(args) != 2:
-        parser.print_help()
-        sys.exit(1)
-    (action, cluster_name) = args
+
+    opts = parser.parse_args()
+    action = opts.action
+    cluster_name = opts.cluster_name
 
     # Boto config check
     # http://boto.cloudhackers.com/en/latest/boto_config_tut.html
