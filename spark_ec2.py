@@ -180,6 +180,8 @@ def parse_args():
 
     # Optional arguments
     parser.add_argument(
+        "--version", action="version", version="%(prog)s {v}".format(v=SPARK_EC2_VERSION))
+    parser.add_argument(
         "-s", "--slaves", type=int, default=1,
         help="Number of slaves to launch (default: %(default)s)")
     parser.add_argument(
