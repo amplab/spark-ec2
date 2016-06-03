@@ -1,8 +1,11 @@
-# spark-ec2
+# EC2 Cluster Setup for Apache Spark
 
 `spark-ec2` allows you
-to launch, manage and shut down Spark clusters on Amazon EC2. It automatically
-sets up Spark and HDFS on the cluster for you. This guide describes 
+to launch, manage and shut down
+[Apache Spark](http://spark.apache.org/docs/latest/ec2-scripts.html) [1] clusters
+on Amazon EC2. It automatically sets up Apache Spark and
+[HDFS](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HdfsUserGuide.html)
+on the cluster for you. This guide describes
 how to use `spark-ec2` to launch clusters, how to run jobs on them, and how 
 to shut them down. It assumes you've already signed up for an EC2 account 
 on the [Amazon Web Services site](http://aws.amazon.com/).
@@ -18,6 +21,7 @@ are derived from the name of the cluster. For example, a cluster named
 for you based on the cluster name you request. You can also use them to
 identify machines belonging to each cluster in the Amazon EC2 Console.
 
+[1] Apache, [Apache Spark](http://spark.apache.org), and Spark are trademarks of the Apache Software Foundation.
 
 ## Before You Start
 
@@ -35,7 +39,7 @@ identify machines belonging to each cluster in the Amazon EC2 Console.
 
 ## Launching a Cluster
 
--   Go into the `ec2` directory in the release of Spark you downloaded.
+-   Go into the `ec2` directory in the release of Apache Spark you downloaded.
 -   Run
     `./spark-ec2 -k <keypair> -i <key-file> -s <num-slaves> launch <cluster-name>`,
     where `<keypair>` is the name of your EC2 key pair (that you gave it
