@@ -76,6 +76,7 @@ VALID_SPARK_VERSIONS = set([
     "1.5.1",
     "1.5.2",
     "1.6.0",
+    "2.0.0-preview",
 ])
 
 SPARK_TACHYON_MAP = {
@@ -94,6 +95,7 @@ SPARK_TACHYON_MAP = {
     "1.5.1": "0.7.1",
     "1.5.2": "0.7.1",
     "1.6.0": "0.8.2",
+    "2.0.0-preview": "",
 }
 
 DEFAULT_SPARK_VERSION = SPARK_EC2_VERSION
@@ -365,7 +367,8 @@ def get_or_make_group(conn, name, vpc_id):
 
 def get_validate_spark_version(version, repo):
     if "." in version:
-        version = version.replace("v", "")
+        # Remove leading v to handle inputs like v1.5.0
+        version = version.lstrip("v")
         if version not in VALID_SPARK_VERSIONS:
             print("Don't know about Spark version: {v}".format(v=version), file=stderr)
             sys.exit(1)
@@ -1057,8 +1060,10 @@ def deploy_files(conn, root_dir, opts, master_nodes, slave_nodes, modules):
         # Spark-only custom deploy
         spark_v = "%s|%s" % (opts.spark_git_repo, opts.spark_version)
         tachyon_v = ""
-        print("Deploying Spark via git hash; Tachyon won't be set up")
-        modules = filter(lambda x: x != "tachyon", modules)
+
+    if tachyon_v == "":
+      print("No valid Tachyon version found; Tachyon won't be set up")
+      modules = filter(lambda x: x != "tachyon", modules)
 
     master_addresses = [get_dns_name(i, opts.private_ips) for i in master_nodes]
     slave_addresses = [get_dns_name(i, opts.private_ips) for i in slave_nodes]
