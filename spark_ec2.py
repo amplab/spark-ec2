@@ -76,6 +76,7 @@ VALID_SPARK_VERSIONS = set([
     "1.5.1",
     "1.5.2",
     "1.6.0",
+    "2.0.0-preview",
 ])
 
 SPARK_TACHYON_MAP = {
@@ -94,6 +95,7 @@ SPARK_TACHYON_MAP = {
     "1.5.1": "0.7.1",
     "1.5.2": "0.7.1",
     "1.6.0": "0.8.2",
+    "2.0.0-preview": "",
 }
 
 DEFAULT_SPARK_VERSION = SPARK_EC2_VERSION
@@ -362,10 +364,23 @@ def get_or_make_group(conn, name, vpc_id):
         print("Creating security group " + name)
         return conn.create_security_group(name, "Spark EC2 group", vpc_id)
 
+def validate_spark_hadoop_version(spark_version, hadoop_version):
+    if "." in spark_version:
+        parts = spark_version.split(".")
+        if parts[0].isdigit():
+            spark_major_version = float(parts[0])
+            if spark_major_version > 1.0 and hadoop_version != "yarn":
+              print("Spark version: {v}, does not support Hadoop version: {hv}".
+                    format(v=spark_version, hv=hadoop_version), file=stderr)
+              sys.exit(1)
+        else:
+            print("Invalid Spark version: {v}".format(v=spark_version), file=stderr)
+            sys.exit(1)
 
 def get_validate_spark_version(version, repo):
     if "." in version:
-        version = version.replace("v", "")
+        # Remove leading v to handle inputs like v1.5.0
+        version = version.lstrip("v")
         if version not in VALID_SPARK_VERSIONS:
             print("Don't know about Spark version: {v}".format(v=version), file=stderr)
             sys.exit(1)
@@ -1052,13 +1067,16 @@ def deploy_files(conn, root_dir, opts, master_nodes, slave_nodes, modules):
     if "." in opts.spark_version:
         # Pre-built Spark deploy
         spark_v = get_validate_spark_version(opts.spark_version, opts.spark_git_repo)
+        validate_spark_hadoop_version(spark_v, opts.hadoop_major_version)
         tachyon_v = get_tachyon_version(spark_v)
     else:
         # Spark-only custom deploy
         spark_v = "%s|%s" % (opts.spark_git_repo, opts.spark_version)
         tachyon_v = ""
-        print("Deploying Spark via git hash; Tachyon won't be set up")
-        modules = filter(lambda x: x != "tachyon", modules)
+
+    if tachyon_v == "":
+      print("No valid Tachyon version found; Tachyon won't be set up")
+      modules.remove("tachyon")
 
     master_addresses = [get_dns_name(i, opts.private_ips) for i in master_nodes]
     slave_addresses = [get_dns_name(i, opts.private_ips) for i in slave_nodes]
@@ -1259,7 +1277,8 @@ def real_main():
     (opts, action, cluster_name) = parse_args()
 
     # Input parameter validation
-    get_validate_spark_version(opts.spark_version, opts.spark_git_repo)
+    spark_v = get_validate_spark_version(opts.spark_version, opts.spark_git_repo)
+    validate_spark_hadoop_version(spark_v, opts.hadoop_major_version)
 
     if opts.wait is not None:
         # NOTE: DeprecationWarnings are silent in 2.7+ by default.
