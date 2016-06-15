@@ -1077,7 +1077,7 @@ def deploy_files(conn, root_dir, opts, master_nodes, slave_nodes, modules):
 
     if tachyon_v == "":
       print("No valid Tachyon version found; Tachyon won't be set up")
-      modules = filter(lambda x: x != "tachyon", modules)
+      modules.remove("tachyon")
 
     master_addresses = [get_dns_name(i, opts.private_ips) for i in master_nodes]
     slave_addresses = [get_dns_name(i, opts.private_ips) for i in slave_nodes]
