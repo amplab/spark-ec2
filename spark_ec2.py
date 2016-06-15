@@ -364,6 +364,19 @@ def get_or_make_group(conn, name, vpc_id):
         print("Creating security group " + name)
         return conn.create_security_group(name, "Spark EC2 group", vpc_id)
 
+def validate_spark_hadoop_version(spark_version, hadoop_version):
+    if "." in spark_version:
+        parts = spark_version.split(".")
+        if parts[0].isdigit():
+            spark_major_version = float(parts[0])
+            print("Got major spark version " + str(spark_major_version))
+            if spark_major_version > 1.0 and hadoop_version != "yarn":
+              print("Spark version: {v}, does not support Hadoop version: {hv}".
+                    format(v=spark_version, hv=hadoop_version), file=stderr)
+              sys.exit(1)
+        else:
+            print("Invalid Spark version: {v}".format(v=spark_version), file=stderr)
+            sys.exit(1)
 
 def get_validate_spark_version(version, repo):
     if "." in version:
@@ -1055,6 +1068,7 @@ def deploy_files(conn, root_dir, opts, master_nodes, slave_nodes, modules):
     if "." in opts.spark_version:
         # Pre-built Spark deploy
         spark_v = get_validate_spark_version(opts.spark_version, opts.spark_git_repo)
+        validate_spark_hadoop_version(spark_v, opts.hadoop_major_version)
         tachyon_v = get_tachyon_version(spark_v)
     else:
         # Spark-only custom deploy
@@ -1264,7 +1278,8 @@ def real_main():
     (opts, action, cluster_name) = parse_args()
 
     # Input parameter validation
-    get_validate_spark_version(opts.spark_version, opts.spark_git_repo)
+    spark_v = get_validate_spark_version(opts.spark_version, opts.spark_git_repo)
+    validate_spark_hadoop_version(spark_v, opts.hadoop_major_version)
 
     if opts.wait is not None:
         # NOTE: DeprecationWarnings are silent in 2.7+ by default.
