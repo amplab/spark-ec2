@@ -369,7 +369,6 @@ def validate_spark_hadoop_version(spark_version, hadoop_version):
         parts = spark_version.split(".")
         if parts[0].isdigit():
             spark_major_version = float(parts[0])
-            print("Got major spark version " + str(spark_major_version))
             if spark_major_version > 1.0 and hadoop_version != "yarn":
               print("Spark version: {v}, does not support Hadoop version: {hv}".
                     format(v=spark_version, hv=hadoop_version), file=stderr)
