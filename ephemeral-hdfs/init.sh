@@ -30,11 +30,11 @@ case "$HADOOP_MAJOR_VERSION" in
     cp /root/hadoop-native/* /root/ephemeral-hdfs/lib/native/
     ;;
   yarn)
-    wget http://mirrors.advancedhosters.com/apache/hadoop/common/hadoop-2.6.4/hadoop-2.6.4.tar.gz
+    wget http://mirrors.advancedhosters.com/apache/hadoop/common/hadoop-2.7.2/hadoop-2.7.2.tar.gz
     echo "Unpacking Hadoop"
     tar xvzf hadoop-*.tar.gz > /tmp/spark-ec2_hadoop.log
     rm hadoop-*.tar.gz
-    mv hadoop-2.6.4/ ephemeral-hdfs/
+    mv hadoop-2.7.2/ ephemeral-hdfs/
 
     # Have single conf dir
     rm -rf /root/ephemeral-hdfs/etc/hadoop/
