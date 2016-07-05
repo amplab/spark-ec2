@@ -65,7 +65,7 @@ following options are worth pointing out:
 
 -   `--instance-type=<instance-type>` can be used to specify an EC2
 instance type to use. For now, the script only supports 64-bit instance
-types, and the default type is `m1.large` (which has 2 cores and 7.5 GB
+types, and the default type is `m3.large` (which has 2 cores and 7.5 GB
 RAM). Refer to the Amazon pages about [EC2 instance
 types](http://aws.amazon.com/ec2/instance-types) and [EC2
 pricing](http://aws.amazon.com/ec2/#pricing) for information about other
