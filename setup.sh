@@ -29,14 +29,10 @@ export HOSTNAME=$PRIVATE_DNS  # Fix the bash built-in hostname variable too
 
 echo "Setting up Spark on `hostname`..."
 
-# Set up the masters, slaves, etc files based on cluster env variables
-echo "$MASTERS" > masters
-echo "$SLAVES" > slaves
-
-MASTERS=`cat masters`
+export MASTERS=`cat masters`
 NUM_MASTERS=`cat masters | wc -l`
 OTHER_MASTERS=`cat masters | sed '1d'`
-SLAVES=`cat slaves`
+export SLAVES=`cat slaves`
 SSH_OPTS="-o StrictHostKeyChecking=no -o ConnectTimeout=5"
 
 if [[ "x$JAVA_HOME" == "x" ]] ; then
@@ -107,7 +103,9 @@ chmod u+x /root/spark/conf/spark-env.sh
 for module in $MODULES; do
   echo "Setting up $module"
   module_setup_start_time="$(date +'%s')"
-  source ./$module/setup.sh
+  if [[ -e $module/setup.sh ]]; then
+      source ./$module/setup.sh
+  fi
   sleep 0.1
   module_setup_end_time="$(date +'%s')"
   echo_time_diff "$module setup" "$module_setup_start_time" "$module_setup_end_time"
