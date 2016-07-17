@@ -835,23 +835,26 @@ def remove_slaves(conn, opts, cluster_name):
 
     master = get_dns_name(master_nodes[0], opts.private_ips)
 
-    if not slave_nodes:
+    if not slave_nodes or len(slave_nodes) == 1:
+        print("Cannot remove mores slaves, " \
+              "at least one slave is required by the cluster.")
         return ;
 
     slave_to_remove = []
-    if opts.slaves == -1 or opts.slaves >= len(slave_nodes):
-        slave_to_remove = slave_nodes
-        print("All slaves will be terminated.")
-    else:
-        print("The following slave instance(s) will be terminated:")
-        for _ in range(opts.slaves):
-            slave_to_remove.append(random.choice(slave_nodes))
+    nb_slave_to_remove = opts.slaves
+    if nb_slave_to_remove == -1 or nb_slave_to_remove >= len(slave_nodes):
+        nb_slave_to_remove = len(slave_nodes) - 1
 
-    for inst in slave_to_remove:
-        print("> %s" % get_dns_name(inst, opts.private_ips))
+    print("The following slave instance(s) will be terminated:")
+    for _ in range(nb_slave_to_remove):
+        remain_nodes = list(set(slave_nodes) - set(slave_to_remove))
+        slave_inst = random.choice(remain_nodes)
+        slave_to_remove.append(slave_inst)
+        print("> %s" % get_dns_name(slave_inst, opts.private_ips))
+
 
     msg = "Are you sure you want to delete " \
-          "these slave(s) on cluster {c} ? (y/N) ".format(c=cluster_name)
+          "the preceding slave(s) on cluster {c} ? (y/N) ".format(c=cluster_name)
     response = raw_input(msg)
     if response == "y":
         print("Terminating slave(s)...")
@@ -860,8 +863,6 @@ def remove_slaves(conn, opts, cluster_name):
 
         master_nodes, slave_nodes = get_existing_cluster(conn, opts,
                                                          cluster_name, die_on_error=False)
-
-        master = get_dns_name(master_nodes[0], opts.private_ips)
 
         print("Deploying files to master...")
         deploy_files(
