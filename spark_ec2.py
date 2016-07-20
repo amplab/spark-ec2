@@ -183,9 +183,9 @@ def process_conf_file(file_path, parser, opts):
         with open(file_path) as configuration_file:
             configuration = json.load(configuration_file)
     except Exception as e:
-        err_msg = " ".join(map(str, e.args))
+        err_msg = " ".join([str(err) for err in e.args])
         print("[!] Error when loading config file: {}".format(err_msg), file=stderr)
-        sys.exit(-1)
+        sys.exit(1)
 
     JSON_SPECIAL_PARAMS = {
         "no_ganglia": "--no-ganglia",
@@ -423,13 +423,14 @@ def parse_args():
                         help="Specify config file", metavar="FILE")
 
     (opts, args) = parser.parse_args()
-    if opts.conf_file:
-        opts = process_conf_file(opts.conf_file, parser, opts)
 
     if len(args) != 2:
         parser.print_help()
         sys.exit(1)
     (action, cluster_name) = args
+
+    if opts.conf_file:
+        opts = process_conf_file(opts.conf_file, parser, opts)
 
     # Boto config check
     # http://boto.cloudhackers.com/en/latest/boto_config_tut.html
