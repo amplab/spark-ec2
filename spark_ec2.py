@@ -168,17 +168,11 @@ class UsageError(Exception):
     pass
 
 
-def parse_opt_args(parser, args=None):
-    if not args:
-        args = sys.argv[1:]
-
-    opts, _ = parser.parse_args(args=args)
-    return opts
-
-
-def process_conf_file(file_path, parser, opts):
+def process_conf_file(file_path, parser):
+    """
+    Load configuration file and extract arguments.
+    """
     configuration = {}
-
     try:
         with open(file_path) as configuration_file:
             configuration = json.load(configuration_file)
@@ -187,7 +181,8 @@ def process_conf_file(file_path, parser, opts):
         print("[!] Error when loading config file: {}".format(err_msg), file=stderr)
         sys.exit(1)
 
-    JSON_SPECIAL_PARAMS = {
+    # True / False options parameters
+    json_special_params = {
         "no_ganglia": "--no-ganglia",
         "delete_groups": "--delete_groups",
         "private_ips": "--private-ips",
@@ -196,8 +191,9 @@ def process_conf_file(file_path, parser, opts):
         "copy_aws_credentials": "--copy-aws-credentials",
     }
 
-    JSON_PARAMS = {
-        "slaves": "--slaves",
+    # Options parameters followed by values
+    json_params = {
+         "slaves": "--slaves",
         "wait": "--wait",
         "key_pair": "--key-pair",
         "identity_file": "--identity-file",
@@ -233,6 +229,7 @@ def process_conf_file(file_path, parser, opts):
         "instance_profile_name": "--instance-profile-name"
     }
 
+    # Path to identity file (located in keys folder under current location of spark-ec2 file)
     configuration["identity_file"] = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                                   "keys",
                                                   configuration["identity_file"])
@@ -248,13 +245,12 @@ def process_conf_file(file_path, parser, opts):
 
     args = []
     for op in configuration:
-        if op in JSON_SPECIAL_PARAMS and configuration[op]:
-            args.append(JSON_SPECIAL_PARAMS[op])
-        elif op in JSON_PARAMS:
-            option_value = "{opt} {val}".format(opt=JSON_PARAMS[op],
+        if op in json_special_params and configuration[op]:
+            args.append(json_special_params[op])
+        elif op in json_params:
+            option_value = "{opt} {val}".format(opt=json_params[op],
                                                 val=configuration[op])
             args.extend(option_value.split())
-
     new_opts, _ = parser.parse_args(args)
     return new_opts
 
@@ -430,7 +426,7 @@ def parse_args():
     (action, cluster_name) = args
 
     if opts.conf_file:
-        opts = process_conf_file(opts.conf_file, parser, opts)
+        opts = process_conf_file(opts.conf_file, parser)
 
     # Boto config check
     # http://boto.cloudhackers.com/en/latest/boto_config_tut.html
