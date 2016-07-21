@@ -327,6 +327,10 @@ def parse_args():
     parser.add_option(
         "--instance-profile-name", default=None,
         help="IAM profile name to launch instances under")
+    parser.add_option(
+        "--spark-ec2-compressed",
+        default=None, metavar="FILE",
+        help="Compressed spark-ec2 folder, avoid to clone spark-ec2 repos from GitHub. (default: %default)")
 
     (opts, args) = parser.parse_args()
     if len(args) != 2:
@@ -819,18 +823,55 @@ def setup_cluster(conn, master_nodes, slave_nodes, opts, deploy_ssh_key):
     if opts.hadoop_major_version == "yarn":
         opts.worker_instances = ""
 
-    # NOTE: We should clone the repository before running deploy_files to
-    # prevent ec2-variables.sh from being overwritten
-    print("Cloning spark-ec2 scripts from {r}/tree/{b} on master...".format(
-        r=opts.spark_ec2_git_repo, b=opts.spark_ec2_git_branch))
-    ssh(
-        host=master,
-        opts=opts,
-        command="rm -rf spark-ec2"
-        + " && "
-        + "git clone {r} -b {b} spark-ec2".format(r=opts.spark_ec2_git_repo,
-                                                  b=opts.spark_ec2_git_branch)
-    )
+    if opts.spark_ec2_compressed:
+        path = opts.spark_ec2_compressed
+        recognized_format = (".tar", ".tar.gz", ".tar.bz2", ".tar.xz")
+
+        if not os.path.exists(path):
+            print("[!] Error: {path}: File not found.".format(path=path), file=stderr)
+            sys.exit(1)
+
+        if not path.endswith(recognized_format):
+            print("[!] Error: Unrecognized compression format. "
+                  "Recognized formats are: {formats}.".format(formats=", ".join(recognized_format)),
+                  file=stderr)
+            sys.exit(1)
+
+        print("[*] Transferring {} from local to master...".format(path))
+
+        command = [
+            'rsync', '-rv',
+            '-e', stringify_command(ssh_command(opts)),
+            "%s" % path,
+            "%s@%s:/root/" % (opts.user, master)
+        ]
+        subprocess.check_call(command)
+
+        spark_ec2_basename = os.path.basename(path)
+        ssh(
+            host=master,
+            opts=opts,
+            command= "rm -rf spark-ec2"
+            + " && "
+            + "mkdir spark-ec2"
+            + " && "
+            + "tar --strip-components=1 -xf {c} -C spark-ec2".format(c=spark_ec2_basename)
+            + " && "
+            + "rm -f {c}".format(c=spark_ec2_basename)
+        )
+    else:
+        # NOTE: We should clone the repository before running deploy_files to
+        # prevent ec2-variables.sh from being overwritten
+        print("Cloning spark-ec2 scripts from {r}/tree/{b} on master...".format(
+            r=opts.spark_ec2_git_repo, b=opts.spark_ec2_git_branch))
+        ssh(
+            host=master,
+            opts=opts,
+            command="rm -rf spark-ec2"
+            + " && "
+            + "git clone {r} -b {b} spark-ec2".format(r=opts.spark_ec2_git_repo,
+                                                      b=opts.spark_ec2_git_branch)
+        )
 
     print("Deploying files to master...")
     deploy_files(
