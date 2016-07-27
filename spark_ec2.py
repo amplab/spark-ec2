@@ -216,10 +216,10 @@ def process_conf_file(file_path, parser):
     [map_conf.update(mapping_conf(opt)) for opt in parser.option_list]
     [map_conf.pop(unneeded_opt, None) for unneeded_opt in unneeded_opts]
 
-    # Path to identity file (located in keys folder under current location of spark-ec2 file)
-    configuration["identity_file"] = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                                  "keys",
-                                                  configuration["identity_file"])
+    # Generating path to identity file (located in ~/.ssh/)
+    home_dir = os.path.expanduser('~')
+    key_pair_path = os.path.join(home_dir, ".ssh", configuration["identity_file"])
+    configuration["identity_file"] = key_pair_path
 
     # Setting credentials to the environment to access AWS.
     if "credentials" in configuration:
