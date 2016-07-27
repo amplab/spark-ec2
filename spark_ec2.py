@@ -916,9 +916,9 @@ def get_existing_cluster(conn, opts, cluster_name, die_on_error=True):
     return (master_instances, slave_instances)
 
 
-def transfert_SSH_key(opts, master, slave_nodes):
+def transfer_SSH_key(opts, master, slave_nodes):
     """
-    Transfert SSH key to slaves
+    Transfer SSH key to slaves
     """
     dot_ssh_tar = ssh_read(master, opts, ['tar', 'c', '.ssh'])
     print("Transferring cluster's SSH key to slaves...")
@@ -966,7 +966,7 @@ def setup_cluster(conn, master_nodes, slave_nodes, opts, deploy_ssh_key):
              cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys)
         """
         ssh(master, opts, key_setup)
-        transfert_SSH_key(opts, master, slave_nodes)
+        transfer_SSH_key(opts, master, slave_nodes)
 
     modules = ['spark', 'ephemeral-hdfs', 'persistent-hdfs',
                'mapreduce', 'spark-standalone', 'tachyon', 'rstudio']
@@ -1022,7 +1022,7 @@ def setup_new_slaves(conn, new_slave_nodes, opts, cluster_name, deploy_ssh_key):
     master_nodes, all_slave_nodes = get_existing_cluster(conn, opts, cluster_name)
     master = get_dns_name(master_nodes[0], opts.private_ips)
     if deploy_ssh_key:
-        transfert_SSH_key(opts, master, new_slave_nodes)
+        transfer_SSH_key(opts, master, new_slave_nodes)
 
     deploy_files(
         conn=conn,
