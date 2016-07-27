@@ -31,7 +31,6 @@ import pipes
 import random
 import shutil
 import string
-import json
 from stat import S_IRUSR
 import subprocess
 import sys
@@ -145,7 +144,21 @@ def setup_external_libs(libs):
             tar.close()
             os.remove(tgz_file_path)
             print(" - Finished downloading {lib}.".format(lib=lib["name"]))
-        sys.path.insert(1, lib_dir)
+
+        if lib["add-path"]:
+            lib["add-path"](lib_dir)
+        else:
+            sys.path.insert(1, lib_dir)
+
+
+def add_pyaml_path(lib_dir):
+    lib_py2 = os.path.join(lib_dir, "lib")
+    if os.path.exists(lib_py2) and sys.version < "3":
+        sys.path.insert(1, lib_py2)
+
+    lib_py3 = os.path.join(lib_dir, "lib3")
+    if os.path.exists(lib_py3) and sys.version >= "3":
+        sys.path.insert(1, lib_py3)
 
 
 # Only PyPI libraries are supported.
@@ -153,7 +166,14 @@ external_libs = [
     {
         "name": "boto",
         "version": "2.34.0",
-        "md5": "5556223d2d0cc4d06dd4829e671dcecd"
+        "md5": "5556223d2d0cc4d06dd4829e671dcecd",
+        "add-path": None
+    },
+    {
+        "name": "PyYAML",
+        "version": "3.11",
+        "md5": "f50e08ef0fe55178479d3a618efe21db",
+        "add-path": add_pyaml_path
     }
 ]
 
@@ -163,6 +183,7 @@ import boto
 from boto.ec2.blockdevicemapping import BlockDeviceMapping, BlockDeviceType, EBSBlockDeviceType
 from boto import ec2
 
+import yaml
 
 class UsageError(Exception):
     pass
@@ -172,85 +193,60 @@ def process_conf_file(file_path, parser):
     """
     Load configuration file and extract arguments.
     """
+    # Loading the configuration file.
     configuration = {}
     try:
         with open(file_path) as configuration_file:
-            configuration = json.load(configuration_file)
+            configuration = yaml.safe_load(configuration_file)
     except Exception as e:
-        err_msg = " ".join([str(err) for err in e.args])
-        print("[!] Error when loading config file: {}".format(err_msg), file=stderr)
+        print("[!] An error occured when loading the config file:\n{}".format(e), file=stderr)
         sys.exit(1)
 
-    # True / False options parameters
-    json_special_params = {
-        "no_ganglia": "--no-ganglia",
-        "delete_groups": "--delete_groups",
-        "private_ips": "--private-ips",
-        "resume": "--resume",
-        "use_existing_master": "--use-existing-master",
-        "copy_aws_credentials": "--copy-aws-credentials",
-    }
+    unneeded_opts = ("version", "help")
 
-    # Options parameters followed by values
-    json_params = {
-         "slaves": "--slaves",
-        "wait": "--wait",
-        "key_pair": "--key-pair",
-        "identity_file": "--identity-file",
-        "profile": "--profile",
-        "instance_type": "--instance-type",
-        "master_instance_type": "--master-instance-type",
-        "region": "--region",
-        "zone": "--zone",
-        "ami": "--ami",
-        "spark_version": "--spark-version",
-        "spark_git_repo": "--spark-git-repo",
-        "spark_ec2_git_repo": "--spark-ec2-git-repo",
-        "spark_ec2_git_branch": "--spark-ec2-git-branch",
-        "deploy_root_dir": "--deploy-root-dir",
-        "hadoop_major_version": "--hadoop-major-version",
-        "D": "-D",
-        "ebs_vol_size": "--ebs-vol-size",
-        "ebs_vol_type": "--ebs-vol-type",
-        "ebs_vol_num": "--ebs-vol-num",
-        "placement_group": "--placement-group",
-        "swap": "--swap",
-        "spot_price": "--spot-price",
-        "user": "--user",
-        "worker_instances": "--worker-instances",
-        "master_opts": "--master-opts",
-        "user_data": "--user-data",
-        "authorized_address": "--authorized-address",
-        "additional_security_group": "--additional-security-group",
-        "additional_tags": "--additional-tags",
-        "subnet_id": "--subnet-id",
-        "vpc_id": "--vpc-id",
-        "instance_initiated_shutdown_behavior": "--instance-initiated-shutdown-behavior",
-        "instance_profile_name": "--instance-profile-name"
-    }
+    # mapppin_conf() aims to avoid maintaining a manual mapping dictionary.
+    # Transforms --option-like-this to option_like_this
+    def mapping_conf(opt):
+        normal_opt = str(opt).split("/")[-1]
+        trans_opt = normal_opt.strip("-")
+        trans_opt = trans_opt.replace("-", "_")
+        return {trans_opt: normal_opt}
+
+    map_conf = {}
+    [map_conf.update(mapping_conf(opt)) for opt in parser.option_list]
+    [map_conf.pop(unneeded_opt, None) for unneeded_opt in unneeded_opts]
 
     # Path to identity file (located in keys folder under current location of spark-ec2 file)
     configuration["identity_file"] = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                                   "keys",
                                                   configuration["identity_file"])
 
+    # Setting credentials to the environment to access AWS.
     if "credentials" in configuration:
         try:
             key_id = configuration["credentials"]["aws_access_key_id"]
             access_key = configuration["credentials"]["aws_secret_access_key"]
-            os.environ["AWS_ACCESS_KEY_ID"] = key_id
-            os.environ["AWS_SECRET_ACCESS_KEY"] =  access_key
         except KeyError:
             pass
+        else:
+            os.environ["AWS_ACCESS_KEY_ID"] = key_id
+            os.environ["AWS_SECRET_ACCESS_KEY"] =  access_key
 
+    # Creating the args from the values present in the configuration file.
     args = []
-    for op in configuration:
-        if op in json_special_params and configuration[op]:
-            args.append(json_special_params[op])
-        elif op in json_params:
-            option_value = "{opt} {val}".format(opt=json_params[op],
+    options = set(map_conf).intersection(configuration)
+    for op in options:
+        takes_value = parser.get_option(map_conf[op]).takes_value()
+        # Extends args with options that takes an value, example: slaves.
+        if takes_value:
+            option_value = "{opt} {val}".format(opt=map_conf[op],
                                                 val=configuration[op])
             args.extend(option_value.split())
+        elif configuration[op]:
+            # Option that doesn't takes value, like --copy-aws-credentials
+            # Verifying that those options are setted(True).
+            args.append(map_conf[op])
+
     new_opts, _ = parser.parse_args(args)
     return new_opts
 
