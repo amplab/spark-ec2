@@ -250,11 +250,14 @@ def parse_args():
         help="Resume installation on a previously launched cluster " +
              "(for debugging)")
     parser.add_option(
+        "--ebs-root-vol-type", default="gp2",
+        help="Root EBS volume type (e.g. 'gp2', 'io1', 'st1', 'sc1', 'standard').")
+    parser.add_option(
         "--ebs-vol-size", metavar="SIZE", type="int", default=0,
         help="Size (in GB) of each EBS volume.")
     parser.add_option(
-        "--ebs-vol-type", default="standard",
-        help="EBS volume type (e.g. 'gp2', 'standard').")
+        "--ebs-vol-type", default="gp2",
+        help="EBS volume type (e.g. e.g. 'gp2', 'io1', 'st1', 'sc1', 'standard').")
     parser.add_option(
         "--ebs-vol-num", type="int", default=1,
         help="Number of EBS volumes to attach to each node as /vol[x]. " +
@@ -588,9 +591,16 @@ def launch_cluster(conn, opts, cluster_name):
         print("Could not find AMI " + opts.ami, file=stderr)
         sys.exit(1)
 
-    # Create block device mapping so that we can add EBS volumes if asked to.
-    # The first drive is attached as /dev/sds, 2nd as /dev/sdt, ... /dev/sdz
+    # Create block device mapping so that we can configure and add EBS volumes if asked to.
     block_map = BlockDeviceMapping()
+    # add root ebs volume type
+    root_device = EBSBlockDeviceType()
+    root_device.volume_type = opts.ebs_root_vol_type
+    root_device.delete_on_termination = True
+    block_map['/dev/sda1'] = root_device
+
+    # add additional EBS volumes if asked to
+    # The first drive is attached as /dev/sds, 2nd as /dev/sdt, ... /dev/sdz
     if opts.ebs_vol_size > 0:
         for i in range(opts.ebs_vol_num):
             device = EBSBlockDeviceType()
