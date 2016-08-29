@@ -51,7 +51,7 @@ else:
     raw_input = input
     xrange = range
 
-SPARK_EC2_VERSION = "1.6.0"
+SPARK_EC2_VERSION = "2.0.0"
 SPARK_EC2_DIR = os.path.dirname(os.path.realpath(__file__))
 
 VALID_SPARK_VERSIONS = set([
@@ -76,6 +76,7 @@ VALID_SPARK_VERSIONS = set([
     "1.5.1",
     "1.5.2",
     "1.6.0",
+    "2.0.0-preview",
     "2.0.0",
 ])
 
@@ -103,7 +104,7 @@ DEFAULT_SPARK_GITHUB_REPO = "https://github.com/apache/spark"
 
 # Default location to get the spark-ec2 scripts (and ami-list) from
 DEFAULT_SPARK_EC2_GITHUB_REPO = "https://github.com/amplab/spark-ec2"
-DEFAULT_SPARK_EC2_BRANCH = "branch-1.5"
+DEFAULT_SPARK_EC2_BRANCH = "branch-2.0"
 
 
 def setup_external_libs(libs):
@@ -236,7 +237,7 @@ def parse_args():
              "the directory is not created and its contents are copied directly into /. " +
              "(default: %default).")
     parser.add_option(
-        "--hadoop-major-version", default="1",
+        "--hadoop-major-version", default="yarn",
         help="Major version of Hadoop. Valid options are 1 (Hadoop 1.0.4), 2 (CDH 4.2.0), yarn " +
              "(Hadoop 2.4.0) (default: %default)")
     parser.add_option(
