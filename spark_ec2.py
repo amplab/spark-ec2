@@ -334,6 +334,9 @@ def parse_args():
     parser.add_option(
         "--elastic-ip", default=None,
         help="Elastic IP to associate with the master")
+    parser.add_option(
+        "--no-setup", action="store_true", default=False,
+        help="Do not run the usual setup commands")
 
     (opts, args) = parser.parse_args()
     if len(args) != 2:
@@ -480,22 +483,6 @@ def get_spark_ami(opts):
     print("Spark AMI: " + ami)
     return ami
 
-
-def create_cluster(conn, cluster_name, opts):
-    if opts.slaves <= 0:
-	print("ERROR: You have to start at least 1 slave", file=sys.stderr)
-	sys.exit(1)
-    if opts.resume:
-	(master_nodes, slave_nodes) = get_existing_cluster(conn, opts, cluster_name)
-    else:
-	(master_nodes, slave_nodes) = launch_cluster(conn, opts, cluster_name)
-    wait_for_cluster_state(
-	conn=conn,
-	opts=opts,
-	cluster_instances=(master_nodes + slave_nodes),
-	cluster_state='ssh-ready'
-    )
-    return (master_nodes, slave_nodes)
 
 # Launch a cluster of the given name, by setting up its security groups,
 # and then starting new instances in them.
@@ -1364,12 +1351,23 @@ def real_main():
     if opts.zone == "":
         opts.zone = random.choice(conn.get_all_zones()).name
 
-    if action == "create":
-	master_nodes, slave_nodes = create_cluster(conn, cluster_name, opts)
+    if action == "launch":
+	if opts.slaves <= 0:
+	    print("ERROR: You have to start at least 1 slave", file=sys.stderr)
+	    sys.exit(1)
+	if opts.resume:
+	    (master_nodes, slave_nodes) = get_existing_cluster(conn, opts, cluster_name)
+	else:
+	    (master_nodes, slave_nodes) = launch_cluster(conn, opts, cluster_name)
+	wait_for_cluster_state(
+	    conn=conn,
+	    opts=opts,
+	    cluster_instances=(master_nodes + slave_nodes),
+	    cluster_state='ssh-ready'
+	)
 
-    elif action == "launch":
-	master_nodes, slave_nodes = create_cluster(conn, cluster_name, opts)
-        setup_cluster(conn, master_nodes, slave_nodes, opts, True)
+	if not opts.no_setup:
+	  setup_cluster(conn, master_nodes, slave_nodes, opts, True)
 
     elif action == "destroy":
         (master_nodes, slave_nodes) = get_existing_cluster(
@@ -1534,7 +1532,8 @@ def real_main():
         opts.master_instance_type = existing_master_type
         opts.instance_type = existing_slave_type
 
-        setup_cluster(conn, master_nodes, slave_nodes, opts, False)
+	if not opts.no_setup:
+	  setup_cluster(conn, master_nodes, slave_nodes, opts, False)
 
     else:
         print("Invalid action: %s" % action, file=stderr)
