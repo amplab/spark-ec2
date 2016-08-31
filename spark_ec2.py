@@ -1497,14 +1497,10 @@ def real_main():
                     else:
                         inst.stop()
 
-    elif action == "start" or action == "startelastic":
-        if action == "startelastic" :
-            if opts.elastic_ip:
-                pdn = "ec2-" + "-".join(opts.elastic_ip.split(".")) + ".us-west-2.compute.amazonaws.com"
-                print("will set master's public dns name to %s" % pdn)
-            else:
-                print("need an elastic-ip option when starting with startelastic")
-                sys.exit(1)
+    elif action == "start":
+	if opts.elastic_ip:
+	    pdn = "ec2-" + "-".join(opts.elastic_ip.split(".")) + "." + opts.region + ".compute.amazonaws.com"
+	    print("will set master's public dns name to %s" % pdn)
         (master_nodes, slave_nodes) = get_existing_cluster(conn, opts, cluster_name)
         print("Starting slaves...")
         for inst in slave_nodes:
@@ -1520,18 +1516,13 @@ def real_main():
             cluster_instances=(master_nodes + slave_nodes),
             cluster_state='ssh-ready'
         )
-        if action == "startelastic" :
-            #pdb.set_trace()
-            #conn.associate_address(master_nodes[0].id, "54.203.251.149")
-            #master_nodes[0].ip_address="54.203.251.149"
-            #master_nodes[0].public_dns_name="ec2-54-203-251-149.us-west-2.compute.amazonaws.com"
+        if opts.elastic_ip:
             print("setting master's public dns name to %s" % pdn)
             conn.associate_address(master_nodes[0].id, opts.elastic_ip)
             master_nodes[0].ip_address=opts.elastic_ip
             master_nodes[0].public_dns_name=pdn
             
             print("Attachment made")
-            #pdb.set_trace()
             
         # Determine types of running instances
         existing_master_type = master_nodes[0].instance_type
