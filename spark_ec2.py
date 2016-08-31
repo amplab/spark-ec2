@@ -177,7 +177,7 @@ def parse_args():
         prog="spark-ec2",
         version="%prog {v}".format(v=SPARK_EC2_VERSION),
         usage="%prog [options] <action> <cluster_name>\n\n"
-        + "<action> can be: launch, destroy, login, stop, start, get-master, reboot-slaves")
+        + "<action> can be: create, launch, destroy, login, stop, start, get-master, reboot-slaves")
 
     parser.add_option(
         "-s", "--slaves", type="int", default=1,
@@ -480,6 +480,22 @@ def get_spark_ami(opts):
     print("Spark AMI: " + ami)
     return ami
 
+
+def create_cluster(conn, cluster_name, opts):
+    if opts.slaves <= 0:
+	print("ERROR: You have to start at least 1 slave", file=sys.stderr)
+	sys.exit(1)
+    if opts.resume:
+	(master_nodes, slave_nodes) = get_existing_cluster(conn, opts, cluster_name)
+    else:
+	(master_nodes, slave_nodes) = launch_cluster(conn, opts, cluster_name)
+    wait_for_cluster_state(
+	conn=conn,
+	opts=opts,
+	cluster_instances=(master_nodes + slave_nodes),
+	cluster_state='ssh-ready'
+    )
+    return (master_nodes, slave_nodes)
 
 # Launch a cluster of the given name, by setting up its security groups,
 # and then starting new instances in them.
@@ -1348,20 +1364,11 @@ def real_main():
     if opts.zone == "":
         opts.zone = random.choice(conn.get_all_zones()).name
 
-    if action == "launch":
-        if opts.slaves <= 0:
-            print("ERROR: You have to start at least 1 slave", file=sys.stderr)
-            sys.exit(1)
-        if opts.resume:
-            (master_nodes, slave_nodes) = get_existing_cluster(conn, opts, cluster_name)
-        else:
-            (master_nodes, slave_nodes) = launch_cluster(conn, opts, cluster_name)
-        wait_for_cluster_state(
-            conn=conn,
-            opts=opts,
-            cluster_instances=(master_nodes + slave_nodes),
-            cluster_state='ssh-ready'
-        )
+    if action == "create":
+	master_nodes, slave_nodes = create_cluster(conn, cluster_name, opts)
+
+    elif action == "launch":
+	master_nodes, slave_nodes = create_cluster(conn, cluster_name, opts)
         setup_cluster(conn, master_nodes, slave_nodes, opts, True)
 
     elif action == "destroy":
