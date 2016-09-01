@@ -1,6 +1,16 @@
 #!/bin/bash
 
-sudo yum install -y -q pssh
+#learn the linux distribution
+DISTRIB_ID=Centos
+if [[ -e /etc/lsb-release ]]; then source /etc/lsb-release; fi
+echo "DISTRIB_ID=$DISTRIB_ID"
+exit 
+
+if [[ DISTRIB_ID = "Centos" ]]; then
+  sudo yum install -y -q pssh
+elif [[ DISTRIB_ID = "Ubuntu" ]]; then
+  sudo apt-get install -y pssh
+fi
 
 # usage: echo_time_diff name start_time end_time
 echo_time_diff () {
@@ -11,10 +21,10 @@ echo_time_diff () {
 }
 
 # Make sure we are in the spark-ec2 directory
-pushd /root/spark-ec2 > /dev/null
+pushd ~/spark-ec2 > /dev/null
 
 # Load the environment variables specific to this AMI
-source /root/.bash_profile
+source ~/.bash_profile
 
 # Load the cluster variables set by the deploy script
 source ec2-variables.sh
@@ -24,7 +34,7 @@ source ec2-variables.sh
 PRIVATE_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/local-hostname`
 PUBLIC_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/hostname`
 hostname $PRIVATE_DNS
-echo $PRIVATE_DNS > /etc/hostname
+sudo echo $PRIVATE_DNS > /etc/hostname
 export HOSTNAME=$PRIVATE_DNS  # Fix the bash built-in hostname variable too
 
 echo "Setting up Spark on `hostname`..."
@@ -52,17 +62,19 @@ fi
 echo "Setting executable permissions on scripts..."
 find . -regex "^.+.\(sh\|py\)" | xargs chmod a+x
 
-echo "RSYNC'ing /root/spark-ec2 to other cluster nodes..."
+echo "RSYNC'ing ~/spark-ec2 to other cluster nodes..."
 rsync_start_time="$(date +'%s')"
 for node in $SLAVES $OTHER_MASTERS; do
   echo $node
-  rsync -e "ssh $SSH_OPTS" -az /root/spark-ec2 $node:/root &
+  rsync -e "ssh $SSH_OPTS" -az ~/spark-ec2 $node:~ &
   scp $SSH_OPTS ~/.ssh/id_rsa $node:.ssh &
   sleep 0.1
 done
 wait
 rsync_end_time="$(date +'%s')"
-echo_time_diff "rsync /root/spark-ec2" "$rsync_start_time" "$rsync_end_time"
+echo_time_diff "rsync ~/spark-ec2" "$rsync_start_time" "$rsync_end_time"
+
+exit
 
 echo "Running setup-slave on all cluster nodes to mount filesystems, etc..."
 setup_slave_start_time="$(date +'%s')"
