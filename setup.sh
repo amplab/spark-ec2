@@ -10,8 +10,10 @@ echo "DISTRIB_ID=$DISTRIB_ID"
 
 if [[ DISTRIB_ID = "Centos" ]]; then
   sudo yum install -y -q pssh
+  PSSH=pssh
 elif [[ DISTRIB_ID = "Ubuntu" ]]; then
   sudo apt-get install -y pssh
+  PSSH=parallel-ssh
 fi
 
 # usage: echo_time_diff name start_time end_time
@@ -78,7 +80,7 @@ echo_time_diff "rsync ~/spark-ec2" "$rsync_start_time" "$rsync_end_time"
 
 echo "Running setup-slave on all cluster nodes to mount filesystems, etc..."
 setup_slave_start_time="$(date +'%s')"
-pssh --inline \
+$PSSH --inline \
     --host "$MASTERS $SLAVES" \
     --user $USER \
     --extra-args "-t -t $SSH_OPTS" \
