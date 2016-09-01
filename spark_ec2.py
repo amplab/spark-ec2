@@ -816,6 +816,7 @@ def setup_cluster(conn, master_nodes, slave_nodes, opts, deploy_ssh_key):
             print(slave_address)
             ssh_write(slave_address, opts, ['tar', 'x'], dot_ssh_tar)
 
+
     modules = ['spark', 'ephemeral-hdfs', 'persistent-hdfs',
                'mapreduce', 'spark-standalone', 'tachyon', 'rstudio']
 
@@ -842,15 +843,25 @@ def setup_cluster(conn, master_nodes, slave_nodes, opts, deploy_ssh_key):
                                                   b=opts.spark_ec2_git_branch)
     )
 
+
     print("Deploying files to master...")
+    if opts.user == "root":
+        root_dir=SPARK_EC2_DIR + "/" + "deploy.generic"
+    elif opts.user == "ubuntu":
+        root_dir=SPARK_EC2_DIR + "/" + "deploy.ubuntu"
+    else:
+        root_dir=SPARK_EC2_DIR + "/" + "deploy.generic"
     deploy_files(
         conn=conn,
-        root_dir=SPARK_EC2_DIR + "/" + "deploy.generic",
+        root_dir=root_dir,
         opts=opts,
         master_nodes=master_nodes,
         slave_nodes=slave_nodes,
         modules=modules
     )
+
+    if opts.user == "ubuntu":
+      return
 
     if opts.deploy_root_dir is not None:
         print("Deploying {s} to master...".format(s=opts.deploy_root_dir))
@@ -1534,6 +1545,21 @@ def real_main():
 
 	if not opts.no_setup:
 	  setup_cluster(conn, master_nodes, slave_nodes, opts, False)
+
+    elif action == "setup":
+        (master_nodes, slave_nodes) = get_existing_cluster(conn, opts, cluster_name)
+
+        # Determine types of running instances
+        existing_master_type = master_nodes[0].instance_type
+        existing_slave_type = slave_nodes[0].instance_type
+        # Setting opts.master_instance_type to the empty string indicates we
+        # have the same instance type for the master and the slaves
+        if existing_master_type == existing_slave_type:
+            existing_master_type = ""
+        opts.master_instance_type = existing_master_type
+        opts.instance_type = existing_slave_type
+
+	setup_cluster(conn, master_nodes, slave_nodes, opts, True)
 
     else:
         print("Invalid action: %s" % action, file=stderr)
