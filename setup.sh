@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#learn the current user
+USER=`whoami`
+
 #learn the linux distribution
 DISTRIB_ID=Centos
 if [[ -e /etc/lsb-release ]]; then source /etc/lsb-release; fi
@@ -73,18 +76,18 @@ wait
 rsync_end_time="$(date +'%s')"
 echo_time_diff "rsync ~/spark-ec2" "$rsync_start_time" "$rsync_end_time"
 
-exit
-
 echo "Running setup-slave on all cluster nodes to mount filesystems, etc..."
 setup_slave_start_time="$(date +'%s')"
 pssh --inline \
     --host "$MASTERS $SLAVES" \
-    --user root \
+    --user $USER \
     --extra-args "-t -t $SSH_OPTS" \
     --timeout 0 \
     "spark-ec2/setup-slave.sh"
 setup_slave_end_time="$(date +'%s')"
 echo_time_diff "setup-slave" "$setup_slave_start_time" "$setup_slave_end_time"
+
+exit
 
 # Always include 'scala' module if it's not defined as a work around
 # for older versions of the scripts.
