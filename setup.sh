@@ -4,7 +4,6 @@
 DISTRIB_ID=Centos
 if [[ -e /etc/lsb-release ]]; then source /etc/lsb-release; fi
 echo "DISTRIB_ID=$DISTRIB_ID"
-exit 
 
 if [[ DISTRIB_ID = "Centos" ]]; then
   sudo yum install -y -q pssh
