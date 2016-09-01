@@ -26,16 +26,15 @@ echo_time_diff () {
 pushd ~/spark-ec2 > /dev/null
 
 # Load the environment variables specific to this AMI
-source ~/.bash_profile
+if [[ -e ~/.bash_profile ]]; then source ~/.bash_profile; fi
 
 # Load the cluster variables set by the deploy script
-source ec2-variables.sh
-
+source ec2-variables.sh 
 # Set hostname based on EC2 private DNS name, so that it is set correctly
 # even if the instance is restarted with a different private DNS name
 PRIVATE_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/local-hostname`
 PUBLIC_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/hostname`
-hostname $PRIVATE_DNS
+sudo hostname $PRIVATE_DNS
 sudo echo $PRIVATE_DNS > /etc/hostname
 export HOSTNAME=$PRIVATE_DNS  # Fix the bash built-in hostname variable too
 
