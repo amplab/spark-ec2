@@ -89,7 +89,7 @@ setup_ebs_volume() {
       if [[ DISTRIB_ID = "Centos" ]]; then
 	yum install -q -y xfsprogs
       elif [[ DISTRIB_ID = "Ubuntu" ]]; then
-	sudo apt-get install -y xfsprogs
+	sudo apt-get install -y -q xfsprogs
       fi
       if sudo mkfs.xfs -q $device; then
         sudo mount -o $XFS_MOUNT_OPTS $device $mount_point
@@ -152,7 +152,7 @@ if [[ $DISTRIB_ID = "CentOS" ]]; then
   echo 'readlink -e "$@"' >> /usr/bin/realpath
   chmod a+x /usr/bin/realpath
 elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
-  sudo apt-get install realpath
+  sudo apt-get install -y -q realpath
 fi
 
 popd > /dev/null

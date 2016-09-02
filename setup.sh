@@ -11,7 +11,15 @@ echo "DISTRIB_ID=$DISTRIB_ID"
 if [[ $DISTRIB_ID = "Centos" ]]; then
   sudo yum install -y -q pssh
 elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
-  sudo apt-get install -y pssh
+  sudo apt-get install -y -q pssh
+
+  #also install java on the first master since stock ubuntu ami does not
+  #come with java pre-installed
+  sudo apt-get install -y -q openjdk-7-jdk
+  if [[ "x$JAVA_HOME" == "x" ]]; then
+    echo "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64" >> /etc/environment
+  fi
+
 fi
 
 # usage: echo_time_diff name start_time end_time
