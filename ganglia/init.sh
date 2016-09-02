@@ -34,7 +34,7 @@ elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
   GANGLIA_PACKAGES="ganglia-webfrontend ganglia-monitor gmetad"
   sudo apt-get install -y $GANGLIA_PACKAGES
   for node in $SLAVES $OTHER_MASTERS; do
-    ssh -t -t $SSH_OPTS $USER@$node "sudo apt-get install -y $GANGLIA_PACKAGES" & sleep 0.3
+    ssh -t -t $SSH_OPTS $USER@$node "sudo apt-get install -y $GANGLIA_PACKAGES; sudo dpkg --configure -a" & sleep 0.3
   done
   wait
 fi
