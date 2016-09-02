@@ -35,16 +35,16 @@ instance_type=$(curl http://169.254.169.254/latest/meta-data/instance-type 2> /d
 
 echo "Setting up slave on `hostname`... of type $instance_type"
 
-function create_ephemeral_blkdev_links {
+create_ephemeral_blkdev_links() {
   device_letter=$1
   devx=/dev/xvd${device_letter}
   devs=/dev/sd${device_letter}
-  if [[ -e $devx ]]; then ln -s $devx $devs; fi
+  if [[ -e $devx ]]; then sudo ln -s $devx $devs; fi
 }
 if [[ $DISTRIB_ID = "Ubuntu" ]]; then
-  sudo create_ephemeral_blkdev_links b
-  sudo create_ephemeral_blkdev_links c
-  sudo create_ephemeral_blkdev_links d
+  create_ephemeral_blkdev_links b
+  create_ephemeral_blkdev_links c
+  create_ephemeral_blkdev_links d
 fi
 
 if [[ $instance_type == r3* || $instance_type == i2* || $instance_type == hi1* ]]; then
@@ -79,7 +79,7 @@ fi
 # are ext3, but we use xfs for EBS volumes to format them faster)
 XFS_MOUNT_OPTS="defaults,noatime,nodiratime,allocsize=8m"
 
-function setup_ebs_volume {
+setup_ebs_volume() {
   device=$1
   mount_point=$2
   if [[ -e $device ]]; then
@@ -112,14 +112,14 @@ function setup_ebs_volume {
 }
 
 # Format and mount EBS volume (/dev/sd[s, t, u, v, w, x, y, z]) as /vol[x] if the device exists
-sudo setup_ebs_volume /dev/sds /vol0
-sudo setup_ebs_volume /dev/sdt /vol1
-sudo setup_ebs_volume /dev/sdu /vol2
-sudo setup_ebs_volume /dev/sdv /vol3
-sudo setup_ebs_volume /dev/sdw /vol4
-sudo setup_ebs_volume /dev/sdx /vol5
-sudo setup_ebs_volume /dev/sdy /vol6
-sudo setup_ebs_volume /dev/sdz /vol7
+setup_ebs_volume /dev/sds /vol0
+setup_ebs_volume /dev/sdt /vol1
+setup_ebs_volume /dev/sdu /vol2
+setup_ebs_volume /dev/sdv /vol3
+setup_ebs_volume /dev/sdw /vol4
+setup_ebs_volume /dev/sdx /vol5
+setup_ebs_volume /dev/sdy /vol6
+setup_ebs_volume /dev/sdz /vol7
 
 # Alias vol to vol3 for backward compatibility: the old spark-ec2 script supports only attaching
 # one EBS volume at /dev/sdv.

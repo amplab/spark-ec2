@@ -89,8 +89,6 @@ if [[ $DISTRIB_ID = "Ubuntu" ]]; then
   create_ephemeral_blkdev_links d
 fi
 
-exit
-
 echo "Running setup-slave on all cluster nodes to mount filesystems, etc..."
 setup_slave_start_time="$(date +'%s')"
 if [[ $DISTRIB_ID = "Centos" ]]; then
