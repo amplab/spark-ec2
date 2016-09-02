@@ -605,6 +605,16 @@ def launch_cluster(conn, opts, cluster_name):
             device.delete_on_termination = True
             block_map["/dev/sd" + chr(ord('s') + i)] = device
 
+    # for vanilla ubuntu AMIs, list out ephemeral block devices so they
+    # attached to be mounted on /mnt*
+    if opts.user == "ubuntu":
+        for i in range(get_num_disks(opts.instance_type)):
+            dev = BlockDeviceType()
+            dev.ephemeral_name = 'ephemeral%d' % i
+            # The first ephemeral drive is /dev/sdb.
+            name = '/dev/sd' + string.ascii_letters[i + 1]
+            block_map[name] = dev
+
     # AWS ignores the AMI-specified block device mapping for M3 (see SPARK-3342).
     if opts.instance_type.startswith('m3.'):
         for i in range(get_num_disks(opts.instance_type)):
