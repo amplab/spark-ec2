@@ -31,7 +31,7 @@ if [[ $DISTRIB_ID = "Centos" ]]; then
   wait
 
 elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
-  GANGLIA_PACKAGES="ganglia ganglia-webfrontend ganglia-monitor gmetad"
+  GANGLIA_PACKAGES="ganglia-webfrontend ganglia-monitor gmetad"
   sudo apt-get install -y $GANGLIA_PACKAGES
   for node in $SLAVES $OTHER_MASTERS; do
     ssh -t -t $SSH_OPTS $USER@$node "sudo apt-get install -y $GANGLIA_PACKAGES" & sleep 0.3
