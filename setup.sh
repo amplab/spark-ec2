@@ -99,14 +99,14 @@ if [[ $DISTRIB_ID = "Centos" ]]; then
 elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
   mkdir slave-setup-stdout
   mkdir slave-setup-stderr
-  parallel-ssh --inline \
-    --host "$MASTERS $SLAVES" \
-    --user $USER \
-    --extra-args "-t -t $SSH_OPTS" \
-    --timeout 0 \
-    --outdir slave-setup-stdout \
-    --errdir slave-setup-stderr \
-    "spark-ec2/setup-slave.sh"
+  #parallel-ssh --inline \
+  #  --host "$MASTERS $SLAVES" \
+  #  --user $USER \
+  #  --extra-args "-t -t $SSH_OPTS" \
+  #  --timeout 0 \
+  #  --outdir slave-setup-stdout \
+  #  --errdir slave-setup-stderr \
+  #  "spark-ec2/setup-slave.sh"
 fi
 
 setup_slave_end_time="$(date +'%s')"
@@ -123,7 +123,7 @@ for module in $MODULES; do
   echo "Initializing $module"
   module_init_start_time="$(date +'%s')"
   if [[ -e $module/init.sh ]]; then
-    sudo source $module/init.sh
+    source $module/init.sh
   fi
   module_init_end_time="$(date +'%s')"
   echo_time_diff "$module init" "$module_init_start_time" "$module_init_end_time"
