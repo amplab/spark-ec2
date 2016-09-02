@@ -87,11 +87,15 @@ if [[ DISTRIB_ID = "Centos" ]]; then
     --timeout 0 \
     "spark-ec2/setup-slave.sh"
 elif [[ DISTRIB_ID = "Ubuntu" ]]; then
+  mkdir slave-setup-stdout
+  mkdir slave-setup-stderr
   parallel-ssh --inline \
     --host "$MASTERS $SLAVES" \
     --user $USER \
     --extra-args "-t -t $SSH_OPTS" \
     --timeout 0 \
+    --outdir slave-setup-stdout \
+    --errdir slave-setup-stderr \
     "spark-ec2/setup-slave.sh"
 fi
 
