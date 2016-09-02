@@ -31,6 +31,7 @@ if [[ $DISTRIB_ID = "Centos" ]]; then
   wait
 
 elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
+  echo "WARNING: Skipping ganglia on ubuntu..."
   GANGLIA_PACKAGES="ganglia-webfrontend ganglia-monitor gmetad"
   sudo apt-get install -y $GANGLIA_PACKAGES
   for node in $SLAVES $OTHER_MASTERS; do
