@@ -1,16 +1,17 @@
 #!/bin/bash
 
-PERSISTENT_HDFS=/root/persistent-hdfs
+PERSISTENT_HDFS=~/persistent-hdfs
+USER=`whoami`
 
-pushd /root/spark-ec2/persistent-hdfs > /dev/null
+pushd ~/spark-ec2/persistent-hdfs > /dev/null
 source ./setup-slave.sh
 
 for node in $SLAVES $OTHER_MASTERS; do
-  ssh -t $SSH_OPTS root@$node "/root/spark-ec2/persistent-hdfs/setup-slave.sh" & sleep 0.3
+  ssh -t $SSH_OPTS $USER@$node "~/spark-ec2/persistent-hdfs/setup-slave.sh" & sleep 0.3
 done
 wait
 
-/root/spark-ec2/copy-dir $PERSISTENT_HDFS/conf
+~/spark-ec2/copy-dir $PERSISTENT_HDFS/conf
 
 if [[ ! -e /vol/persistent-hdfs/dfs/name ]] ; then
   echo "Formatting persistent HDFS namenode..."
