@@ -77,7 +77,7 @@ wait
 rsync_end_time="$(date +'%s')"
 echo_time_diff "rsync ~/spark-ec2" "$rsync_start_time" "$rsync_end_time"
 
-function create_ephemeral_blkdev_links {
+create_ephemeral_blkdev_links() {
   device_letter=$1
   devx=/dev/xvd${device_letter}
   devs=/dev/sd${device_letter}
