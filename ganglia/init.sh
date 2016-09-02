@@ -32,12 +32,12 @@ if [[ $DISTRIB_ID = "Centos" ]]; then
 
 elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
   echo "WARNING: Skipping ganglia on ubuntu..."
-  GANGLIA_PACKAGES="ganglia-webfrontend ganglia-monitor gmetad"
-  sudo apt-get install -y $GANGLIA_PACKAGES
-  for node in $SLAVES $OTHER_MASTERS; do
-    ssh -t -t $SSH_OPTS $USER@$node "sudo apt-get install -y $GANGLIA_PACKAGES; sudo dpkg --configure -a" & sleep 0.3
-  done
-  wait
+  #GANGLIA_PACKAGES="ganglia-webfrontend ganglia-monitor gmetad"
+  #sudo apt-get install -y $GANGLIA_PACKAGES
+  #for node in $SLAVES $OTHER_MASTERS; do
+  #  ssh -t -t $SSH_OPTS $USER@$node "sudo apt-get install -y $GANGLIA_PACKAGES; sudo dpkg --configure -a" & sleep 0.3
+  #done
+  #wait
 fi
 
 # Post-package installation : Symlink /var/lib/ganglia/rrds to /mnt/ganglia/rrds
