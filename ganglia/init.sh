@@ -1,4 +1,4 @@
-#!/bin/bash
+
 
 USER=`whoami`
 
@@ -40,5 +40,5 @@ elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
 fi
 
 # Post-package installation : Symlink /var/lib/ganglia/rrds to /mnt/ganglia/rrds
-sudo rmdir /var/lib/ganglia/rrds
+if [[ -d /var/lib/ganglia/rrds ]]; then sudo rmdir /var/lib/ganglia/rrds; fi
 sudo ln -s /mnt/ganglia/rrds /var/lib/ganglia/rrds
