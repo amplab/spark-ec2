@@ -112,8 +112,6 @@ fi
 setup_slave_end_time="$(date +'%s')"
 echo_time_diff "setup-slave" "$setup_slave_start_time" "$setup_slave_end_time"
 
-exit
-
 # Always include 'scala' module if it's not defined as a work around
 # for older versions of the scripts.
 if [[ ! $MODULES =~ *scala* ]]; then
@@ -125,12 +123,14 @@ for module in $MODULES; do
   echo "Initializing $module"
   module_init_start_time="$(date +'%s')"
   if [[ -e $module/init.sh ]]; then
-    source $module/init.sh
+    sudo source $module/init.sh
   fi
   module_init_end_time="$(date +'%s')"
   echo_time_diff "$module init" "$module_init_start_time" "$module_init_end_time"
-  cd /root/spark-ec2  # guard against init.sh changing the cwd
+  cd ~/spark-ec2  # guard against init.sh changing the cwd
 done
+
+exit
 
 # Deploy templates
 # TODO: Move configuring templates to a per-module ?
