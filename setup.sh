@@ -79,14 +79,14 @@ echo_time_diff "rsync ~/spark-ec2" "$rsync_start_time" "$rsync_end_time"
 
 echo "Running setup-slave on all cluster nodes to mount filesystems, etc..."
 setup_slave_start_time="$(date +'%s')"
-if [[ DISTRIB_ID = "Centos" ]]; then
+if [[ $DISTRIB_ID = "Centos" ]]; then
   pssh --inline \
     --host "$MASTERS $SLAVES" \
     --user $USER \
     --extra-args "-t -t $SSH_OPTS" \
     --timeout 0 \
     "spark-ec2/setup-slave.sh"
-elif [[ DISTRIB_ID = "Ubuntu" ]]; then
+elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
   mkdir slave-setup-stdout
   mkdir slave-setup-stderr
   parallel-ssh --inline \
