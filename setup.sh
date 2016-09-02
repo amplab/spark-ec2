@@ -17,7 +17,7 @@ elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
   #come with java pre-installed
   sudo apt-get install -y -q openjdk-7-jdk
   if [[ "x$JAVA_HOME" == "x" ]]; then
-    echo "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64" >> /etc/environment
+    sudo echo "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64" >> /etc/environment
   fi
 
 fi
