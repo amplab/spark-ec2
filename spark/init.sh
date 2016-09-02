@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pushd /root > /dev/null
+pushd ~ > /dev/null
 
 if [ -d "spark" ]; then
   echo "Spark seems to be installed. Exiting."
