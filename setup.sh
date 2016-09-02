@@ -141,7 +141,9 @@ for module in $MODULES; do
   cd ~/spark-ec2  # guard against init.sh changing the cwd
 done
 
-exit
+if [[ $DISTRIB_ID = "Ubuntu" ]]; then
+  exit
+fi
 
 # Deploy templates
 # TODO: Move configuring templates to a per-module ?
