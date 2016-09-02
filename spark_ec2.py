@@ -860,9 +860,6 @@ def setup_cluster(conn, master_nodes, slave_nodes, opts, deploy_ssh_key):
         modules=modules
     )
 
-    if opts.user == "ubuntu":
-      return
-
     if opts.deploy_root_dir is not None:
         print("Deploying {s} to master...".format(s=opts.deploy_root_dir))
         deploy_user_files(
