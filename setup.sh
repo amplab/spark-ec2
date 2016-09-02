@@ -8,9 +8,9 @@ DISTRIB_ID=Centos
 if [[ -e /etc/lsb-release ]]; then source /etc/lsb-release; fi
 echo "DISTRIB_ID=$DISTRIB_ID"
 
-if [[ DISTRIB_ID = "Centos" ]]; then
+if [[ $DISTRIB_ID = "Centos" ]]; then
   sudo yum install -y -q pssh
-elif [[ DISTRIB_ID = "Ubuntu" ]]; then
+elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
   sudo apt-get install -y pssh
 fi
 
