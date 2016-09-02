@@ -17,7 +17,7 @@ cpu_command = "nproc"
 master_ram_kb = int(
   os.popen(mem_command).read().strip())
 # This is the master's memory. Try to find slave's memory as well
-first_slave = os.popen("cat /root/spark-ec2/slaves | head -1").read().strip()
+first_slave = os.popen("cat ~/spark-ec2/slaves | head -1").read().strip()
 
 slave_mem_command = "ssh -t -o StrictHostKeyChecking=no %s %s" %\
         (first_slave, mem_command)
@@ -80,7 +80,7 @@ template_vars = {
   "aws_secret_access_key": os.getenv("AWS_SECRET_ACCESS_KEY"),
 }
 
-template_dir="/root/spark-ec2/templates"
+template_dir="~/spark-ec2/templates"
 
 for path, dirs, files in os.walk(template_dir):
   if path.find(".svn") == -1:

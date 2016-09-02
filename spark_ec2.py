@@ -826,6 +826,10 @@ def setup_cluster(conn, master_nodes, slave_nodes, opts, deploy_ssh_key):
             print(slave_address)
             ssh_write(slave_address, opts, ['tar', 'x'], dot_ssh_tar)
 
+    #install git on vanilla ubuntu ami
+    if opts.user == "ubuntu":
+        git_install = "sudo apt-get install -y -q git"
+        ssh(master, opts, git_install)
 
     modules = ['spark', 'ephemeral-hdfs', 'persistent-hdfs',
                'mapreduce', 'spark-standalone', 'tachyon', 'rstudio']
