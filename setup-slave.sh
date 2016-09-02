@@ -8,6 +8,10 @@ DISTRIB_ID=Centos
 if [[ -e /etc/lsb-release ]]; then source /etc/lsb-release; fi
 echo "DISTRIB_ID=$DISTRIB_ID"
 
+if [[ $DISTRIB_ID = "Ubuntu" ]]; then
+  sudo apt-get install -y -q git
+fi
+
 # Disable Transparent Huge Pages (THP)
 # THP can result in system thrashing (high sys usage) due to frequent defrags of memory.
 # Most systems recommends turning THP off.
