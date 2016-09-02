@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pushd /root > /dev/null
+pushd ~ > /dev/null
 
 if [ -d "tachyon" ]; then
   echo "Tachyon seems to be installed. Exiting."
