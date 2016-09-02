@@ -23,7 +23,7 @@ source ec2-variables.sh
 # Set hostname based on EC2 private DNS name, so that it is set correctly
 # even if the instance is restarted with a different private DNS name
 PRIVATE_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/local-hostname`
-hostname $PRIVATE_DNS
+sudo hostname $PRIVATE_DNS
 sudo sh -c "echo $PRIVATE_DNS > /etc/hostname"
 HOSTNAME=$PRIVATE_DNS  # Fix the bash built-in hostname variable too
 
@@ -89,7 +89,7 @@ setup_ebs_volume() {
       if [[ DISTRIB_ID = "Centos" ]]; then
 	yum install -q -y xfsprogs
       elif [[ DISTRIB_ID = "Ubuntu" ]]; then
-	sudo install -y xfsprogs
+	sudo apt-get install -y xfsprogs
       fi
       if sudo mkfs.xfs -q $device; then
         sudo mount -o $XFS_MOUNT_OPTS $device $mount_point
@@ -138,7 +138,7 @@ rm -f ~/.ssh/known_hosts
 sudo ~/spark-ec2/create-swap.sh $SWAP_MB
 
 # Allow memory to be over committed. Helps in pyspark where we fork
-sudo echo 1 > /proc/sys/vm/overcommit_memory
+sudo sh -c 'echo 1 > /proc/sys/vm/overcommit_memory'
 
 # Add github to known hosts to get git@github.com clone to work
 # TODO(shivaram): Avoid duplicate entries ?
@@ -147,12 +147,16 @@ cat ~/spark-ec2/github.hostkey >> ~/.ssh/known_hosts
 # Create /usr/bin/realpath which is used by R to find Java installations
 # NOTE: /usr/bin/realpath is missing in CentOS AMIs. See
 # http://superuser.com/questions/771104/usr-bin-realpath-not-found-in-centos-6-5
-sudo echo '#!/bin/bash' > /usr/bin/realpath
-sudo echo 'readlink -e "$@"' >> /usr/bin/realpath
-sudo chmod a+x /usr/bin/realpath
+if [[ $DISTRIB_ID = "CentOS" ]]; then
+  echo '#!/bin/bash' > /usr/bin/realpath
+  echo 'readlink -e "$@"' >> /usr/bin/realpath
+  chmod a+x /usr/bin/realpath
+elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
+  sudo apt-get install realpath
+fi
 
 popd > /dev/null
 
 # this is to set the ulimit for root and other users
-sudo echo '* soft nofile 1000000' >> /etc/security/limits.conf
-sudo echo '* hard nofile 1000000' >> /etc/security/limits.conf
+sudo sh -c "echo '* soft nofile 1000000' >> /etc/security/limits.conf"
+sudo sh -c "echo '* hard nofile 1000000' >> /etc/security/limits.conf"
