@@ -77,6 +77,20 @@ wait
 rsync_end_time="$(date +'%s')"
 echo_time_diff "rsync ~/spark-ec2" "$rsync_start_time" "$rsync_end_time"
 
+function create_ephemeral_blkdev_links {
+  device_letter=$1
+  devx=/dev/xvd${device_letter}
+  devs=/dev/sd${device_letter}
+  if [[ -e $devx ]]; then ln -s $devx $devs; fi
+}
+if [[ $DISTRIB_ID = "Ubuntu" ]]; then
+  sudo create_ephemeral_blkdev_links b
+  sudo create_ephemeral_blkdev_links c
+  sudo create_ephemeral_blkdev_links d
+fi
+
+exit
+
 echo "Running setup-slave on all cluster nodes to mount filesystems, etc..."
 setup_slave_start_time="$(date +'%s')"
 if [[ $DISTRIB_ID = "Centos" ]]; then
@@ -97,18 +111,6 @@ elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
     --outdir slave-setup-stdout \
     --errdir slave-setup-stderr \
     "spark-ec2/setup-slave.sh"
-fi
-
-function create_ephemeral_blkdev_links {
-  device_letter=$1
-  devx=/dev/xvd${device_letter}
-  devs=/dev/sd${device_letter}
-  if [[ -e $devx ]]; then ln -s $devx $devs; fi
-}
-if [[ $DISTRIB_ID = "Ubuntu" ]]; then
-  sudo create_ephemeral_blkdev_links b
-  sudo create_ephemeral_blkdev_links c
-  sudo create_ephemeral_blkdev_links d
 fi
 
 setup_slave_end_time="$(date +'%s')"
