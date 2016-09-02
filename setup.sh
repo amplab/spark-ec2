@@ -98,6 +98,13 @@ if [[ $DISTRIB_ID = "Ubuntu" ]]; then
   create_ephemeral_blkdev_links d
 fi
 
+if [[ $DISTRIB_ID = "Ubuntu" ]]; then
+  [[ -d /mnt ]] && sudo chmod 777 /mnt
+  [[ -d /mnt2 ]] && sudo chmod 777 /mnt2
+  [[ -d /mnt3 ]] && sudo chmod 777 /mnt3
+  [[ -d /mnt4 ]] && sudo chmod 777 /mnt4
+fi
+
 echo "Running setup-slave on all cluster nodes to mount filesystems, etc..."
 setup_slave_start_time="$(date +'%s')"
 if [[ $DISTRIB_ID = "Centos" ]]; then
@@ -141,10 +148,6 @@ for module in $MODULES; do
   cd ~/spark-ec2  # guard against init.sh changing the cwd
 done
 
-if [[ $DISTRIB_ID = "Ubuntu" ]]; then
-  exit
-fi
-
 # Deploy templates
 # TODO: Move configuring templates to a per-module ?
 echo "Creating local config files..."
@@ -152,8 +155,8 @@ echo "Creating local config files..."
 
 # Copy spark conf by default
 echo "Deploying Spark config files..."
-chmod u+x /root/spark/conf/spark-env.sh
-/root/spark-ec2/copy-dir /root/spark/conf
+chmod u+x ~/spark/conf/spark-env.sh
+~/spark-ec2/copy-dir ~/spark/conf
 
 # Setup each module
 for module in $MODULES; do
@@ -163,7 +166,7 @@ for module in $MODULES; do
   sleep 0.1
   module_setup_end_time="$(date +'%s')"
   echo_time_diff "$module setup" "$module_setup_start_time" "$module_setup_end_time"
-  cd /root/spark-ec2  # guard against setup.sh changing the cwd
+  cd ~/spark-ec2  # guard against setup.sh changing the cwd
 done
 
 popd > /dev/null
