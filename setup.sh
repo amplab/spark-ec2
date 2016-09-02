@@ -81,12 +81,12 @@ create_ephemeral_blkdev_links() {
   device_letter=$1
   devx=/dev/xvd${device_letter}
   devs=/dev/sd${device_letter}
-  if [[ -e $devx ]]; then ln -s $devx $devs; fi
+  if [[ -e $devx ]]; then sudo ln -s $devx $devs; fi
 }
 if [[ $DISTRIB_ID = "Ubuntu" ]]; then
-  sudo create_ephemeral_blkdev_links b
-  sudo create_ephemeral_blkdev_links c
-  sudo create_ephemeral_blkdev_links d
+  create_ephemeral_blkdev_links b
+  create_ephemeral_blkdev_links c
+  create_ephemeral_blkdev_links d
 fi
 
 exit
