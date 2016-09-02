@@ -61,6 +61,7 @@ if [[ $instance_type == r3* || $instance_type == i2* || $instance_type == hi1* ]
   #echo '/dev/sdb /mnt  ext4  defaults,noatime,nodiratime,discard 0 0' >> /etc/fstab
   sudo mkfs.ext4 -E lazy_itable_init=0,lazy_journal_init=0 /dev/sdb
   sudo mount -o $EXT4_MOUNT_OPTS /dev/sdb /mnt
+  echo "Changing slave /mnt mode to 777"
   sudo chmod 777 /mnt
 
   if [[ $instance_type == "r3.8xlarge" || $instance_type == "hi1.4xlarge" ]]; then
