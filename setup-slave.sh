@@ -12,7 +12,7 @@ echo "DISTRIB_ID=$DISTRIB_ID"
 # THP can result in system thrashing (high sys usage) due to frequent defrags of memory.
 # Most systems recommends turning THP off.
 if [[ -e /sys/kernel/mm/transparent_hugepage/enabled ]]; then
-  sudo echo never > /sys/kernel/mm/transparent_hugepage/enabled
+  sudo sh -c 'echo never > /sys/kernel/mm/transparent_hugepage/enabled'
 fi
 
 # Make sure we are in the spark-ec2 directory
@@ -24,7 +24,7 @@ source ec2-variables.sh
 # even if the instance is restarted with a different private DNS name
 PRIVATE_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/local-hostname`
 hostname $PRIVATE_DNS
-sudo echo $PRIVATE_DNS > /etc/hostname
+sudo sh -c "echo $PRIVATE_DNS > /etc/hostname"
 HOSTNAME=$PRIVATE_DNS  # Fix the bash built-in hostname variable too
 
 echo "checking/fixing resolution of hostname"
@@ -39,7 +39,7 @@ create_ephemeral_blkdev_links() {
   device_letter=$1
   devx=/dev/xvd${device_letter}
   devs=/dev/sd${device_letter}
-  if [[ -e $devx ]]; then sudo ln -s $devx $devs; fi
+  if [[ -e $devx && ! -e $devs ]]; then sudo ln -s $devx $devs; fi
 }
 if [[ $DISTRIB_ID = "Ubuntu" ]]; then
   create_ephemeral_blkdev_links b

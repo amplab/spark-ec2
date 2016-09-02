@@ -35,9 +35,7 @@ source ec2-variables.sh
 PRIVATE_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/local-hostname`
 PUBLIC_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/hostname`
 sudo hostname $PRIVATE_DNS
-sudo chmod o+w /etc/hostname
-sudo echo $PRIVATE_DNS > /etc/hostname
-sudo chmod o-w /etc/hostname
+sudo sh -c "echo $PRIVATE_DNS > /etc/hostname"
 export HOSTNAME=$PRIVATE_DNS  # Fix the bash built-in hostname variable too
 
 echo "Setting up Spark on `hostname`..."
@@ -81,7 +79,7 @@ create_ephemeral_blkdev_links() {
   device_letter=$1
   devx=/dev/xvd${device_letter}
   devs=/dev/sd${device_letter}
-  if [[ -e $devx ]]; then sudo ln -s $devx $devs; fi
+  if [[ -e $devx && ! -e $devs ]]; then sudo ln -s $devx $devs; fi
 }
 if [[ $DISTRIB_ID = "Ubuntu" ]]; then
   create_ephemeral_blkdev_links b
