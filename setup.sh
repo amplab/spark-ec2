@@ -99,6 +99,18 @@ elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
     "spark-ec2/setup-slave.sh"
 fi
 
+function create_ephemeral_blkdev_links {
+  device_letter=$1
+  devx=/dev/xvd${device_letter}
+  devs=/dev/sd${device_letter}
+  if [[ -e $devx ]]; then ln -s $devx $devs; fi
+}
+if [[ $DISTRIB_ID = "Ubuntu" ]]; then
+  sudo create_ephemeral_blkdev_links b
+  sudo create_ephemeral_blkdev_links c
+  sudo create_ephemeral_blkdev_links d
+fi
+
 setup_slave_end_time="$(date +'%s')"
 echo_time_diff "setup-slave" "$setup_slave_start_time" "$setup_slave_end_time"
 

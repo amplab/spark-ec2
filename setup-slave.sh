@@ -35,6 +35,18 @@ instance_type=$(curl http://169.254.169.254/latest/meta-data/instance-type 2> /d
 
 echo "Setting up slave on `hostname`... of type $instance_type"
 
+function create_ephemeral_blkdev_links {
+  device_letter=$1
+  devx=/dev/xvd${device_letter}
+  devs=/dev/sd${device_letter}
+  if [[ -e $devx ]]; then ln -s $devx $devs; fi
+}
+if [[ $DISTRIB_ID = "Ubuntu" ]]; then
+  sudo create_ephemeral_blkdev_links b
+  sudo create_ephemeral_blkdev_links c
+  sudo create_ephemeral_blkdev_links d
+fi
+
 if [[ $instance_type == r3* || $instance_type == i2* || $instance_type == hi1* ]]; then
   # Format & mount using ext4, which has the best performance among ext3, ext4, and xfs based
   # on our shuffle heavy benchmark
