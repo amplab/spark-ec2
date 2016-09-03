@@ -79,24 +79,24 @@ wait
 rsync_end_time="$(date +'%s')"
 echo_time_diff "rsync ~/spark-ec2" "$rsync_start_time" "$rsync_end_time"
 
-#create_ephemeral_blkdev_links() {
-#  device_letter=$1
-#  devx=/dev/xvd${device_letter}
-#  devs=/dev/sd${device_letter}
-#  if [[ -e $devx && ! -e $devs ]]; then sudo ln -s $devx $devs; fi
-#}
-#if [[ $DISTRIB_ID = "Ubuntu" ]]; then
-#  create_ephemeral_blkdev_links b
-#  create_ephemeral_blkdev_links c
-#  create_ephemeral_blkdev_links d
-#fi
-#
-#if [[ $DISTRIB_ID = "Ubuntu" ]]; then
-#  [[ -d /mnt ]] && sudo chmod 777 /mnt
-#  [[ -d /mnt2 ]] && sudo chmod 777 /mnt2
-#  [[ -d /mnt3 ]] && sudo chmod 777 /mnt3
-#  [[ -d /mnt4 ]] && sudo chmod 777 /mnt4
-#fi
+create_ephemeral_blkdev_links() {
+  device_letter=$1
+  devx=/dev/xvd${device_letter}
+  devs=/dev/sd${device_letter}
+  if [[ -e $devx && ! -e $devs ]]; then sudo ln -s $devx $devs; fi
+}
+if [[ $DISTRIB_ID = "Ubuntu" ]]; then
+  create_ephemeral_blkdev_links b
+  create_ephemeral_blkdev_links c
+  create_ephemeral_blkdev_links d
+fi
+
+if [[ $DISTRIB_ID = "Ubuntu" ]]; then
+  [[ -d /mnt ]] && sudo chmod 777 /mnt
+  [[ -d /mnt2 ]] && sudo chmod 777 /mnt2
+  [[ -d /mnt3 ]] && sudo chmod 777 /mnt3
+  [[ -d /mnt4 ]] && sudo chmod 777 /mnt4
+fi
 
 echo "Running setup-slave on all cluster nodes to mount filesystems, etc..."
 setup_slave_start_time="$(date +'%s')"
@@ -108,16 +108,12 @@ if [[ $DISTRIB_ID = "Centos" ]]; then
     --timeout 0 \
     "spark-ec2/setup-slave.sh"
 elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
-  #mkdir slave-setup-stdout
-  #mkdir slave-setup-stderr
   parallel-ssh --inline \
     --host "$MASTERS $SLAVES" \
     --user $USER \
     --extra-args "-t -t $SSH_OPTS" \
     --timeout 0 \
     "spark-ec2/setup-slave.sh"
-    #--outdir slave-setup-stdout \
-    #--errdir slave-setup-stderr \
 fi
 
 setup_slave_end_time="$(date +'%s')"
@@ -129,10 +125,7 @@ echo_time_diff "setup-slave" "$setup_slave_start_time" "$setup_slave_end_time"
 if [[ ! $MODULES =~ *scala* ]]; then
   MODULES=$(printf "%s\n%s\n" "scala" $MODULES)
 fi
-#
 
-#$$$$ TEST $$$$
-MODULES="ephemeral-hdfs" # persistent-hdfs mapreduce spark-standalone tachyon rstudio ganglia"
 
 # Install / Init module
 for module in $MODULES; do
@@ -170,14 +163,6 @@ echo "Deploying Spark config files..."
 chmod u+x ~/spark/conf/spark-env.sh
 ~/spark-ec2/copy-dir ~/spark/conf
 
-#$$$$ TEST $$$$
-#MODULES="scala spark ephemeral-hdfs persistent-hdfs mapreduce spark-standalone tachyon rstudio ganglia"
-#MODULES="ephemeral-hdfs" # 
-#MODULES="persistent-hdfs" # 
-#MODULES="mapreduce" # 
-MODULES="spark-standalone" # tachyon rstudio ganglia"
-echo $MODULES
-
 # Setup each module
 for module in $MODULES; do
   echo "Setting up $module"
@@ -187,8 +172,6 @@ for module in $MODULES; do
   module_setup_end_time="$(date +'%s')"
   echo_time_diff "$module setup" "$module_setup_start_time" "$module_setup_end_time"
   cd ~/spark-ec2  # guard against setup.sh changing the cwd
-  
-  exit
 done
 
 popd > /dev/null
