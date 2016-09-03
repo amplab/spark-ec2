@@ -62,7 +62,6 @@ if [[ $instance_type == r3* || $instance_type == i2* || $instance_type == hi1* ]
   sudo mkfs.ext4 -E lazy_itable_init=0,lazy_journal_init=0 /dev/sdb
   sudo mount -o $EXT4_MOUNT_OPTS /dev/sdb /mnt
   echo "Changing slave /mnt mode to 777"
-  sudo chmod 777 /mnt
 
   if [[ $instance_type == "r3.8xlarge" || $instance_type == "hi1.4xlarge" ]]; then
     sudo mkdir /mnt2
@@ -71,14 +70,12 @@ if [[ $instance_type == r3* || $instance_type == i2* || $instance_type == hi1* ]
     if [[ $instance_type == "r3.8xlarge" ]]; then
       sudo mkfs.ext4 -E lazy_itable_init=0,lazy_journal_init=0 /dev/sdc      
       sudo mount -o $EXT4_MOUNT_OPTS /dev/sdc /mnt2
-      sudo chmod 777 /mnt2
     fi
     # To turn TRIM support on, uncomment the following line.
     #echo '/dev/sdf /mnt2  ext4  defaults,noatime,nodiratime,discard 0 0' >> /etc/fstab
     if [[ $instance_type == "hi1.4xlarge" ]]; then
       sudo mkfs.ext4 -E lazy_itable_init=0,lazy_journal_init=0 /dev/sdf      
       sudo mount -o $EXT4_MOUNT_OPTS /dev/sdf /mnt2
-      sudo chmod 777 /mnt2
     fi    
   fi
 fi
@@ -162,6 +159,14 @@ if [[ $DISTRIB_ID = "CentOS" ]]; then
 elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
   sudo apt-get install -y -q realpath
 fi
+
+if [[ $DISTRIB_ID = "Ubuntu" ]]; then
+  [[ -d /mnt ]] && sudo chmod 777 /mnt
+  [[ -d /mnt2 ]] && sudo chmod 777 /mnt2
+  [[ -d /mnt3 ]] && sudo chmod 777 /mnt3
+  [[ -d /mnt4 ]] && sudo chmod 777 /mnt4
+fi
+
 
 popd > /dev/null
 
