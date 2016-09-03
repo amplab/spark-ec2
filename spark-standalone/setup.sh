@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BIN_FOLDER="~/spark/sbin"
+BIN_FOLDER=`realpath ~/spark/sbin`
 
 if [[ "0.7.3 0.8.0 0.8.1" =~ $SPARK_VERSION ]]; then
   BIN_FOLDER="~/spark/bin"
