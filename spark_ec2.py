@@ -42,6 +42,7 @@ import warnings
 from datetime import datetime
 from optparse import OptionParser
 from sys import stderr
+from collections import namedtuple
 
 if sys.version < "3":
     from urllib2 import urlopen, Request, HTTPError
@@ -210,6 +211,11 @@ def parse_args():
         help="Availability zone to launch instances in, or 'all' to spread " +
              "slaves across multiple (an additional $0.01/Gb for bandwidth" +
              "between zones applies) (default: a single zone chosen at random)")
+    parser.add_option(
+        "--ami-type", default="spark",
+        help="Type of ami to use (default: %default). " +
+             "Valid options are %default and ubuntu. " +
+	     "If you specify an ami, the ami-type option will be ignored.")
     parser.add_option(
         "-a", "--ami",
         help="Amazon Machine Image ID to use")
@@ -472,7 +478,14 @@ def get_spark_ami(opts):
         r=opts.spark_ec2_git_repo.replace("https://github.com", "https://raw.github.com", 1),
         b=opts.spark_ec2_git_branch)
 
-    ami_path = "%s/%s/%s" % (ami_prefix, opts.region, instance_type)
+    if opts.ami_type == "spark":
+      ami_path = "%s/%s/%s" % (ami_prefix, opts.region, instance_type)
+    elif opts.ami_type == "ubuntu":
+      ami_path = "%s-ubuntu/ami-list-ubuntu-amd64" % ami_prefix
+    else:
+      print("Bad ami type")
+      sys.exit(1)
+
     reader = codecs.getreader("ascii")
     try:
         ami = reader(urlopen(ami_path)).read().strip()
@@ -480,7 +493,29 @@ def get_spark_ami(opts):
         print("Could not resolve AMI at: " + ami_path, file=stderr)
         sys.exit(1)
 
+    if opts.ami_type == "ubuntu":
+      storage_type = "ebs"	#"", "ebs", "ebs-io1", "ebs-ssd"
+      AMItup = namedtuple('AMI', ['region','release','version','arch','hwtype','date','ami','hyper'])
+      amil = ami.split('\n')
+      amill = [l.split(',') for l in amil]
+      amilt = [AMItup._make(l) for l in amill]
+      import pdb; pdb.set_trace()
+      if instance_type == 'hvm':
+	hwtype = 'hvm:' + storage_type
+	amilt = [t for t in amilt if t.region == opts.region and t.hyper == 'hvm' and t.hwtype == hwtype]
+      else:
+	hwtype = storage_type
+	amilt = [t for t in amilt if t.region == opts.region and t.hyper != 'hvm' and t.hwtype == hwtype]
+      if len(amilt) != 1:
+        print("%d AMIs found, needed exactly one" % len(amilt))
+	for t in amilt:
+	  print(t)
+	sys.exit(1)
+      ami = amilt[0].ami
+
+
     print("Spark AMI: " + ami)
+    sys.exit(1)
     return ami
 
 
@@ -489,6 +524,10 @@ def get_spark_ami(opts):
 # Returns a tuple of EC2 reservation objects for the master and slaves
 # Fails if there already instances running in the cluster's groups.
 def launch_cluster(conn, opts, cluster_name):
+    # Figure out Spark AMI
+    if opts.ami is None:
+        opts.ami = get_spark_ami(opts)
+
     if opts.identity_file is None:
         print("ERROR: Must provide an identity file (-i) for ssh connections.", file=stderr)
         sys.exit(1)
