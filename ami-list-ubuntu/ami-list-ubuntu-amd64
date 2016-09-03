@@ -1,88 +1,88 @@
- ap-northeast-1	trusty	14.04 LTS	amd64	hvm:ebs	20160809.1	ami-03d01062	hvm
- ap-northeast-1	trusty	14.04 LTS	amd64	hvm:ebs-io1	20160809.1	ami-90d111f1	hvm
- ap-northeast-1	trusty	14.04 LTS	amd64	hvm:ebs-ssd	20160809.1	ami-49d31328	hvm
- ap-northeast-1	trusty	14.04 LTS	amd64	hvm:instance-store	20160809.1	ami-55d21234	hvm
- ap-northeast-1	trusty	14.04 LTS	amd64	ebs	20160809.1	ami-47d41426	aki-176bf516
- ap-northeast-1	trusty	14.04 LTS	amd64	ebs-io1	20160809.1	ami-97d111f6	aki-176bf516
- ap-northeast-1	trusty	14.04 LTS	amd64	ebs-ssd	20160809.1	ami-24d11145	aki-176bf516
- ap-northeast-1	trusty	14.04 LTS	amd64	instance-store	20160809.1	ami-55d01034	aki-176bf516
- ap-southeast-1	trusty	14.04 LTS	amd64	hvm:ebs	20160809.1	ami-b84799db	hvm
- ap-southeast-1	trusty	14.04 LTS	amd64	hvm:ebs-io1	20160809.1	ami-f0459b93	hvm
- ap-southeast-1	trusty	14.04 LTS	amd64	hvm:ebs-ssd	20160809.1	ami-5e429c3d	hvm
- ap-southeast-1	trusty	14.04 LTS	amd64	hvm:instance-store	20160809.1	ami-41409e22	hvm
- ap-southeast-1	trusty	14.04 LTS	amd64	ebs	20160809.1	ami-af4997cc	aki-503e7402
- ap-southeast-1	trusty	14.04 LTS	amd64	ebs-io1	20160809.1	ami-af449acc	aki-503e7402
- ap-southeast-1	trusty	14.04 LTS	amd64	ebs-ssd	20160809.1	ami-a2449ac1	aki-503e7402
- ap-southeast-1	trusty	14.04 LTS	amd64	instance-store	20160809.1	ami-dc459bbf	aki-503e7402
- ap-southeast-2	trusty	14.04 LTS	amd64	hvm:ebs	20160809.1	ami-47f1c524	hvm
- ap-southeast-2	trusty	14.04 LTS	amd64	hvm:ebs-io1	20160809.1	ami-def2c6bd	hvm
- ap-southeast-2	trusty	14.04 LTS	amd64	hvm:ebs-ssd	20160809.1	ami-25f3c746	hvm
- ap-southeast-2	trusty	14.04 LTS	amd64	hvm:instance-store	20160809.1	ami-41f1c522	hvm
- ap-southeast-2	trusty	14.04 LTS	amd64	ebs	20160809.1	ami-0cf0c46f	aki-c362fff9
- ap-southeast-2	trusty	14.04 LTS	amd64	ebs-io1	20160809.1	ami-1df1c57e	aki-c362fff9
- ap-southeast-2	trusty	14.04 LTS	amd64	ebs-ssd	20160809.1	ami-81f3c7e2	aki-c362fff9
- ap-southeast-2	trusty	14.04 LTS	amd64	instance-store	20160809.1	ami-fef2c69d	aki-c362fff9
- cn-north-1	trusty	14.04 LTS	amd64	hvm:ebs	20160714	ami-67af7a0a	hvm
- cn-north-1	trusty	14.04 LTS	amd64	hvm:ebs-io1	20160714	ami-bfad78d2	hvm
- cn-north-1	trusty	14.04 LTS	amd64	hvm:ebs-ssd	20160714	ami-bead78d3	hvm
- cn-north-1	trusty	14.04 LTS	amd64	hvm:instance-store	20160714	ami-02af7a6f	hvm
- cn-north-1	trusty	14.04 LTS	amd64	ebs	20160714	ami-58ae7b35	aki-9e8f1da7
- cn-north-1	trusty	14.04 LTS	amd64	ebs-io1	20160714	ami-f2ad789f	aki-9e8f1da7
- cn-north-1	trusty	14.04 LTS	amd64	ebs-ssd	20160714	ami-ccae7ba1	aki-9e8f1da7
- cn-north-1	trusty	14.04 LTS	amd64	instance-store	20160714	ami-79ae7b14	aki-9e8f1da7
- eu-central-1	trusty	14.04 LTS	amd64	hvm:ebs	20160809.1	ami-d3cd3bbc	hvm
- eu-central-1	trusty	14.04 LTS	amd64	hvm:ebs-io1	20160809.1	ami-51cd3b3e	hvm
- eu-central-1	trusty	14.04 LTS	amd64	hvm:ebs-ssd	20160809.1	ami-b1cf39de	hvm
- eu-central-1	trusty	14.04 LTS	amd64	hvm:instance-store	20160809.1	ami-6acb3d05	hvm
- eu-central-1	trusty	14.04 LTS	amd64	ebs	20160809.1	ami-d1cd3bbe	aki-184c7a05
- eu-central-1	trusty	14.04 LTS	amd64	ebs-io1	20160809.1	ami-b6cf39d9	aki-184c7a05
- eu-central-1	trusty	14.04 LTS	amd64	ebs-ssd	20160809.1	ami-09cf3966	aki-184c7a05
- eu-central-1	trusty	14.04 LTS	amd64	instance-store	20160809.1	ami-d3cf39bc	aki-184c7a05
- eu-west-1	trusty	14.04 LTS	amd64	hvm:ebs	20160809.1	ami-a7412ad4	hvm
- eu-west-1	trusty	14.04 LTS	amd64	hvm:ebs-io1	20160809.1	ami-5a452e29	hvm
- eu-west-1	trusty	14.04 LTS	amd64	hvm:ebs-ssd	20160809.1	ami-55452e26	hvm
- eu-west-1	trusty	14.04 LTS	amd64	hvm:instance-store	20160809.1	ami-5d42292e	hvm
- eu-west-1	trusty	14.04 LTS	amd64	ebs	20160809.1	ami-e4452e97	aki-52a34525
- eu-west-1	trusty	14.04 LTS	amd64	ebs-io1	20160809.1	ami-3f472c4c	aki-52a34525
- eu-west-1	trusty	14.04 LTS	amd64	ebs-ssd	20160809.1	ami-5b452e28	aki-52a34525
- eu-west-1	trusty	14.04 LTS	amd64	instance-store	20160809.1	ami-07492274	aki-52a34525
- sa-east-1	trusty	14.04 LTS	amd64	hvm:ebs	20160809.1	ami-e09d0b8c	hvm
- sa-east-1	trusty	14.04 LTS	amd64	hvm:ebs-io1	20160809.1	ami-f89d0b94	hvm
- sa-east-1	trusty	14.04 LTS	amd64	hvm:ebs-ssd	20160809.1	ami-97980efb	hvm
- sa-east-1	trusty	14.04 LTS	amd64	hvm:instance-store	20160809.1	ami-1a980e76	hvm
- sa-east-1	trusty	14.04 LTS	amd64	ebs	20160809.1	ami-16980e7a	aki-5553f448
- sa-east-1	trusty	14.04 LTS	amd64	ebs-io1	20160809.1	ami-8b9a0ce7	aki-5553f448
- sa-east-1	trusty	14.04 LTS	amd64	ebs-ssd	20160809.1	ami-98980ef4	aki-5553f448
- sa-east-1	trusty	14.04 LTS	amd64	instance-store	20160809.1	ami-6c9f0900	aki-5553f448
- us-east-1	trusty	14.04 LTS	amd64	hvm:ebs	20160809.1	ami-d90d92ce	hvm
- us-east-1	trusty	14.04 LTS	amd64	hvm:ebs-io1	20160809.1	ami-1b0d920c	hvm
- us-east-1	trusty	14.04 LTS	amd64	hvm:ebs-ssd	20160809.1	ami-8e0b9499	hvm
- us-east-1	trusty	14.04 LTS	amd64	hvm:instance-store	20160809.1	ami-08128d1f	hvm
- us-east-1	trusty	14.04 LTS	amd64	ebs	20160809.1	ami-c70f90d0	aki-919dcaf8
- us-east-1	trusty	14.04 LTS	amd64	ebs-io1	20160809.1	ami-510c9346	aki-919dcaf8
- us-east-1	trusty	14.04 LTS	amd64	ebs-ssd	20160809.1	ami-6808977f	aki-919dcaf8
- us-east-1	trusty	14.04 LTS	amd64	instance-store	20160809.1	ami-b266f9a5	aki-919dcaf8
- us-gov-west-1	trusty	14.04 LTS	amd64	hvm:ebs	20160809.1	ami-3508b654	hvm
- us-gov-west-1	trusty	14.04 LTS	amd64	hvm:ebs-io1	20160809.1	ami-2e0bb54f	hvm
- us-gov-west-1	trusty	14.04 LTS	amd64	hvm:ebs-ssd	20160809.1	ami-2a08b64b	hvm
- us-gov-west-1	trusty	14.04 LTS	amd64	hvm:instance-store	20160809.1	ami-2809b749	hvm
- us-gov-west-1	trusty	14.04 LTS	amd64	ebs	20160809.1	ami-600cb201	aki-1de98d3e
- us-gov-west-1	trusty	14.04 LTS	amd64	ebs-io1	20160809.1	ami-780fb119	aki-1de98d3e
- us-gov-west-1	trusty	14.04 LTS	amd64	ebs-ssd	20160809.1	ami-ab0bb5ca	aki-1de98d3e
- us-gov-west-1	trusty	14.04 LTS	amd64	instance-store	20160809.1	ami-2b0bb54a	aki-1de98d3e
- us-west-1	trusty	14.04 LTS	amd64	hvm:ebs	20160809.1	ami-27743747	hvm
- us-west-1	trusty	14.04 LTS	amd64	hvm:ebs-io1	20160809.1	ami-577a3937	hvm
- us-west-1	trusty	14.04 LTS	amd64	hvm:ebs-ssd	20160809.1	ami-547b3834	hvm
- us-west-1	trusty	14.04 LTS	amd64	hvm:instance-store	20160809.1	ami-fd74379d	hvm
- us-west-1	trusty	14.04 LTS	amd64	ebs	20160809.1	ami-d47a39b4	aki-880531cd
- us-west-1	trusty	14.04 LTS	amd64	ebs-io1	20160809.1	ami-11753671	aki-880531cd
- us-west-1	trusty	14.04 LTS	amd64	ebs-ssd	20160809.1	ami-31753651	aki-880531cd
- us-west-1	trusty	14.04 LTS	amd64	instance-store	20160809.1	ami-33773453	aki-880531cd
- us-west-2	trusty	14.04 LTS	amd64	hvm:ebs	20160809.1	ami-20be7540	hvm
- us-west-2	trusty	14.04 LTS	amd64	hvm:ebs-io1	20160809.1	ami-dcb57ebc	hvm
- us-west-2	trusty	14.04 LTS	amd64	hvm:ebs-ssd	20160809.1	ami-70b67d10	hvm
- us-west-2	trusty	14.04 LTS	amd64	hvm:instance-store	20160809.1	ami-a9b972c9	hvm
- us-west-2	trusty	14.04 LTS	amd64	ebs	20160809.1	ami-abb07bcb	aki-fc8f11cc
- us-west-2	trusty	14.04 LTS	amd64	ebs-io1	20160809.1	ami-88b07be8	aki-fc8f11cc
- us-west-2	trusty	14.04 LTS	amd64	ebs-ssd	20160809.1	ami-73b67d13	aki-fc8f11cc
- us-west-2	trusty	14.04 LTS	amd64	instance-store	20160809.1	ami-a3bf74c3	aki-fc8f11cc
+ ap-northeast-1,trusty,14.04 LTS,amd64,hvm:ebs,20160809.1,ami-03d01062,hvm
+ ap-northeast-1,trusty,14.04 LTS,amd64,hvm:ebs-io1,20160809.1,ami-90d111f1,hvm
+ ap-northeast-1,trusty,14.04 LTS,amd64,hvm:ebs-ssd,20160809.1,ami-49d31328,hvm
+ ap-northeast-1,trusty,14.04 LTS,amd64,hvm:instance-store,20160809.1,ami-55d21234,hvm
+ ap-northeast-1,trusty,14.04 LTS,amd64,ebs,20160809.1,ami-47d41426,aki-176bf516
+ ap-northeast-1,trusty,14.04 LTS,amd64,ebs-io1,20160809.1,ami-97d111f6,aki-176bf516
+ ap-northeast-1,trusty,14.04 LTS,amd64,ebs-ssd,20160809.1,ami-24d11145,aki-176bf516
+ ap-northeast-1,trusty,14.04 LTS,amd64,instance-store,20160809.1,ami-55d01034,aki-176bf516
+ ap-southeast-1,trusty,14.04 LTS,amd64,hvm:ebs,20160809.1,ami-b84799db,hvm
+ ap-southeast-1,trusty,14.04 LTS,amd64,hvm:ebs-io1,20160809.1,ami-f0459b93,hvm
+ ap-southeast-1,trusty,14.04 LTS,amd64,hvm:ebs-ssd,20160809.1,ami-5e429c3d,hvm
+ ap-southeast-1,trusty,14.04 LTS,amd64,hvm:instance-store,20160809.1,ami-41409e22,hvm
+ ap-southeast-1,trusty,14.04 LTS,amd64,ebs,20160809.1,ami-af4997cc,aki-503e7402
+ ap-southeast-1,trusty,14.04 LTS,amd64,ebs-io1,20160809.1,ami-af449acc,aki-503e7402
+ ap-southeast-1,trusty,14.04 LTS,amd64,ebs-ssd,20160809.1,ami-a2449ac1,aki-503e7402
+ ap-southeast-1,trusty,14.04 LTS,amd64,instance-store,20160809.1,ami-dc459bbf,aki-503e7402
+ ap-southeast-2,trusty,14.04 LTS,amd64,hvm:ebs,20160809.1,ami-47f1c524,hvm
+ ap-southeast-2,trusty,14.04 LTS,amd64,hvm:ebs-io1,20160809.1,ami-def2c6bd,hvm
+ ap-southeast-2,trusty,14.04 LTS,amd64,hvm:ebs-ssd,20160809.1,ami-25f3c746,hvm
+ ap-southeast-2,trusty,14.04 LTS,amd64,hvm:instance-store,20160809.1,ami-41f1c522,hvm
+ ap-southeast-2,trusty,14.04 LTS,amd64,ebs,20160809.1,ami-0cf0c46f,aki-c362fff9
+ ap-southeast-2,trusty,14.04 LTS,amd64,ebs-io1,20160809.1,ami-1df1c57e,aki-c362fff9
+ ap-southeast-2,trusty,14.04 LTS,amd64,ebs-ssd,20160809.1,ami-81f3c7e2,aki-c362fff9
+ ap-southeast-2,trusty,14.04 LTS,amd64,instance-store,20160809.1,ami-fef2c69d,aki-c362fff9
+ cn-north-1,trusty,14.04 LTS,amd64,hvm:ebs,20160714,ami-67af7a0a,hvm
+ cn-north-1,trusty,14.04 LTS,amd64,hvm:ebs-io1,20160714,ami-bfad78d2,hvm
+ cn-north-1,trusty,14.04 LTS,amd64,hvm:ebs-ssd,20160714,ami-bead78d3,hvm
+ cn-north-1,trusty,14.04 LTS,amd64,hvm:instance-store,20160714,ami-02af7a6f,hvm
+ cn-north-1,trusty,14.04 LTS,amd64,ebs,20160714,ami-58ae7b35,aki-9e8f1da7
+ cn-north-1,trusty,14.04 LTS,amd64,ebs-io1,20160714,ami-f2ad789f,aki-9e8f1da7
+ cn-north-1,trusty,14.04 LTS,amd64,ebs-ssd,20160714,ami-ccae7ba1,aki-9e8f1da7
+ cn-north-1,trusty,14.04 LTS,amd64,instance-store,20160714,ami-79ae7b14,aki-9e8f1da7
+ eu-central-1,trusty,14.04 LTS,amd64,hvm:ebs,20160809.1,ami-d3cd3bbc,hvm
+ eu-central-1,trusty,14.04 LTS,amd64,hvm:ebs-io1,20160809.1,ami-51cd3b3e,hvm
+ eu-central-1,trusty,14.04 LTS,amd64,hvm:ebs-ssd,20160809.1,ami-b1cf39de,hvm
+ eu-central-1,trusty,14.04 LTS,amd64,hvm:instance-store,20160809.1,ami-6acb3d05,hvm
+ eu-central-1,trusty,14.04 LTS,amd64,ebs,20160809.1,ami-d1cd3bbe,aki-184c7a05
+ eu-central-1,trusty,14.04 LTS,amd64,ebs-io1,20160809.1,ami-b6cf39d9,aki-184c7a05
+ eu-central-1,trusty,14.04 LTS,amd64,ebs-ssd,20160809.1,ami-09cf3966,aki-184c7a05
+ eu-central-1,trusty,14.04 LTS,amd64,instance-store,20160809.1,ami-d3cf39bc,aki-184c7a05
+ eu-west-1,trusty,14.04 LTS,amd64,hvm:ebs,20160809.1,ami-a7412ad4,hvm
+ eu-west-1,trusty,14.04 LTS,amd64,hvm:ebs-io1,20160809.1,ami-5a452e29,hvm
+ eu-west-1,trusty,14.04 LTS,amd64,hvm:ebs-ssd,20160809.1,ami-55452e26,hvm
+ eu-west-1,trusty,14.04 LTS,amd64,hvm:instance-store,20160809.1,ami-5d42292e,hvm
+ eu-west-1,trusty,14.04 LTS,amd64,ebs,20160809.1,ami-e4452e97,aki-52a34525
+ eu-west-1,trusty,14.04 LTS,amd64,ebs-io1,20160809.1,ami-3f472c4c,aki-52a34525
+ eu-west-1,trusty,14.04 LTS,amd64,ebs-ssd,20160809.1,ami-5b452e28,aki-52a34525
+ eu-west-1,trusty,14.04 LTS,amd64,instance-store,20160809.1,ami-07492274,aki-52a34525
+ sa-east-1,trusty,14.04 LTS,amd64,hvm:ebs,20160809.1,ami-e09d0b8c,hvm
+ sa-east-1,trusty,14.04 LTS,amd64,hvm:ebs-io1,20160809.1,ami-f89d0b94,hvm
+ sa-east-1,trusty,14.04 LTS,amd64,hvm:ebs-ssd,20160809.1,ami-97980efb,hvm
+ sa-east-1,trusty,14.04 LTS,amd64,hvm:instance-store,20160809.1,ami-1a980e76,hvm
+ sa-east-1,trusty,14.04 LTS,amd64,ebs,20160809.1,ami-16980e7a,aki-5553f448
+ sa-east-1,trusty,14.04 LTS,amd64,ebs-io1,20160809.1,ami-8b9a0ce7,aki-5553f448
+ sa-east-1,trusty,14.04 LTS,amd64,ebs-ssd,20160809.1,ami-98980ef4,aki-5553f448
+ sa-east-1,trusty,14.04 LTS,amd64,instance-store,20160809.1,ami-6c9f0900,aki-5553f448
+ us-east-1,trusty,14.04 LTS,amd64,hvm:ebs,20160809.1,ami-d90d92ce,hvm
+ us-east-1,trusty,14.04 LTS,amd64,hvm:ebs-io1,20160809.1,ami-1b0d920c,hvm
+ us-east-1,trusty,14.04 LTS,amd64,hvm:ebs-ssd,20160809.1,ami-8e0b9499,hvm
+ us-east-1,trusty,14.04 LTS,amd64,hvm:instance-store,20160809.1,ami-08128d1f,hvm
+ us-east-1,trusty,14.04 LTS,amd64,ebs,20160809.1,ami-c70f90d0,aki-919dcaf8
+ us-east-1,trusty,14.04 LTS,amd64,ebs-io1,20160809.1,ami-510c9346,aki-919dcaf8
+ us-east-1,trusty,14.04 LTS,amd64,ebs-ssd,20160809.1,ami-6808977f,aki-919dcaf8
+ us-east-1,trusty,14.04 LTS,amd64,instance-store,20160809.1,ami-b266f9a5,aki-919dcaf8
+ us-gov-west-1,trusty,14.04 LTS,amd64,hvm:ebs,20160809.1,ami-3508b654,hvm
+ us-gov-west-1,trusty,14.04 LTS,amd64,hvm:ebs-io1,20160809.1,ami-2e0bb54f,hvm
+ us-gov-west-1,trusty,14.04 LTS,amd64,hvm:ebs-ssd,20160809.1,ami-2a08b64b,hvm
+ us-gov-west-1,trusty,14.04 LTS,amd64,hvm:instance-store,20160809.1,ami-2809b749,hvm
+ us-gov-west-1,trusty,14.04 LTS,amd64,ebs,20160809.1,ami-600cb201,aki-1de98d3e
+ us-gov-west-1,trusty,14.04 LTS,amd64,ebs-io1,20160809.1,ami-780fb119,aki-1de98d3e
+ us-gov-west-1,trusty,14.04 LTS,amd64,ebs-ssd,20160809.1,ami-ab0bb5ca,aki-1de98d3e
+ us-gov-west-1,trusty,14.04 LTS,amd64,instance-store,20160809.1,ami-2b0bb54a,aki-1de98d3e
+ us-west-1,trusty,14.04 LTS,amd64,hvm:ebs,20160809.1,ami-27743747,hvm
+ us-west-1,trusty,14.04 LTS,amd64,hvm:ebs-io1,20160809.1,ami-577a3937,hvm
+ us-west-1,trusty,14.04 LTS,amd64,hvm:ebs-ssd,20160809.1,ami-547b3834,hvm
+ us-west-1,trusty,14.04 LTS,amd64,hvm:instance-store,20160809.1,ami-fd74379d,hvm
+ us-west-1,trusty,14.04 LTS,amd64,ebs,20160809.1,ami-d47a39b4,aki-880531cd
+ us-west-1,trusty,14.04 LTS,amd64,ebs-io1,20160809.1,ami-11753671,aki-880531cd
+ us-west-1,trusty,14.04 LTS,amd64,ebs-ssd,20160809.1,ami-31753651,aki-880531cd
+ us-west-1,trusty,14.04 LTS,amd64,instance-store,20160809.1,ami-33773453,aki-880531cd
+ us-west-2,trusty,14.04 LTS,amd64,hvm:ebs,20160809.1,ami-20be7540,hvm
+ us-west-2,trusty,14.04 LTS,amd64,hvm:ebs-io1,20160809.1,ami-dcb57ebc,hvm
+ us-west-2,trusty,14.04 LTS,amd64,hvm:ebs-ssd,20160809.1,ami-70b67d10,hvm
+ us-west-2,trusty,14.04 LTS,amd64,hvm:instance-store,20160809.1,ami-a9b972c9,hvm
+ us-west-2,trusty,14.04 LTS,amd64,ebs,20160809.1,ami-abb07bcb,aki-fc8f11cc
+ us-west-2,trusty,14.04 LTS,amd64,ebs-io1,20160809.1,ami-88b07be8,aki-fc8f11cc
+ us-west-2,trusty,14.04 LTS,amd64,ebs-ssd,20160809.1,ami-73b67d13,aki-fc8f11cc
+ us-west-2,trusty,14.04 LTS,amd64,instance-store,20160809.1,ami-a3bf74c3,aki-fc8f11cc
