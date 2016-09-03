@@ -1,7 +1,5 @@
 #!/bin/bash
 
-BIN_FOLDER=`realpath ~/spark/sbin`
-
 if [[ "0.7.3 0.8.0 0.8.1" =~ $SPARK_VERSION ]]; then
   BIN_FOLDER="~/spark/bin"
 fi
@@ -19,15 +17,15 @@ echo "spark://""`cat ~/spark-ec2/masters`"":7077" > ~/spark-ec2/cluster-url
 # workers.
 
 # Stop anything that is running
-$BIN_FOLDER/stop-all.sh
+~/spark/sbin/stop-all.sh
 
 sleep 2
 
 # Start Master
-$BIN_FOLDER/start-master.sh
+~/spark/sbin/start-master.sh
 
 # Pause
 sleep 20
 
 # Start Workers
-$BIN_FOLDER/start-slaves.sh
+~/spark/sbin/start-slaves.sh
