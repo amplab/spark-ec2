@@ -499,7 +499,6 @@ def get_spark_ami(opts):
       amil = ami.split('\n')
       amill = [l.split(',') for l in amil]
       amilt = [AMItup._make(l) for l in amill]
-      import pdb; pdb.set_trace()
       if instance_type == 'hvm':
 	hwtype = 'hvm:' + storage_type
 	amilt = [t for t in amilt if t.region == opts.region and t.hyper == 'hvm' and t.hwtype == hwtype]
@@ -515,7 +514,6 @@ def get_spark_ami(opts):
 
 
     print("Spark AMI: " + ami)
-    sys.exit(1)
     return ami
 
 
@@ -524,9 +522,6 @@ def get_spark_ami(opts):
 # Returns a tuple of EC2 reservation objects for the master and slaves
 # Fails if there already instances running in the cluster's groups.
 def launch_cluster(conn, opts, cluster_name):
-    # Figure out Spark AMI
-    if opts.ami is None:
-        opts.ami = get_spark_ami(opts)
 
     if opts.identity_file is None:
         print("ERROR: Must provide an identity file (-i) for ssh connections.", file=stderr)
