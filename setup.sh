@@ -12,10 +12,7 @@ if [[ $DISTRIB_ID = "Centos" ]]; then
   sudo yum install -y -q pssh
 elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
   sudo apt-get install -y -q pssh
-
-  ./install-java-on-ubuntu.sh
   sudo apt-get install -y -q git
-
 fi
 
 # usage: echo_time_diff name start_time end_time
@@ -28,6 +25,10 @@ echo_time_diff () {
 
 # Make sure we are in the spark-ec2 directory
 pushd ~/spark-ec2 > /dev/null
+
+if [[ $DISTRIB_ID = "Ubuntu" ]]; then
+  ./install-java-on-ubuntu.sh
+fi
 
 # Load the environment variables specific to this AMI
 if [[ -e ~/.bash_profile ]]; then source ~/.bash_profile; fi

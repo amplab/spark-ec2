@@ -10,7 +10,6 @@ echo "DISTRIB_ID=$DISTRIB_ID"
 
 if [[ $DISTRIB_ID = "Ubuntu" ]]; then
   sudo apt-get install -y -q git
-  ~/spark-ec2/install-java-on-ubuntu.sh
 fi
 
 # Disable Transparent Huge Pages (THP)
@@ -22,6 +21,10 @@ fi
 
 # Make sure we are in the spark-ec2 directory
 pushd ~/spark-ec2 > /dev/null
+
+if [[ $DISTRIB_ID = "Ubuntu" ]]; then
+  ./install-java-on-ubuntu.sh
+fi
 
 source ec2-variables.sh
 
