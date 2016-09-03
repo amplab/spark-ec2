@@ -80,11 +80,21 @@ template_vars = {
   "aws_secret_access_key": os.getenv("AWS_SECRET_ACCESS_KEY"),
 }
 
-template_dir="~/spark-ec2/templates"
+deploy_root_dir = os.getenv("DEPLOY_ROOT_DIR")
+
+template_dir=deploy_root_dir+"/spark-ec2/templates"
+tmp_template_dir=os.getenv("TMP_TEMPLATE_DIR")
+print("deploy_templates.py")
+print(deploy_root_dir)
 
 for path, dirs, files in os.walk(template_dir):
   if path.find(".svn") == -1:
     dest_dir = os.path.join('/', path[len(template_dir):])
+    print(dest_dir, path, dirs, files)
+    if dest_dir.startswith("/root"):
+      dest_dir = deploy_root_dir + dest_dir[5:]
+    dest_dir = "/tmp/templates/" + dest_dir
+    print(dest_dir, path, dirs, files)
     if not os.path.exists(dest_dir):
       os.makedirs(dest_dir)
     for filename in files:

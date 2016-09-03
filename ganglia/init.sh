@@ -38,8 +38,9 @@ elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
   #  ssh -t -t $SSH_OPTS $USER@$node "sudo apt-get install -y $GANGLIA_PACKAGES; sudo dpkg --configure -a" & sleep 0.3
   #done
   #wait
-fi
 
-# Post-package installation : Symlink /var/lib/ganglia/rrds to /mnt/ganglia/rrds
-if [[ -d /var/lib/ganglia/rrds ]]; then sudo rmdir /var/lib/ganglia/rrds; fi
-sudo ln -s /mnt/ganglia/rrds /var/lib/ganglia/rrds
+	# Post-package installation : Symlink /var/lib/ganglia/rrds to /mnt/ganglia/rrds
+	if [[ -d /var/lib/ganglia/rrds ]]; then sudo rmdir /var/lib/ganglia/rrds; fi
+	sudo ln -s /mnt/ganglia/rrds /var/lib/ganglia/rrds
+
+fi
