@@ -172,7 +172,10 @@ chmod u+x ~/spark/conf/spark-env.sh
 
 #$$$$ TEST $$$$
 #MODULES="scala spark ephemeral-hdfs persistent-hdfs mapreduce spark-standalone tachyon rstudio ganglia"
-MODULES="ephemeral-hdfs" # persistent-hdfs mapreduce spark-standalone tachyon rstudio ganglia"
+#MODULES="ephemeral-hdfs" # 
+#MODULES="persistent-hdfs" # 
+#MODULES="mapreduce" # 
+MODULES="spark-standalone" # tachyon rstudio ganglia"
 echo $MODULES
 
 # Setup each module
