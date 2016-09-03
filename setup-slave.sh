@@ -10,6 +10,7 @@ echo "DISTRIB_ID=$DISTRIB_ID"
 
 if [[ $DISTRIB_ID = "Ubuntu" ]]; then
   sudo apt-get install -y -q git
+  ~/spark-ec2/install-java-on-ubuntu.sh
 fi
 
 # Disable Transparent Huge Pages (THP)

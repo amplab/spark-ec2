@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#learn the linux distribution
+DISTRIB_ID=Centos
+if [[ -e /etc/lsb-release ]]; then source /etc/lsb-release; fi
+echo "DISTRIB_ID=$DISTRIB_ID"
+
 EPHEMERAL_HDFS=~/ephemeral-hdfs
 USER=`whoami`
 
@@ -32,12 +37,24 @@ echo "Starting ephemeral HDFS..."
 # This is different depending on version.
 case "$HADOOP_MAJOR_VERSION" in
   1)
+    if [[ $DISTRIB_ID = "Ubuntu" ]]; then
+      echo "ERROR: Unsupported hadoop version on Ubuntu"
+      return -1
+    fi
     $EPHEMERAL_HDFS/bin/start-dfs.sh
     ;;
   2)
+    if [[ $DISTRIB_ID = "Ubuntu" ]]; then
+      [[ ! -e /var/hadoop ]] && sudo mkdir /var/hadoop
+      sudo chmod 777 /var/hadoop
+    fi
     $EPHEMERAL_HDFS/sbin/start-dfs.sh
     ;;
   yarn) 
+    if [[ $DISTRIB_ID = "Ubuntu" ]]; then
+      [[ ! -e /var/hadoop ]] && sudo mkdir /var/hadoop 
+      sudo chmod 777 /var/hadoop
+    fi
     $EPHEMERAL_HDFS/sbin/start-dfs.sh
     echo "Starting YARN"
     $EPHEMERAL_HDFS/sbin/start-yarn.sh

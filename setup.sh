@@ -8,22 +8,15 @@ DISTRIB_ID=Centos
 if [[ -e /etc/lsb-release ]]; then source /etc/lsb-release; fi
 echo "DISTRIB_ID=$DISTRIB_ID"
 
-#if [[ $DISTRIB_ID = "Centos" ]]; then
-#  sudo yum install -y -q pssh
-#elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
-#  sudo apt-get install -y -q pssh
-#
-#  if [[ "x$JAVA_HOME" == "x" ]]; then
-#    #also install java on the first master since stock ubuntu ami does not
-#    #come with java pre-installed; also install git
-#    sudo apt-get update
-#    sudo apt-get install -y -q openjdk-7-jdk
-#    sudo sh -c 'echo "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64" >> /etc/environment'
-#    source /etc/environment
-#  fi
-#  sudo apt-get install -y -q git
-#
-#fi
+if [[ $DISTRIB_ID = "Centos" ]]; then
+  sudo yum install -y -q pssh
+elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
+  sudo apt-get install -y -q pssh
+
+  ./install-java-on-ubuntu.sh
+  sudo apt-get install -y -q git
+
+fi
 
 # usage: echo_time_diff name start_time end_time
 echo_time_diff () {
@@ -74,17 +67,17 @@ fi
 echo "Setting executable permissions on scripts..."
 find . -regex "^.+.\(sh\|py\)" | xargs chmod a+x
 
-#echo "RSYNC'ing ~/spark-ec2 to other cluster nodes..."
-#rsync_start_time="$(date +'%s')"
-#for node in $SLAVES $OTHER_MASTERS; do
-#  echo $node
-#  rsync -e "ssh $SSH_OPTS" -az ~/spark-ec2 $node:~ &
-#  scp $SSH_OPTS ~/.ssh/id_rsa $node:.ssh &
-#  sleep 0.1
-#done
-#wait
-#rsync_end_time="$(date +'%s')"
-#echo_time_diff "rsync ~/spark-ec2" "$rsync_start_time" "$rsync_end_time"
+echo "RSYNC'ing ~/spark-ec2 to other cluster nodes..."
+rsync_start_time="$(date +'%s')"
+for node in $SLAVES $OTHER_MASTERS; do
+  echo $node
+  rsync -e "ssh $SSH_OPTS" -az ~/spark-ec2 $node:~ &
+  scp $SSH_OPTS ~/.ssh/id_rsa $node:.ssh &
+  sleep 0.1
+done
+wait
+rsync_end_time="$(date +'%s')"
+echo_time_diff "rsync ~/spark-ec2" "$rsync_start_time" "$rsync_end_time"
 
 #create_ephemeral_blkdev_links() {
 #  device_letter=$1
@@ -105,30 +98,30 @@ find . -regex "^.+.\(sh\|py\)" | xargs chmod a+x
 #  [[ -d /mnt4 ]] && sudo chmod 777 /mnt4
 #fi
 
-#echo "Running setup-slave on all cluster nodes to mount filesystems, etc..."
-#setup_slave_start_time="$(date +'%s')"
-#if [[ $DISTRIB_ID = "Centos" ]]; then
-#  pssh --inline \
-#    --host "$MASTERS $SLAVES" \
-#    --user $USER \
-#    --extra-args "-t -t $SSH_OPTS" \
-#    --timeout 0 \
-#    "spark-ec2/setup-slave.sh"
-#elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
-#  #mkdir slave-setup-stdout
-#  #mkdir slave-setup-stderr
-#  parallel-ssh --inline \
-#    --host "$MASTERS $SLAVES" \
-#    --user $USER \
-#    --extra-args "-t -t $SSH_OPTS" \
-#    --timeout 0 \
-#    "spark-ec2/setup-slave.sh"
-#    #--outdir slave-setup-stdout \
-#    #--errdir slave-setup-stderr \
-#fi
-#
-#setup_slave_end_time="$(date +'%s')"
-#echo_time_diff "setup-slave" "$setup_slave_start_time" "$setup_slave_end_time"
+echo "Running setup-slave on all cluster nodes to mount filesystems, etc..."
+setup_slave_start_time="$(date +'%s')"
+if [[ $DISTRIB_ID = "Centos" ]]; then
+  pssh --inline \
+    --host "$MASTERS $SLAVES" \
+    --user $USER \
+    --extra-args "-t -t $SSH_OPTS" \
+    --timeout 0 \
+    "spark-ec2/setup-slave.sh"
+elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
+  #mkdir slave-setup-stdout
+  #mkdir slave-setup-stderr
+  parallel-ssh --inline \
+    --host "$MASTERS $SLAVES" \
+    --user $USER \
+    --extra-args "-t -t $SSH_OPTS" \
+    --timeout 0 \
+    "spark-ec2/setup-slave.sh"
+    #--outdir slave-setup-stdout \
+    #--errdir slave-setup-stderr \
+fi
+
+setup_slave_end_time="$(date +'%s')"
+echo_time_diff "setup-slave" "$setup_slave_start_time" "$setup_slave_end_time"
 
 
 # Always include 'scala' module if it's not defined as a work around
@@ -168,17 +161,14 @@ for f in `cat conflist`; do
   outf=`echo $f | sed "s/\/tmp\/templates//"`
   dir=`dirname $outf`
   [[ ! -e $dir ]] && sudo mkdir -p $dir
-  sudo mv -v $f $outf
+  sudo mv $f $outf
 done
 
 
-#$$$$ TEST $$$$
-exit
-
-## Copy spark conf by default
-#echo "Deploying Spark config files..."
-#chmod u+x ~/spark/conf/spark-env.sh
-#~/spark-ec2/copy-dir ~/spark/conf
+# Copy spark conf by default
+echo "Deploying Spark config files..."
+chmod u+x ~/spark/conf/spark-env.sh
+~/spark-ec2/copy-dir ~/spark/conf
 
 #$$$$ TEST $$$$
 #MODULES="scala spark ephemeral-hdfs persistent-hdfs mapreduce spark-standalone tachyon rstudio ganglia"
@@ -194,6 +184,8 @@ for module in $MODULES; do
   module_setup_end_time="$(date +'%s')"
   echo_time_diff "$module setup" "$module_setup_start_time" "$module_setup_end_time"
   cd ~/spark-ec2  # guard against setup.sh changing the cwd
+  
+  exit
 done
 
 popd > /dev/null
