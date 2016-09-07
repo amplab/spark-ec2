@@ -3,21 +3,30 @@
 PERSISTENT_HDFS=~/persistent-hdfs
 USER=`whoami`
 
-pushd ~/spark-ec2/persistent-hdfs > /dev/null
-source ./setup-slave.sh
+DISTRIB_ID=Centos
+if [[ -e /etc/lsb-release ]]; then source /etc/lsb-release; fi
+echo "DISTRIB_ID=$DISTRIB_ID"
 
-for node in $SLAVES $OTHER_MASTERS; do
-  ssh -t $SSH_OPTS $USER@$node "~/spark-ec2/persistent-hdfs/setup-slave.sh" & sleep 0.3
-done
-wait
+if [[ $DISTRIB_ID = "Centos" ]]; then
+  pushd ~/spark-ec2/persistent-hdfs > /dev/null
+  source ./setup-slave.sh
 
-~/spark-ec2/copy-dir $PERSISTENT_HDFS/conf
+  for node in $SLAVES $OTHER_MASTERS; do
+    ssh -t $SSH_OPTS $USER@$node "~/spark-ec2/persistent-hdfs/setup-slave.sh" & sleep 0.3
+  done
+  wait
 
-if [[ ! -e /vol/persistent-hdfs/dfs/name ]] ; then
-  echo "Formatting persistent HDFS namenode..."
-  $PERSISTENT_HDFS/bin/hadoop namenode -format
+  ~/spark-ec2/copy-dir $PERSISTENT_HDFS/conf
+
+  if [[ ! -e /vol/persistent-hdfs/dfs/name ]] ; then
+    echo "Formatting persistent HDFS namenode..."
+    $PERSISTENT_HDFS/bin/hadoop namenode -format
+  fi
+
+  echo "Persistent HDFS installed, won't start by default..."
+
+  popd > /dev/null
+
+else
+  echo "Skipping persistent hdfs setup on $DISTRIB_ID"
 fi
-
-echo "Persistent HDFS installed, won't start by default..."
-
-popd > /dev/null
