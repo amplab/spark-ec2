@@ -24,6 +24,7 @@ pushd ~/spark-ec2 > /dev/null
 
 if [[ $DISTRIB_ID = "Ubuntu" ]]; then
   ./install-java-on-ubuntu.sh
+  source /etc/environment
 fi
 
 source ec2-variables.sh
