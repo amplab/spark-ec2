@@ -311,6 +311,10 @@ def parse_args():
         help="Additional tags to set on the machines; tags are comma-separated, while name and " +
              "value are colon separated; ex: \"Task:MySparkProject,Env:production\"")
     parser.add_option(
+        "--tag-volumes", action="store_true", default=False,
+        help="Apply the tags given in --additional-tags to any EBS volumes " +
+             "attached to master and slave instances.")
+    parser.add_option(
         "--copy-aws-credentials", action="store_true", default=False,
         help="Add AWS credentials to hadoop configuration to allow Spark to access S3")
     parser.add_option(
@@ -751,15 +755,27 @@ def launch_cluster(conn, opts, cluster_name):
             map(str.strip, tag.split(':', 1)) for tag in opts.additional_tags.split(',')
         )
 
+    print('Applying tags to master nodes')
     for master in master_nodes:
         master.add_tags(
             dict(additional_tags, Name='{cn}-master-{iid}'.format(cn=cluster_name, iid=master.id))
         )
 
+    print('Applying tags to slave nodes')
     for slave in slave_nodes:
         slave.add_tags(
             dict(additional_tags, Name='{cn}-slave-{iid}'.format(cn=cluster_name, iid=slave.id))
         )
+
+    if opts.tag_volumes:
+        if len(additional_tags) > 0:
+            print('Applying tags to volumes')
+            all_instance_ids = [x.id for x in master_nodes + slave_nodes]
+            volumes = conn.get_all_volumes(filters={'attachment.instance-id': all_instance_ids})
+            for v in volumes:
+                v.add_tags(additional_tags)
+        else:
+            print('--tag-volumes has no effect without --additional-tags')
 
     # Return all the instances
     return (master_nodes, slave_nodes)
