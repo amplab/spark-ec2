@@ -61,7 +61,7 @@ export HADOOP_PID_DIR=/var/hadoop/ephemeral-hdfs/pids
 
 # Set hadoop user for CDH (which doesn't allow running as root)
 USER=`whoami`
-if [[ $USER == "root" ]];
+if [[ $USER == "root" ]]; then
   USER=hadoop
 fi
 export HADOOP_NAMENODE_USER=$USER
