@@ -145,11 +145,11 @@ done
 # Deploy templates
 # TODO: Move configuring templates to a per-module ?
 echo "Creating local config files..."
-if [[ $DISTRIB_ID = "Ubuntu" ]]; then
-  export DEPLOY_ROOT_DIR=~
-  export TMP_TEMPLATE_DIR="/tmp/templates/"
-  mkdir $TMP_TEMPLATE_DIR
-fi
+
+export DEPLOY_ROOT_DIR=~
+export TMP_TEMPLATE_DIR="/tmp/templates/"
+mkdir $TMP_TEMPLATE_DIR
+
 ./deploy_templates.py
 find $TMP_TEMPLATE_DIR -type f > conflist
 for f in `cat conflist`; do
