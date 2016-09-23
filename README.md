@@ -148,7 +148,7 @@ as JVM options. This file needs to be copied to **every machine** to reflect the
 do this is to use a script we provide called `copy-dir`. First edit your `spark-env.sh` file on the master, 
 then run `~/spark-ec2/copy-dir /root/spark/conf` to RSYNC it to all the workers.
 
-The [configuration guide](configuration.html) describes the available configuration options.
+The [configuration guide](http://spark.apache.org/docs/latest/configuration.html) describes the available configuration options.
 
 ## Terminating a Cluster
 
