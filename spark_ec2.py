@@ -1349,7 +1349,7 @@ def set_opts(**kwargs):
         proxy_port=None,
         private_ips=False,
         instance_initiated_shutdown_behavior='stop',
-        hadoop_major_version=1,
+        hadoop_major_version='1',
         authorized_address='0.0.0.0/0',
         master_opts='',
         worker_instances=1,
