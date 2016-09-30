@@ -104,7 +104,7 @@ DEFAULT_SPARK_VERSION = SPARK_EC2_VERSION
 DEFAULT_SPARK_GITHUB_REPO = "https://github.com/apache/spark"
 
 # Default location to get the spark-ec2 scripts (and ami-list) from
-DEFAULT_SPARK_EC2_GITHUB_REPO = "https://github.com/arokem/spark-ec2"
+DEFAULT_SPARK_EC2_GITHUB_REPO = "https://github.com/amplab/spark-ec2"
 DEFAULT_SPARK_EC2_BRANCH = "branch-1.6"
 
 
@@ -160,7 +160,7 @@ external_libs = [
     }
 ]
 
-# setup_external_libs(external_libs)
+setup_external_libs(external_libs)
 
 import boto
 from boto.ec2.blockdevicemapping import BlockDeviceMapping, BlockDeviceType, EBSBlockDeviceType
@@ -1660,6 +1660,14 @@ def set_opts(**kwargs):
 class Cluster(object):
     def __init__(self, cluster_name, **kwargs):
         """
+        Initialize a Spark EC2 cluster
+
+        Parameters
+        ----------
+        cluster_name : str
+            The name of the cluster
+
+        kwargs : optional inputs (see inputs to `spark-ec2` CLI)
 
         """
         self.opts = set_opts(**kwargs)
@@ -1702,36 +1710,6 @@ class Cluster(object):
 
     def upload_credentials(self):
         pass
-
-    def _ssh(self, command, dns):
-        import paramiko
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(dns, username=self.opts.user,
-                       key_filename=self.opts.identity_file)
-        stdin, stdout, stderr = client.exec_command(command)
-        return stdin, stdout, stderr
-
-
-    def ssh_master(self, command):
-        try:
-            return self._ssh(command, self.master.dns_name)
-        except ImportError:
-            warning("Must have paramiko installed to ssh cluster directly ")
-
-    def ssh_slaves(self, command):
-        ins = []
-        outs = []
-        errs = []
-        for sl in self.slaves:
-            try:
-                stdin, stdout, stderr = self._ssh(command, sl.dns_name)
-                ins.append(stdin)
-                outs.append(stdout)
-                errs.append(stderr)
-            except ImportError:
-                warning("Must have paramiko installed to ssh cluster directly")
-        return ins, outs, errs
 
 
 def main():
