@@ -104,7 +104,7 @@ DEFAULT_SPARK_VERSION = SPARK_EC2_VERSION
 DEFAULT_SPARK_GITHUB_REPO = "https://github.com/apache/spark"
 
 # Default location to get the spark-ec2 scripts (and ami-list) from
-DEFAULT_SPARK_EC2_GITHUB_REPO = "https://github.com/amplab/spark-ec2"
+DEFAULT_SPARK_EC2_GITHUB_REPO = "https://github.com/arokem/spark-ec2"
 DEFAULT_SPARK_EC2_BRANCH = "branch-1.6"
 
 
@@ -160,7 +160,7 @@ external_libs = [
     }
 ]
 
-#setup_external_libs(external_libs)
+# setup_external_libs(external_libs)
 
 import boto
 from boto.ec2.blockdevicemapping import BlockDeviceMapping, BlockDeviceType, EBSBlockDeviceType
@@ -1308,106 +1308,6 @@ def get_dns_name(instance, private_ips=False):
     return dns
 
 
-class Bunch(object):
-    def __init__(self, **params):
-        for k, v in params.items():
-            self.__dict__[k] = v
-
-    def __repr__(self):
-        my_list = []
-        for k, v in self.__dict__.items():
-            my_list.append("%s : %s" % (k, v))
-        my_list.sort()
-        my_str = "\n".join(my_list)
-        return my_str
-
-    def __setattr__(self, name, value):
-        self.__dict__[name] = value
-
-    def __getitem__(self, name):
-        return self.__dict__[name]
-
-    def update(self, **kwargs):
-        self.__dict__.update(**kwargs)
-
-    def get(self, name, default=None):
-        self.__dict__.get(name, default)
-
-
-def set_opts(**kwargs):
-    """
-    Set the options
-
-    Parameters
-    ----------
-    kwargs : these will be used as options of the Cluster object
-
-    """
-    # Set the default values to the ones set in the argparser:
-    parser = get_parser()
-    opts = Bunch(**parser.defaults)
-    opts.update(**kwargs)
-    return opts
-
-
-class Cluster(object):
-    def __init__(self, cluster_name, **kwargs):
-        """
-
-        """
-        self.opts = set_opts(**kwargs)
-        # Cast hadoop_major_version as a string to avoid cryptic errors
-        # when launching:
-        self.opts.hadoop_major_version = str(self.opts.hadoop_major_version)
-        self.cluster_name = cluster_name
-        self._ssh_client = None
-
-    def launch(self):
-        real_main('launch', self.cluster_name, opts=self.opts)
-        self.master = self.opts.master_nodes[0]
-        self.slaves = self.opts.slave_nodes
-        self.spark_dns = "https://" + self.master.dns_name + ":8080"
-        self.ganglia_dns = "https://" + self.master.dns_name + ":5080/ganglia"
-
-    def destroy(self, force=False):
-        real_main('destroy', self.cluster_name, opts=self.opts, force=force)
-
-    def login(self):
-        real_main('login', self.cluster_name, opts=self.opts)
-
-    def stop(self):
-        real_main('stop', self.cluster_name, opts=self.opts)
-
-    def start(self):
-        real_main('start', self.cluster_name, opts=self.opts)
-
-    def get_master(self):
-        real_main('get-master', self.cluster_name, opts=self.opts)
-
-    def reboot_slaves(self):
-        real_main('reboot-slaves', self.cluster_name, opts=self.opts)
-
-    def upload_credentials(self):
-        pass
-
-    def set_ssh_client(self):
-        import paramiko
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(self.master.dns_name, username=self.opts.user,
-                       key_filename=self.opts.identity_file)
-        self._ssh_client = client
-
-    def get_ssh_client(self):
-        return self._ssh_client
-
-    ssh_client = property(get_ssh_client, set_ssh_client)
-
-    def ssh(self, command):
-        return self.ssh_client.exec_command(command)
-
-
-
 def real_main(action, cluster_name, opts=None, **kwargs):
     force = kwargs.pop('force', False)
     if opts is None:
@@ -1711,6 +1611,120 @@ def real_main(action, cluster_name, opts=None, **kwargs):
     else:
         print("Invalid action: %s" % action, file=stderr)
         sys.exit(1)
+
+
+class Bunch(object):
+    def __init__(self, **params):
+        for k, v in params.items():
+            self.__dict__[k] = v
+
+    def __repr__(self):
+        my_list = []
+        for k, v in self.__dict__.items():
+            my_list.append("%s : %s" % (k, v))
+        my_list.sort()
+        my_str = "\n".join(my_list)
+        return my_str
+
+    def __setattr__(self, name, value):
+        self.__dict__[name] = value
+
+    def __getitem__(self, name):
+        return self.__dict__[name]
+
+    def update(self, **kwargs):
+        self.__dict__.update(**kwargs)
+
+    def get(self, name, default=None):
+        self.__dict__.get(name, default)
+
+
+def set_opts(**kwargs):
+    """
+    Set the options
+
+    Parameters
+    ----------
+    kwargs : these will be used as options of the Cluster object
+
+    """
+    # Set the default values to the ones set in the argparser:
+    parser = get_parser()
+    opts = Bunch(**parser.defaults)
+    opts.update(**kwargs)
+    return opts
+
+
+class Cluster(object):
+    def __init__(self, cluster_name, **kwargs):
+        """
+
+        """
+        self.opts = set_opts(**kwargs)
+        # Cast hadoop_major_version as a string to avoid cryptic errors
+        # when launching:
+        self.opts.hadoop_major_version = str(self.opts.hadoop_major_version)
+        self.cluster_name = cluster_name
+        self._ssh_client = None
+
+    def launch(self):
+        real_main('launch', self.cluster_name, opts=self.opts)
+        self.master = self.opts.master_nodes[0]
+        self.slaves = self.opts.slave_nodes
+        self.spark_dns = "https://" + self.master.dns_name + ":8080"
+        self.ganglia_dns = "https://" + self.master.dns_name + ":5080/ganglia"
+
+    def destroy(self, force=False):
+        real_main('destroy', self.cluster_name, opts=self.opts, force=force)
+
+    def login(self):
+        real_main('login', self.cluster_name, opts=self.opts)
+
+    def stop(self):
+        real_main('stop', self.cluster_name, opts=self.opts)
+
+    def start(self):
+        real_main('start', self.cluster_name, opts=self.opts)
+        self.set_ssh_client()
+
+    def get_master(self):
+        real_main('get-master', self.cluster_name, opts=self.opts)
+
+    def reboot_slaves(self):
+        real_main('reboot-slaves', self.cluster_name, opts=self.opts)
+
+    def upload_credentials(self):
+        pass
+
+    def _ssh(self, command, dns):
+        import paramiko
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(dns, username=self.opts.user,
+                       key_filename=self.opts.identity_file)
+        stdin, stdout, stderr = client.exec_command(command)
+        return stdin, stdout, stderr
+
+
+    def ssh_master(self, command):
+        try:
+            return self._ssh(command, self.master.dns_name)
+        except ImportError:
+            warning("Must have paramiko installed to ssh cluster directly ")
+
+    def ssh_slaves(self, command):
+        ins = []
+        outs = []
+        errs = []
+        for sl in self.slaves:
+            try:
+                stdin, stdout, stderr = self._ssh(command, sl.dns_name)
+                ins.append(stdin)
+                outs.append(stdout)
+                errs.append(stderr)
+            except ImportError:
+                warning("Must have paramiko installed to ssh cluster directly")
+        return ins, outs, errs
 
 
 def main():
