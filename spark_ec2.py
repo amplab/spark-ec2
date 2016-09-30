@@ -373,14 +373,15 @@ def get_or_make_group(conn, name, vpc_id):
         print("Creating security group " + name)
         return conn.create_security_group(name, "Spark EC2 group", vpc_id)
 
-def validate_spark_hadoop_version(spark_version, hadoop_version):
+def validate_spark_hadoop_version(spark_version, hadoop_version, hadoop_minor_version):
     if "." in spark_version:
         parts = spark_version.split(".")
         if parts[0].isdigit():
             spark_major_version = float(parts[0])
-            if spark_major_version > 1.0 and hadoop_version != "yarn":
-              print("Spark version: {v}, does not support Hadoop version: {hv}".
-                    format(v=spark_version, hv=hadoop_version), file=stderr)
+            if spark_major_version > 1.0 and hadoop_version != "yarn" \
+                    and (hadoop_minor_version != "2.4" or hadoop_minor_version != "2.6"):
+              print("Spark version: {v}, does not support Hadoop major version: {hv}, Hadoop minor version: {hm}".
+                    format(v=spark_version, hv=hadoop_version, hm=hadoop_minor_version), file=stderr)
               sys.exit(1)
         else:
             print("Invalid Spark version: {v}".format(v=spark_version), file=stderr)
@@ -1088,7 +1089,7 @@ def deploy_files(conn, root_dir, opts, master_nodes, slave_nodes, modules):
     if "." in opts.spark_version:
         # Pre-built Spark deploy
         spark_v = get_validate_spark_version(opts.spark_version, opts.spark_git_repo)
-        validate_spark_hadoop_version(spark_v, opts.hadoop_major_version)
+        validate_spark_hadoop_version(spark_v, opts.hadoop_major_version, opts.hadoop_minor_version)
         tachyon_v = get_tachyon_version(spark_v)
     else:
         # Spark-only custom deploy
