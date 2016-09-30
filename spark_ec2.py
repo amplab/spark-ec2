@@ -170,8 +170,7 @@ class UsageError(Exception):
     pass
 
 
-# Configure and parse our command-line arguments
-def parse_args():
+def get_parser():
     parser = OptionParser(
         prog="spark-ec2",
         version="%prog {v}".format(v=SPARK_EC2_VERSION),
@@ -331,6 +330,11 @@ def parse_args():
         "--instance-profile-name", default=None,
         help="IAM profile name to launch instances under")
 
+    return parser
+
+# Configure and parse our command-line arguments
+def parse_args():
+    parser = get_parser()
     opts, args = parser.parse_args()
     if len(args) != 2:
         parser.print_help()
@@ -798,9 +802,15 @@ def get_existing_cluster(conn, opts, cluster_name, die_on_error=True):
                                                   reservations)
         return [i for i in instances if i.state not in ["shutting-down",
                                                         "terminated"]]
+    master_instances = None
+    slave_instances = None
+    if isinstance(opts, Bunch):
+        master_instances = opts.get("master_nodes")
+        slave_instances = opts.get("slave_nodes")
 
-    master_instances = get_instances([cluster_name + "-master"])
-    slave_instances = get_instances([cluster_name + "-slaves"])
+    if master_instances is None and slave_instances is None:
+        master_instances = get_instances([cluster_name + "-master"])
+        slave_instances = get_instances([cluster_name + "-slaves"])
 
     if any((master_instances, slave_instances)):
         print("Found {m} master{plural_m}, {s} slave{plural_s}.".format(
@@ -816,7 +826,7 @@ def get_existing_cluster(conn, opts, cluster_name, die_on_error=True):
               file=sys.stderr)
         sys.exit(1)
 
-    return (master_instances, slave_instances)
+    return master_instances, slave_instances
 
 
 # Deploy configuration files and run setup scripts on a newly launched
@@ -1320,61 +1330,43 @@ class Bunch(object):
     def update(self, **kwargs):
         self.__dict__.update(**kwargs)
 
+    def get(self, name, default=None):
+        self.__dict__.get(name, default)
+
 
 def set_opts(**kwargs):
-    opts = Bunch(
-        subnet_id=None,
-        delete_groups=False,
-        copy_aws_credentials=False,
-        use_existing_master=False,
-        ebs_vol_size=0,
-        ebs_vol_num=1,
-        zone="us-west-2b",
-        slaves=1,
-        ebs_vol_type="standard",
-        deploy_root_dir=None,
-        key_pair=None,
-        instance_profile_name=None,
-        instance_type="m1.large",
-        ganglia=True,
-        resume=False,
-        vpc_id=None,
-        spark_ec2_git_branch="branch-1.5",
-        wait=None,
-        identity_file="",
-        master_instance_type='',
-        region="us-west-2",
-        spark_ec2_git_repo='https://github.com/amplab/spark-ec2',
-        ami=None,
-        profile=None,
-        user='root',
-        additional_security_group='',
-        proxy_port=None,
-        private_ips=False,
-        instance_initiated_shutdown_behavior='stop',
-        hadoop_major_version='1',
-        authorized_address='0.0.0.0/0',
-        master_opts='',
-        worker_instances=1,
-        placement_group=None,
-        user_data='',
-        spark_git_repo='https://github.com/apache/spark',
-        swap=1024,
-        spot_price=None,
-        additional_tags='',
-        spark_version='1.6.1')
+    """
+    Set the options
 
+    Parameters
+    ----------
+    kwargs : these will be used as options of the Cluster object
+
+    """
+    # Set the default values to the ones set in the argparser:
+    parser = get_parser()
+    opts = Bunch(**parser.container.defaults)
     opts.update(**kwargs)
     return opts
 
 
 class Cluster(object):
     def __init__(self, cluster_name, **kwargs):
+        """
+
+        """
         self.opts = set_opts(**kwargs)
+        # Cast hadoop_major_version as a string to avoid cryptic errors
+        # when launching:
+        self.opts.hadoop_major_version = str(self.opts.hadoop_major_version)
         self.cluster_name = cluster_name
 
     def launch(self):
         real_main('launch', self.cluster_name, opts=self.opts)
+        self.master = self.opts.master_nodes[0]
+        self.slaves = self.opts.slave_nodes
+        self.spark_dns = "https://" + master.dns_name + ":8080"
+        self.ganglia_dns = "https://" + master.dns_name + ":5080/ganglia"
 
     def destroy(self, force=False):
         if force:
@@ -1396,6 +1388,8 @@ class Cluster(object):
     def reboot_slaves(self):
         real_main('reboot-slaves', self.cluster_name, opts=self.opts)
 
+    def upload_credentials(self):
+        pass
 
 def real_main(action, cluster_name, opts=None, **kwargs):
     if opts is None:
@@ -1516,10 +1510,12 @@ def real_main(action, cluster_name, opts=None, **kwargs):
             cluster_state='ssh-ready'
         )
         setup_cluster(conn, master_nodes, slave_nodes, opts, True)
+        opts.master_nodes = master_nodes
+        opts.slave_nodes = slave_nodes
 
     elif action == "destroy":
         (master_nodes, slave_nodes) = get_existing_cluster(
-            conn, opts, cluster_name, die_on_error=False)
+                conn, opts, cluster_name, die_on_error=False)
 
         if any(master_nodes + slave_nodes):
             print("The following instances will be terminated:")
@@ -1527,7 +1523,7 @@ def real_main(action, cluster_name, opts=None, **kwargs):
                 print("> %s" % get_dns_name(inst, opts.private_ips))
             print("ALL DATA ON ALL NODES WILL BE LOST!!")
 
-        if not opt.force:
+        if not opts.force:
             msg = "Are you sure you want to destroy the cluster "
             msg += "{c}? (y/N) ".format(c=cluster_name)
             response = raw_input(msg)
