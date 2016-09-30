@@ -1607,6 +1607,8 @@ def real_main(action, cluster_name, opts=None, **kwargs):
         opts.instance_type = existing_slave_type
 
         setup_cluster(conn, master_nodes, slave_nodes, opts, False)
+        opts.master_nodes = master_nodes
+        opts.slave_nodes = slave_nodes
 
     else:
         print("Invalid action: %s" % action, file=stderr)
@@ -1665,7 +1667,6 @@ class Cluster(object):
         # when launching:
         self.opts.hadoop_major_version = str(self.opts.hadoop_major_version)
         self.cluster_name = cluster_name
-        self._ssh_client = None
 
     def launch(self):
         real_main('launch', self.cluster_name, opts=self.opts)
@@ -1685,7 +1686,13 @@ class Cluster(object):
 
     def start(self):
         real_main('start', self.cluster_name, opts=self.opts)
-        self.set_ssh_client()
+        # If you started an already existing cluster, you might need to set
+        # these
+        if not hasattr(self, "master"):
+            self.master = self.opts.master_nodes[0]
+            self.slaves = self.opts.slave_nodes
+        self.spark_dns = "https://" + self.master.dns_name + ":8080"
+        self.ganglia_dns = "https://" + self.master.dns_name + ":5080/ganglia"
 
     def get_master(self):
         real_main('get-master', self.cluster_name, opts=self.opts)
