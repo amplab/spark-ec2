@@ -1115,6 +1115,7 @@ def deploy_files(conn, root_dir, opts, master_nodes, slave_nodes, modules):
         "spark_version": spark_v,
         "tachyon_version": tachyon_v,
         "hadoop_major_version": opts.hadoop_major_version,
+        "hadoop_minor_version": opts.hadoop_minor_version,
         "spark_worker_instances": worker_instances_str,
         "spark_master_opts": opts.master_opts
     }
