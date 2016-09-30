@@ -1345,7 +1345,7 @@ def set_opts(**kwargs):
     """
     # Set the default values to the ones set in the argparser:
     parser = get_parser()
-    opts = Bunch(**parser.container.defaults)
+    opts = Bunch(**parser.defaults)
     opts.update(**kwargs)
     return opts
 
@@ -1360,18 +1360,17 @@ class Cluster(object):
         # when launching:
         self.opts.hadoop_major_version = str(self.opts.hadoop_major_version)
         self.cluster_name = cluster_name
+        self._ssh_client = None
 
     def launch(self):
         real_main('launch', self.cluster_name, opts=self.opts)
         self.master = self.opts.master_nodes[0]
         self.slaves = self.opts.slave_nodes
-        self.spark_dns = "https://" + master.dns_name + ":8080"
-        self.ganglia_dns = "https://" + master.dns_name + ":5080/ganglia"
+        self.spark_dns = "https://" + self.master.dns_name + ":8080"
+        self.ganglia_dns = "https://" + self.master.dns_name + ":5080/ganglia"
 
     def destroy(self, force=False):
-        if force:
-            self.opts.force = True
-        real_main('destroy', self.cluster_name, opts=self.opts)
+        real_main('destroy', self.cluster_name, opts=self.opts, force=force)
 
     def login(self):
         real_main('login', self.cluster_name, opts=self.opts)
@@ -1391,7 +1390,26 @@ class Cluster(object):
     def upload_credentials(self):
         pass
 
+    def set_ssh_client(self):
+        import paramiko
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(self.master.dns_name, username=self.opts.user,
+                       key_filename=self.opts.identity_file)
+        self._ssh_client = client
+
+    def get_ssh_client(self):
+        return self._ssh_client
+
+    ssh_client = property(get_ssh_client, set_ssh_client)
+
+    def ssh(self, command):
+        return self.ssh_client.exec_command(command)
+
+
+
 def real_main(action, cluster_name, opts=None, **kwargs):
+    force = kwargs.pop('force', False)
     if opts is None:
         opts = set_opts()
         opts.update(**kwargs)
@@ -1523,12 +1541,12 @@ def real_main(action, cluster_name, opts=None, **kwargs):
                 print("> %s" % get_dns_name(inst, opts.private_ips))
             print("ALL DATA ON ALL NODES WILL BE LOST!!")
 
-        if not opts.force:
+        if force:
+            response = "y"
+        else:
             msg = "Are you sure you want to destroy the cluster "
             msg += "{c}? (y/N) ".format(c=cluster_name)
             response = raw_input(msg)
-        else:
-            response = "y"
 
         if response == "y":
             print("Terminating master...")
@@ -1610,10 +1628,13 @@ def real_main(action, cluster_name, opts=None, **kwargs):
                                                  (opts.user, master)])
 
     elif action == "reboot-slaves":
-        response = raw_input(
-            "Are you sure you want to reboot the cluster " +
-            cluster_name + " slaves?\n" +
-            "Reboot cluster slaves " + cluster_name + " (y/N): ")
+        if force:
+            response = "y"
+        else:
+            response = raw_input(
+                "Are you sure you want to reboot the cluster " +
+                cluster_name + " slaves?\n" +
+                "Reboot cluster slaves " + cluster_name + " (y/N): ")
         if response == "y":
             (master_nodes, slave_nodes) = get_existing_cluster(
                 conn, opts, cluster_name, die_on_error=False)
@@ -1633,14 +1654,17 @@ def real_main(action, cluster_name, opts=None, **kwargs):
             print(get_dns_name(master_nodes[0], opts.private_ips))
 
     elif action == "stop":
-        response = raw_input(
-            "Are you sure you want to stop the cluster " +
-            cluster_name + "?\nDATA ON EPHEMERAL DISKS WILL BE LOST, " +
-            "BUT THE CLUSTER WILL KEEP USING SPACE ON\n" +
-            "AMAZON EBS IF IT IS EBS-BACKED!!\n" +
-            "All data on spot-instance slaves will be lost.\n" +
-            "Stop cluster " + cluster_name + " (y/N): ")
-        if response == "y" or opts.force:
+        if force:
+            response = "y"
+        else:
+            response = raw_input(
+                "Are you sure you want to stop the cluster " +
+                cluster_name + "?\nDATA ON EPHEMERAL DISKS WILL BE LOST, " +
+                "BUT THE CLUSTER WILL KEEP USING SPACE ON\n" +
+                "AMAZON EBS IF IT IS EBS-BACKED!!\n" +
+                "All data on spot-instance slaves will be lost.\n" +
+                "Stop cluster " + cluster_name + " (y/N): ")
+        if response == "y":
             (master_nodes, slave_nodes) = get_existing_cluster(
                 conn, opts, cluster_name, die_on_error=False)
             print("Stopping master...")
