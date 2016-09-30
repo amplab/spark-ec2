@@ -382,7 +382,7 @@ def validate_spark_hadoop_version(spark_version, hadoop_version, hadoop_minor_ve
               print("Spark version: {v}, does not support Hadoop major version: {hv}".
                     format(v=spark_version, hv=hadoop_version), file=stderr)
               sys.exit(1)
-            if hadoop_version == "yarn" and (hadoop_minor_version != "2.4" or hadoop_minor_version != "2.6"):
+            if hadoop_version == "yarn" and hadoop_minor_version != "2.4" and hadoop_minor_version != "2.6":
               print("Spark version: {v}, does not support Hadoop minor version: {hm}".
                     format(v=spark_version, hm=hadoop_minor_version), file=stderr)
               sys.exit(1)
