@@ -242,8 +242,8 @@ def parse_args():
              "(Hadoop 2.4.0) (default: %default)")
     parser.add_option(
         "--hadoop-minor-version", default="2.4",
-        help="Minor version of Hadoop. Valid options are 2.4 (Hadoop 2.4.0), 2.6 (Hadoop 2.6.0) " +
-             "(default: %default)")
+        help="Minor version of Hadoop. Valid options are 2.4 (Hadoop 2.4.0) and 2.6 (Hadoop 2.6.0). " +
+             "This only has any effect if yarn is specified as Hadoop major version/ (default: %default)")
     parser.add_option(
         "-D", metavar="[ADDRESS:]PORT", dest="proxy_port",
         help="Use SSH dynamic port forwarding to create a SOCKS proxy at " +
