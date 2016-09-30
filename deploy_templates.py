@@ -73,6 +73,7 @@ template_vars = {
   "spark_version": os.getenv("SPARK_VERSION"),
   "tachyon_version": os.getenv("TACHYON_VERSION"),
   "hadoop_major_version": os.getenv("HADOOP_MAJOR_VERSION"),
+  "hadoop_minor_version": os.getenv("HADOOP_MINOR_VERSION"),
   "java_home": os.getenv("JAVA_HOME"),
   "default_tachyon_mem": "%dMB" % tachyon_mb,
   "system_ram_mb": "%d" % system_ram_mb,

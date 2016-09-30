@@ -13,6 +13,9 @@ then
   # Not yet supported
   echo "Tachyon git hashes are not yet supported. Please specify a Tachyon release version."
 # Pre-package tachyon version
+elif [[ "$HADOOP_MINOR_VERSION" == "2.6" ]]
+then
+  echo "Tachyon is not supported with Hadoop 2.6.0"
 else
   case "$TACHYON_VERSION" in
     0.3.0)
