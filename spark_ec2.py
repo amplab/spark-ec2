@@ -1301,7 +1301,7 @@ def real_main():
 
     # Input parameter validation
     spark_v = get_validate_spark_version(opts.spark_version, opts.spark_git_repo)
-    validate_spark_hadoop_version(spark_v, opts.hadoop_major_version)
+    validate_spark_hadoop_version(spark_v, opts.hadoop_major_version, opts.hadoop_minor_version)
 
     if opts.wait is not None:
         # NOTE: DeprecationWarnings are silent in 2.7+ by default.
