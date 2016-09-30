@@ -1212,11 +1212,13 @@ def ssh(host, opts, command):
                 if e.returncode == 255:
                     raise UsageError(
                         "Failed to SSH to remote host {0}.\n"
-                        "Please check that you have provided the correct --identity-file and "
+                        "Please check that you have provided the correct " +
+                        "--identity-file and " +
                         "--key-pair parameters and try again.".format(host))
                 else:
                     raise e
-            print("Error executing remote command, retrying after 30 seconds: {0}".format(e),
+            print("Error executing remote command, retrying after 30",
+                  " seconds: {0}".format(e),
                   file=stderr)
             time.sleep(30)
             tries = tries + 1
@@ -1318,6 +1320,7 @@ class Bunch(object):
     def update(self, **kwargs):
         self.__dict__.update(**kwargs)
 
+
 def set_opts(**kwargs):
     opts = Bunch(
         subnet_id=None,
@@ -1361,8 +1364,38 @@ def set_opts(**kwargs):
         additional_tags='',
         spark_version='1.6.1')
 
-    opts.__dict__.update(**kwargs)
+    opts.update(**kwargs)
     return opts
+
+
+class Cluster(object):
+    def __init__(self, cluster_name, **kwargs):
+        self.opts = set_opts(**kwargs)
+        self.cluster_name = cluster_name
+
+    def launch(self):
+        real_main('launch', self.cluster_name, opts=self.opts)
+
+    def destroy(self, force=False):
+        if force:
+            self.opts.force = True
+        real_main('destroy', self.cluster_name, opts=self.opts)
+
+    def login(self):
+        real_main('login', self.cluster_name, opts=self.opts)
+
+    def stop(self):
+        real_main('stop', self.cluster_name, opts=self.opts)
+
+    def start(self):
+        real_main('start', self.cluster_name, opts=self.opts)
+
+    def get_master(self):
+        real_main('get-master', self.cluster_name, opts=self.opts)
+
+    def reboot_slaves(self):
+        real_main('reboot-slaves', self.cluster_name, opts=self.opts)
+
 
 def real_main(action, cluster_name, opts=None, **kwargs):
     if opts is None:
@@ -1399,8 +1432,9 @@ def real_main(action, cluster_name, opts=None, **kwargs):
             sys.exit(1)
 
     if opts.instance_type not in EC2_INSTANCE_TYPES:
-        print("Warning: Unrecognized EC2 instance type for instance-type: {t}".format(
-              t=opts.instance_type), file=stderr)
+        print("Warning: Unrecognized EC2 instance type for",
+              "instance-type: {t}".format(t=opts.instance_type),
+              file=stderr)
 
     if opts.master_instance_type != "":
         if opts.master_instance_type not in EC2_INSTANCE_TYPES:
@@ -1493,9 +1527,13 @@ def real_main(action, cluster_name, opts=None, **kwargs):
                 print("> %s" % get_dns_name(inst, opts.private_ips))
             print("ALL DATA ON ALL NODES WILL BE LOST!!")
 
-        msg = "Are you sure you want to destroy the cluster "
-        msg += "{c}? (y/N) ".format(c=cluster_name)
-        response = raw_input(msg)
+        if not opt.force:
+            msg = "Are you sure you want to destroy the cluster "
+            msg += "{c}? (y/N) ".format(c=cluster_name)
+            response = raw_input(msg)
+        else:
+            response = "y"
+
         if response == "y":
             print("Terminating master...")
             for inst in master_nodes:
@@ -1606,7 +1644,7 @@ def real_main(action, cluster_name, opts=None, **kwargs):
             "AMAZON EBS IF IT IS EBS-BACKED!!\n" +
             "All data on spot-instance slaves will be lost.\n" +
             "Stop cluster " + cluster_name + " (y/N): ")
-        if response == "y":
+        if response == "y" or opts.force:
             (master_nodes, slave_nodes) = get_existing_cluster(
                 conn, opts, cluster_name, die_on_error=False)
             print("Stopping master...")
