@@ -29,13 +29,13 @@ case "$HADOOP_MAJOR_VERSION" in
     cp /root/hadoop-native/* /root/persistent-hdfs/lib/native/
     ;;
   yarn)
-    if [[ "HADOOP_MINOR_VERSION" == "2.4" ]]; then
+    if [[ "$HADOOP_MINOR_VERSION" == "2.4" ]]; then
       wget http://s3.amazonaws.com/spark-related-packages/hadoop-2.4.0.tar.gz
       echo "Unpacking Hadoop"
       tar xvzf hadoop-*.tar.gz > /tmp/spark-ec2_hadoop.log
       rm hadoop-*.tar.gz
       mv hadoop-2.4.0/ persistent-hdfs/
-    elif [[ "HADOOP_MINOR_VERSION" == "2.6" ]]; then
+    elif [[ "$HADOOP_MINOR_VERSION" == "2.6" ]]; then
       wget https://www.apache.org/dist/hadoop/core/hadoop-2.6.0/hadoop-2.6.0.tar.gz
       echo "Unpacking Hadoop"
       tar xvzf hadoop-*.tar.gz > /tmp/spark-ec2_hadoop.log
