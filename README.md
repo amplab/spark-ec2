@@ -242,7 +242,7 @@ get a list of slave hostnames and `/root/spark-ec2/copy-dir` to sync a directory
 
 Starting Hadoop 2.6.0, s3 FS connector has been moved to a separate library called hadoop-aws. 
 
-In order to make the package available in sbt use:
+In order to make the package available add it as a dependency:
 
 ```libraryDependencies += "org.apache.hadoop" % "hadoop-aws" % "2.6.4"```
 
