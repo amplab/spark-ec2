@@ -201,15 +201,10 @@ please refer to http://spark-project.org/docs/latest/ec2-scripts.html
 
 Starting Hadoop 2.6.0, s3 FS connector has been moved to a separate library called hadoop-aws. 
 
-In order to make the package available add it as a dependency:
+- In order to make the package available add it as a dependency, `libraryDependencies += "org.apache.hadoop" % "hadoop-aws" % "2.6.4"`.
+- It can also be added it directly to spark-submit, `spark-submit --packages org.apache.hadoop:hadoop-aws:2.6.4 SimpleApp.py`.
 
-```libraryDependencies += "org.apache.hadoop" % "hadoop-aws" % "2.6.4"```
-
-Or add it directly to spark-submit:
-
-```spark-submit --packages org.apache.hadoop:hadoop-aws:2.6.4 SimpleApp.py```
-
-On other related note, it is recommended to use "s3a" and not "s3n" filesystem starting Hadoop 2.6.0.
+On other related note, it is recommended to use `s3a` and not `s3n` filesystem starting Hadoop 2.6.0.
 
 ## spark-ec2 Internals
 
