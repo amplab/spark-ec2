@@ -197,7 +197,7 @@ EC2. These scripts are intended to be used by the default Spark AMI and is *not*
 expected to work on other AMIs. If you wish to start a cluster using Spark,
 please refer to http://spark-project.org/docs/latest/ec2-scripts.html 
 
-### Using S3 with Hadoop 2.6 or newer
+## Using S3 with Hadoop 2.6 or newer
 
 Starting Hadoop 2.6.0, s3 FS connector has been moved to a separate library called hadoop-aws. 
 
