@@ -242,7 +242,7 @@ def parse_args():
              "(Hadoop 2.4.0) (default: %default)")
     parser.add_option(
         "--hadoop-minor-version", default="2.4",
-        help="Minor version of Hadoop. Valid options are 2.4 (Hadoop 2.4.0) and 2.6 (Hadoop 2.6.0). " +
+        help="Minor version of Hadoop. Valid options are 2.4 (Hadoop 2.4.0), 2.6 (Hadoop 2.6.0) and 2.7 (Hadoop 2.7.0). " +
              "This only has any effect if yarn is specified as Hadoop major version/ (default: %default)")
     parser.add_option(
         "-D", metavar="[ADDRESS:]PORT", dest="proxy_port",
@@ -382,7 +382,7 @@ def validate_spark_hadoop_version(spark_version, hadoop_version, hadoop_minor_ve
               print("Spark version: {v}, does not support Hadoop major version: {hv}".
                     format(v=spark_version, hv=hadoop_version), file=stderr)
               sys.exit(1)
-            if hadoop_version == "yarn" and hadoop_minor_version != "2.4" and hadoop_minor_version != "2.6":
+            if hadoop_version == "yarn" and hadoop_minor_version != "2.4" and hadoop_minor_version != "2.6" and hadoop_minor_version != "2.7":
               print("Spark version: {v}, does not support Hadoop minor version: {hm}".
                     format(v=spark_version, hm=hadoop_minor_version), file=stderr)
               sys.exit(1)

@@ -41,6 +41,12 @@ case "$HADOOP_MAJOR_VERSION" in
       tar xvzf hadoop-*.tar.gz > /tmp/spark-ec2_hadoop.log
       rm hadoop-*.tar.gz
       mv hadoop-2.6.0/ persistent-hdfs/
+    elif [[ "$HADOOP_MINOR_VERSION" == "2.7" ]]; then
+      wget https://www.apache.org/dist/hadoop/core/hadoop-2.7.0/hadoop-2.7.0.tar.gz
+      echo "Unpacking Hadoop"
+      tar xvzf hadoop-*.tar.gz > /tmp/spark-ec2_hadoop.log
+      rm hadoop-*.tar.gz
+      mv hadoop-2.7.0/ persistent-hdfs/
     else
       echo "ERROR: Unknown Hadoop version"
     fi
