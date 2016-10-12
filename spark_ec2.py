@@ -80,6 +80,12 @@ VALID_SPARK_VERSIONS = set([
     "2.0.0",
 ])
 
+VALID_HADOOP_MINOR_VERSIONS = set([
+    "2.4",
+    "2.5",
+    "2.7"
+])
+
 SPARK_TACHYON_MAP = {
     "1.0.0": "0.4.1",
     "1.0.1": "0.4.1",
@@ -382,9 +388,9 @@ def validate_spark_hadoop_version(spark_version, hadoop_version, hadoop_minor_ve
               print("Spark version: {v}, does not support Hadoop major version: {hv}".
                     format(v=spark_version, hv=hadoop_version), file=stderr)
               sys.exit(1)
-            if hadoop_version == "yarn" and hadoop_minor_version != "2.4" and hadoop_minor_version != "2.6" and hadoop_minor_version != "2.7":
-              print("Spark version: {v}, does not support Hadoop minor version: {hm}".
-                    format(v=spark_version, hm=hadoop_minor_version), file=stderr)
+            if hadoop_version == "yarn" and hadoop_minor_version not in VALID_HADOOP_MINOR_VERSIONS:
+              print("Spark version: {v}, does not support Hadoop minor version: {hm}, supported minor versions: {sv}".
+                    format(v=spark_version, hm=hadoop_minor_version, sv=",".join(VALID_HADOOP_MINOR_VERSIONS)), file=stderr)
               sys.exit(1)
         else:
             print("Invalid Spark version: {v}".format(v=spark_version), file=stderr)
