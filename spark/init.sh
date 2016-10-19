@@ -24,125 +24,43 @@ then
 
 # Pre-packaged spark version:
 else 
-  case "$SPARK_VERSION" in
-    0.7.3)
+ case "$SPARK_VERSION" in
+    # 0.7.3 - 1.0.2
+    0\.[7-9]\.[0-3]|1\.0\.[0-2])
       if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-0.7.3-prebuilt-hadoop1.tgz
+        wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-prebuilt-hadoop1.tgz
       else
-        wget http://s3.amazonaws.com/spark-related-packages/spark-0.7.3-prebuilt-cdh4.tgz
+        wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-prebuilt-cdh4.tgz
       fi
-      ;;    
-    0.8.0)
+    ;;
+    # 1.1.0 - 1.3.0
+    1\.[1-2]\.[0-9]*|1\.3\.0)
       if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-0.8.0-incubating-bin-hadoop1.tgz
-      else
-        wget http://s3.amazonaws.com/spark-related-packages/spark-0.8.0-incubating-bin-cdh4.tgz
-      fi
-      ;;    
-    0.8.1)
-      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-0.8.1-incubating-bin-hadoop1.tgz
-      else
-        wget http://s3.amazonaws.com/spark-related-packages/spark-0.8.1-incubating-bin-cdh4.tgz
-      fi
-      ;;    
-    0.9.0)
-      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-0.9.0-incubating-bin-hadoop1.tgz
-      else
-        wget http://s3.amazonaws.com/spark-related-packages/spark-0.9.0-incubating-bin-cdh4.tgz
-      fi
-      ;;
-    0.9.1)
-      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-0.9.1-bin-hadoop1.tgz
-      else
-        wget http://s3.amazonaws.com/spark-related-packages/spark-0.9.1-bin-cdh4.tgz
-      fi
-      ;;
-    0.9.2)
-      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-0.9.2-bin-hadoop1.tgz
-      else
-        wget http://s3.amazonaws.com/spark-related-packages/spark-0.9.2-bin-cdh4.tgz
-      fi
-      ;;
-    1.0.0)
-      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.0.0-bin-hadoop1.tgz
-      else
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.0.0-bin-cdh4.tgz
-      fi
-      ;;
-    1.0.1)
-      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.0.1-bin-hadoop1.tgz
-      else
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.0.1-bin-cdh4.tgz
-      fi
-      ;;
-    1.0.2)
-      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.0.2-bin-hadoop1.tgz
-      else
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.0.2-bin-cdh4.tgz
-      fi
-      ;;
-    1.1.0)
-      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.1.0-bin-hadoop1.tgz
+        wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-bin-hadoop1.tgz
       elif [[ "$HADOOP_MAJOR_VERSION" == "2" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.1.0-bin-cdh4.tgz
+        wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-bin-cdh4.tgz
       else
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.1.0-bin-hadoop2.4.tgz
+        wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-bin-hadoop2.4.tgz
       fi
-      ;;
-    1.1.1)
+    ;;
+    # 1.3.1 - 1.6.2
+    1\.[3-6]\.[0-2])
       if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.1.1-bin-hadoop1.tgz
+        wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-bin-hadoop1.tgz
       elif [[ "$HADOOP_MAJOR_VERSION" == "2" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.1.1-bin-cdh4.tgz
+        wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-bin-cdh4.tgz
       else
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.1.1-bin-hadoop2.4.tgz
+        if [[ "$HADOOP_MINOR_VERSION" == "2.4" ]]; then
+          wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-bin-hadoop2.4.tgz
+        elif [[ "$HADOOP_MINOR_VERSION" == "2.6" ]]; then
+          wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-bin-hadoop2.6.tgz
+        else
+          echo "ERROR: Unknown Hadoop version"
+        fi
       fi
-      ;;
-    1.2.0)
-      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.2.0-bin-hadoop1.tgz
-      elif [[ "$HADOOP_MAJOR_VERSION" == "2" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.2.0-bin-cdh4.tgz
-      else
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.2.0-bin-hadoop2.4.tgz
-      fi
-      ;;
-    1.2.1)
-      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.2.1-bin-hadoop1.tgz
-      elif [[ "$HADOOP_MAJOR_VERSION" == "2" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.2.1-bin-cdh4.tgz
-      else
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.2.1-bin-hadoop2.4.tgz
-      fi
-      ;;
-    1.2.2)
-      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.2.2-bin-hadoop1.tgz
-      elif [[ "$HADOOP_MAJOR_VERSION" == "2" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.2.2-bin-cdh4.tgz
-      else
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.2.2-bin-hadoop2.4.tgz
-      fi
-      ;;
-    1.3.0)
-      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.3.0-bin-hadoop1.tgz
-      elif [[ "$HADOOP_MAJOR_VERSION" == "2" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.3.0-bin-cdh4.tgz
-      else
-        wget http://s3.amazonaws.com/spark-related-packages/spark-1.3.0-bin-hadoop2.4.tgz
-      fi
-      ;;
-    2.0.0)
+    ;;
+    # 2.0.0 - 2.0.1
+    2\.0\.[0-1])
       if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
         wget http://s3.amazonaws.com/spark-related-packages/spark-2.0.0-bin-hadoop1.tgz
       elif [[ "$HADOOP_MAJOR_VERSION" == "2" ]]; then
@@ -158,43 +76,14 @@ else
           echo "ERROR: Unknown Hadoop version"
         fi
       fi
-      ;;
-    2.0.1)
-      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-          echo "ERROR: Not supported"
-      elif [[ "$HADOOP_MAJOR_VERSION" == "2" ]]; then
-          echo "ERROR: Not supported"
-      else
-        if [[ "$HADOOP_MINOR_VERSION" == "2.4" ]]; then
-          wget http://s3.amazonaws.com/spark-related-packages/spark-2.0.1-bin-hadoop2.4.tgz
-        elif [[ "$HADOOP_MINOR_VERSION" == "2.6" ]]; then
-          wget http://s3.amazonaws.com/spark-related-packages/spark-2.0.1-bin-hadoop2.6.tgz
-        elif [[ "$HADOOP_MINOR_VERSION" == "2.7" ]]; then
-          wget http://s3.amazonaws.com/spark-related-packages/spark-2.0.1-bin-hadoop2.7.tgz
-        else
-          echo "ERROR: Unknown Hadoop version"
-        fi
-      fi
-      ;;
+    ;;
     *)
-      if [[ "$HADOOP_MAJOR_VERSION" == "1" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-bin-hadoop1.tgz
-      elif [[ "$HADOOP_MAJOR_VERSION" == "2" ]]; then
-        wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-bin-cdh4.tgz
-      else
-        if [[ "$HADOOP_MINOR_VERSION" == "2.4" ]]; then
-          wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-bin-hadoop2.4.tgz
-        elif [[ "$HADOOP_MINOR_VERSION" == "2.6" ]]; then
-          wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-bin-hadoop2.6.tgz
-        else
-          echo "ERROR: Unknown Hadoop version"
-        fi
-      fi
       if [ $? != 0 ]; then
         echo "ERROR: Unknown Spark version"
         return -1
       fi
-  esac
+    ;;
+ esac
 
   echo "Unpacking Spark"
   tar xvzf spark-*.tgz > /tmp/spark-ec2_spark.log
