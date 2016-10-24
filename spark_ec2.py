@@ -78,6 +78,7 @@ VALID_SPARK_VERSIONS = set([
     "1.6.0",
     "2.0.0-preview",
     "2.0.0",
+    "2.0.1"
 ])
 
 VALID_HADOOP_MINOR_VERSIONS = set([
@@ -379,12 +380,15 @@ def get_or_make_group(conn, name, vpc_id):
         print("Creating security group " + name)
         return conn.create_security_group(name, "Spark EC2 group", vpc_id)
 
+
 def validate_spark_hadoop_version(spark_version, hadoop_version, hadoop_minor_version):
     if "." in spark_version:
         parts = spark_version.split(".")
-        if parts[0].isdigit():
+        if parts[0].isdigit() and parts[0].isdigit():
             spark_major_version = float(parts[0])
-            if spark_major_version > 1.0 and hadoop_version != "yarn":
+            spark_minor_version = float(parts[1])
+            spark_major_minor_version = spark_major_version + (spark_minor_version / 10)
+            if spark_major_minor_version > 1.0 and hadoop_version != "yarn":
               print("Spark version: {v}, does not support Hadoop major version: {hv}".
                     format(v=spark_version, hv=hadoop_version), file=stderr)
               sys.exit(1)
@@ -392,9 +396,14 @@ def validate_spark_hadoop_version(spark_version, hadoop_version, hadoop_minor_ve
               print("Spark version: {v}, does not support Hadoop minor version: {hm}, supported minor versions: {sv}".
                     format(v=spark_version, hm=hadoop_minor_version, sv=",".join(VALID_HADOOP_MINOR_VERSIONS)), file=stderr)
               sys.exit(1)
+            if hadoop_minor_version == "2.7" and spark_major_minor_version < 2.0:
+              print("Spark version: {v}, does not support Hadoop minor version: {hm}".
+                    format(v=spark_version, hm=hadoop_minor_version, sv=",".join(VALID_HADOOP_MINOR_VERSIONS)), file=stderr)
+              sys.exit(1)
         else:
             print("Invalid Spark version: {v}".format(v=spark_version), file=stderr)
             sys.exit(1)
+
 
 def get_validate_spark_version(version, repo):
     if "." in version:
