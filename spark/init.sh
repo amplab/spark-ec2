@@ -33,6 +33,7 @@ else
         wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-prebuilt-cdh4.tgz
       else
        echo "ERROR: Unsupported Hadoop major version"
+       return -1
       fi
     ;;
     # 1.1.0 - 1.3.0
@@ -45,6 +46,7 @@ else
         wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-bin-hadoop2.4.tgz
       else
        echo "ERROR: Unsupported Hadoop major version"
+       return -1
       fi
     ;;
     # 1.3.1 - 1.6.2
@@ -60,9 +62,11 @@ else
           wget http://s3.amazonaws.com/spark-related-packages/spark-$SPARK_VERSION-bin-hadoop2.6.tgz
         else
           echo "ERROR: Unknown Hadoop minor version"
+          return -1
         fi
       else
         echo "ERROR: Unsupported Hadoop major version"
+        return -1
       fi
     ;;
     # 2.0.0 - 2.0.1
@@ -80,9 +84,11 @@ else
           wget http://s3.amazonaws.com/spark-related-packages/spark-2.0.0-bin-hadoop2.7.tgz
         else
           echo "ERROR: Unknown Hadoop version"
+          return -1
         fi
       else
         echo "ERROR: Unsupported Hadoop major version"
+        return -1
       fi
     ;;
     *)
