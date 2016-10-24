@@ -245,7 +245,7 @@ def parse_args():
     parser.add_option(
         "--hadoop-major-version", default="yarn",
         help="Major version of Hadoop. Valid options are 1 (Hadoop 1.0.4), 2 (CDH 4.2.0), yarn " +
-             "(Hadoop 2.4.0) (default: %default)")
+             "(Hadoop 2.x) (default: %default)")
     parser.add_option(
         "--hadoop-minor-version", default="2.4",
         help="Minor version of Hadoop. Valid options are 2.4 (Hadoop 2.4.0), 2.6 (Hadoop 2.6.0) and 2.7 (Hadoop 2.7.0). " +
