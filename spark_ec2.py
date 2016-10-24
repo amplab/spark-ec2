@@ -400,6 +400,10 @@ def validate_spark_hadoop_version(spark_version, hadoop_version, hadoop_minor_ve
               print("Spark version: {v}, does not support Hadoop minor version: {hm}".
                     format(v=spark_version, hm=hadoop_minor_version, sv=",".join(VALID_HADOOP_MINOR_VERSIONS)), file=stderr)
               sys.exit(1)
+            if hadoop_minor_version == "2.6" and spark_major_minor_version < 1.3:
+              print("Spark version: {v}, does not support Hadoop minor version: {hm}".
+                    format(v=spark_version, hm=hadoop_minor_version, sv=",".join(VALID_HADOOP_MINOR_VERSIONS)), file=stderr)
+              sys.exit(1)
         else:
             print("Invalid Spark version: {v}".format(v=spark_version), file=stderr)
             sys.exit(1)
