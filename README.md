@@ -197,6 +197,15 @@ EC2. These scripts are intended to be used by the default Spark AMI and is *not*
 expected to work on other AMIs. If you wish to start a cluster using Spark,
 please refer to http://spark-project.org/docs/latest/ec2-scripts.html 
 
+## Using S3 with Hadoop 2.6 or newer
+
+Starting Hadoop 2.6.0, s3 FS connector has been moved to a separate library called hadoop-aws. 
+
+- In order to make the package available add it as a dependency, `libraryDependencies += "org.apache.hadoop" % "hadoop-aws" % "2.6.4"`.
+- It can also be added it directly to spark-submit, `spark-submit --packages org.apache.hadoop:hadoop-aws:2.6.4 SimpleApp.py`.
+
+On other related note, it is recommended to use `s3a` and not `s3n` filesystem starting Hadoop 2.6.0.
+
 ## spark-ec2 Internals
 
 The Spark cluster setup is guided by the values set in `ec2-variables.sh`.`setup.sh`
@@ -237,3 +246,4 @@ after the templates have been configured. You can use the environment variables 
 get a list of slave hostnames and `/root/spark-ec2/copy-dir` to sync a directory across machines.
 
 5. Modify `spark_ec2.py` to add your module to the list of enabled modules.
+

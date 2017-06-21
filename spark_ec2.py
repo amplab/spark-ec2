@@ -87,6 +87,12 @@ VALID_SPARK_VERSIONS = set([
     "2.1.1"
 ])
 
+VALID_HADOOP_MINOR_VERSIONS = set([
+    "2.4",
+    "2.6",
+    "2.7"
+])
+
 SPARK_TACHYON_MAP = {
     "1.0.0": "0.4.1",
     "1.0.1": "0.4.1",
@@ -246,7 +252,11 @@ def parse_args():
     parser.add_option(
         "--hadoop-major-version", default="yarn",
         help="Major version of Hadoop. Valid options are 1 (Hadoop 1.0.4), 2 (CDH 4.2.0), yarn " +
-             "(Hadoop 2.4.0) (default: %default)")
+             "(Hadoop 2.x) (default: %default)")
+    parser.add_option(
+        "--hadoop-minor-version", default="2.4",
+        help="Minor version of Hadoop. Valid options are 2.4 (Hadoop 2.4.0), 2.6 (Hadoop 2.6.0) and 2.7 (Hadoop 2.7.0). " +
+             "This only has any effect if yarn is specified as Hadoop major version/ (default: %default)")
     parser.add_option(
         "-D", metavar="[ADDRESS:]PORT", dest="proxy_port",
         help="Use SSH dynamic port forwarding to create a SOCKS proxy at " +
@@ -376,18 +386,42 @@ def get_or_make_group(conn, name, vpc_id):
         print("Creating security group " + name)
         return conn.create_security_group(name, "Spark EC2 group", vpc_id)
 
-def validate_spark_hadoop_version(spark_version, hadoop_version):
+
+def validate_spark_hadoop_version(spark_version, hadoop_version, hadoop_minor_version):
     if "." in spark_version:
-        parts = spark_version.split(".")
-        if parts[0].isdigit():
-            spark_major_version = float(parts[0])
-            if spark_major_version > 1.0 and hadoop_version != "yarn":
-              print("Spark version: {v}, does not support Hadoop version: {hv}".
-                    format(v=spark_version, hv=hadoop_version), file=stderr)
-              sys.exit(1)
+        if hadoop_version == "1" or hadoop_version == "2":
+            if spark_version >= "2.0.0":
+                print("Spark version: {v}, does not support Hadoop major version: {hv}".
+                      format(v=spark_version, hv=hadoop_version))
+                sys.exit(1)
+        elif hadoop_version == "yarn":
+            if spark_version < "1.0.2":
+                print("Spark version: {v}, does not support Hadoop major version: {hv}".
+                      format(v=spark_version, hv=hadoop_version))
+                sys.exit(1)
+
+            if hadoop_minor_version not in VALID_HADOOP_MINOR_VERSIONS:
+                print("Spark version: {v}, does not support Hadoop minor version: {hm}, supported minor versions: {sv}".
+                      format(v=spark_version, hm=hadoop_minor_version, sv=",".join(VALID_HADOOP_MINOR_VERSIONS)))
+                sys.exit(1)
+
+            if hadoop_minor_version == "2.6" and spark_version < "1.3.1":
+                print("Spark version: {v}, does not support Hadoop minor version: {hm}".
+                      format(v=spark_version, hm=hadoop_minor_version))
+                sys.exit(1)
+
+            if hadoop_minor_version == "2.7" and spark_version < "2.0.0":
+                print("Spark version: {v}, does not support Hadoop minor version: {hm}".
+                      format(v=spark_version, hm=hadoop_minor_version))
+                sys.exit(1)
         else:
-            print("Invalid Spark version: {v}".format(v=spark_version), file=stderr)
-            sys.exit(1)
+            print("Invalid Hadoop version: {hv}".
+                format(hv=hadoop_version))
+
+    else:
+        print("Invalid Spark version: {v}".format(v=spark_version))
+        sys.exit(1)
+
 
 def get_validate_spark_version(version, repo):
     if "." in version:
@@ -1091,7 +1125,7 @@ def deploy_files(conn, root_dir, opts, master_nodes, slave_nodes, modules):
     if "." in opts.spark_version:
         # Pre-built Spark deploy
         spark_v = get_validate_spark_version(opts.spark_version, opts.spark_git_repo)
-        validate_spark_hadoop_version(spark_v, opts.hadoop_major_version)
+        validate_spark_hadoop_version(spark_v, opts.hadoop_major_version, opts.hadoop_minor_version)
         tachyon_v = get_tachyon_version(spark_v)
     else:
         # Spark-only custom deploy
@@ -1118,6 +1152,7 @@ def deploy_files(conn, root_dir, opts, master_nodes, slave_nodes, modules):
         "spark_version": spark_v,
         "tachyon_version": tachyon_v,
         "hadoop_major_version": opts.hadoop_major_version,
+        "hadoop_minor_version": opts.hadoop_minor_version,
         "spark_worker_instances": worker_instances_str,
         "spark_master_opts": opts.master_opts
     }
@@ -1302,7 +1337,7 @@ def real_main():
 
     # Input parameter validation
     spark_v = get_validate_spark_version(opts.spark_version, opts.spark_git_repo)
-    validate_spark_hadoop_version(spark_v, opts.hadoop_major_version)
+    validate_spark_hadoop_version(spark_v, opts.hadoop_major_version, opts.hadoop_minor_version)
 
     if opts.wait is not None:
         # NOTE: DeprecationWarnings are silent in 2.7+ by default.
