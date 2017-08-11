@@ -551,6 +551,9 @@ def launch_cluster(conn, opts, cluster_name):
         master_group.authorize('udp', 4242, 4242, authorized_address)
         # RM in YARN mode uses 8088
         master_group.authorize('tcp', 8088, 8088, authorized_address)
+        # Jupyter notebook on port 8888
+        master_group.authorize('tcp', 8888, 8888, authorized_address)
+
         if opts.ganglia:
             master_group.authorize('tcp', 5080, 5080, authorized_address)
     if slave_group.rules == []:  # Group was just now created
@@ -1403,6 +1406,8 @@ def real_main(action, cluster_name, opts=None, **kwargs):
             conn = ec2.connect_to_region(opts.region,
                                          profile_name=opts.profile)
 
+        opts.conn = conn
+    
     except Exception as e:
         print((e), file=stderr)
         sys.exit(1)
