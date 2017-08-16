@@ -51,7 +51,11 @@ else:
     raw_input = input
     xrange = range
 
-SPARK_EC2_VERSION = "2.0.0"
+# spark-2.2.0-bin-hadoop2.7.tgz
+# For the Scala API, Spark 2.2.0 uses Scala 2.11. You will need to use a compatible Scala version (2.11.x).
+# Versions of Hadoop before 2.6 are deprecated as of Spark 2.1.0, and may be removed in Spark 2.2.0.
+
+SPARK_EC2_VERSION = "2.2.0"
 SPARK_EC2_DIR = os.path.dirname(os.path.realpath(__file__))
 
 VALID_SPARK_VERSIONS = set([
@@ -84,9 +88,12 @@ VALID_SPARK_VERSIONS = set([
     "2.0.1",
     "2.0.2",
     "2.1.0",
-    "2.1.1"
+    "2.1.1",
+    "2.2.0"
 ])
 
+# https://spark.apache.org/releases/spark-release-2-0-0.html#removals-behavior-changes-and-deprecations
+# Removed :  Block-oriented integration with Tachyon (subsumed by file system integration)
 SPARK_TACHYON_MAP = {
     "1.0.0": "0.4.1",
     "1.0.1": "0.4.1",
@@ -103,15 +110,15 @@ SPARK_TACHYON_MAP = {
     "1.5.1": "0.7.1",
     "1.5.2": "0.7.1",
     "1.6.0": "0.8.2",
-    "2.0.0-preview": "",
+    # nothing for spark >= 2.x
 }
 
 DEFAULT_SPARK_VERSION = SPARK_EC2_VERSION
 DEFAULT_SPARK_GITHUB_REPO = "https://github.com/apache/spark"
 
 # Default location to get the spark-ec2 scripts (and ami-list) from
-DEFAULT_SPARK_EC2_GITHUB_REPO = "https://github.com/amplab/spark-ec2"
-DEFAULT_SPARK_EC2_BRANCH = "branch-2.0"
+DEFAULT_SPARK_EC2_GITHUB_REPO = "https://github.com/sul-dlss/spark-ec2"
+DEFAULT_SPARK_EC2_BRANCH = "spark-2.2.0"
 
 
 def setup_external_libs(libs):
