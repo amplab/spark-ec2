@@ -13,20 +13,13 @@ fi
 # Dev tools
 sudo yum install -y gcc gcc-c++ ant git
 
-# Install java-7 for Hadoop 2.7.x
 # Install java-8 for Spark 2.2.x
-# Installing java-8 second should set it as the default
-sudo yum install -y java-1.7.0-openjdk-devel
 sudo yum install -y java-1.8.0-openjdk-devel
-ls -lh /usr/lib/jvm
-which javac
-javac -version
 
 # Perf tools
 sudo yum install -y dstat iotop strace sysstat htop perf
 sudo debuginfo-install -q -y glibc
 sudo debuginfo-install -q -y kernel
-sudo yum --enablerepo='*-debug*' install -q -y java-1.7.0-openjdk-debuginfo
 sudo yum --enablerepo='*-debug*' install -q -y java-1.8.0-openjdk-debuginfo
 
 # PySpark and MLlib deps
@@ -57,7 +50,7 @@ for x in {1..23}; do
     "\"defaults,noatime\", \"0\", \"0\" ]" >> /etc/cloud/cloud.cfg
 done
 
-# Install Maven (for Hadoop)
+# Install Maven
 cd /tmp
 wget "http://archive.apache.org/dist/maven/maven-3/3.2.3/binaries/apache-maven-3.2.3-bin.tar.gz"
 tar xvzf apache-maven-3.2.3-bin.tar.gz
@@ -70,25 +63,6 @@ echo "export M2_HOME=/opt/apache-maven-3.2.3" >> ~/.bash_profile
 echo "export PATH=\$PATH:\$M2_HOME/bin" >> ~/.bash_profile
 
 source ~/.bash_profile
-
-# Build Hadoop to install native libs - Hadoop 2.7 requires java-7
-hadoop_version="2.7.4"
-export JAVA_HOME="/usr/lib/jvm/java-1.7.0"  # temporarily use java-7
-sudo mkdir /root/hadoop-native
-cd /tmp
-sudo yum install -y protobuf-compiler cmake openssl-devel
-wget "http://archive.apache.org/dist/hadoop/common/hadoop-${hadoop_version}/hadoop-${hadoop_version}-src.tar.gz"
-tar xvzf "hadoop-${hadoop_version}-src.tar.gz"
-cd "hadoop-${hadoop_version}-src"
-mvn package -Pdist,native -DskipTests -Dtar
-sudo mv "hadoop-dist/target/hadoop-${hadoop_version}/lib/native/*" /root/hadoop-native
-
-# Reset JAVA_HOME etc. after building hadoop
-source ~/.bash_profile
-
-# Install Snappy lib (for Hadoop)
-yum install -y snappy
-ln -sf /usr/lib64/libsnappy.so.1 /root/hadoop-native/.
 
 # Create /usr/bin/realpath which is used by R to find Java installations
 # NOTE: /usr/bin/realpath is missing in CentOS AMIs. See
