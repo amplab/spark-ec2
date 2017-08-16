@@ -14,13 +14,16 @@ fi
 sudo yum install -y gcc gcc-c++ ant git
 
 # Install java-8 for Spark 2.2.x
-sudo yum install -y java-1.8.0-openjdk-devel
+sudo yum install -y java-1.8.0 java-1.8.0-devel
+sudo /usr/sbin/alternatives --set java /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/java
+sudo /usr/sbin/alternatives --set javac /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/javac
+#sudo yum remove java-1.7
 
 # Perf tools
 sudo yum install -y dstat iotop strace sysstat htop perf
 sudo debuginfo-install -q -y glibc
 sudo debuginfo-install -q -y kernel
-sudo yum --enablerepo='*-debug*' install -q -y java-1.8.0-openjdk-debuginfo
+sudo yum --enablerepo='*-debug*' install -y java-1.8.0-openjdk-debuginfo
 
 # PySpark and MLlib deps
 sudo yum install -y  python-matplotlib python-tornado scipy libgfortran
