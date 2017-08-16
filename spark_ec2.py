@@ -52,8 +52,12 @@ else:
     xrange = range
 
 # spark-2.2.0-bin-hadoop2.7.tgz
-# For the Scala API, Spark 2.2.0 uses Scala 2.11. You will need to use a compatible Scala version (2.11.x).
-# Versions of Hadoop before 2.6 are deprecated as of Spark 2.1.0, and may be removed in Spark 2.2.0.
+
+# Spark 2.2.0 overview notes:
+# - Spark runs on Java 8+, Python 2.7+/3.4+ and R 3.1+.
+# - For the Scala API, Spark 2.2.0 uses Scala 2.11. You will need to use a compatible Scala version (2.11.x).
+# - Note that support for Java 7, Python 2.6 and old Hadoop versions before 2.6.5 were removed as of Spark 2.2.0.
+# - Note that support for Scala 2.10 is deprecated as of Spark 2.1.0, and may be removed in Spark 2.3.0.
 
 SPARK_EC2_VERSION = "2.2.0"
 SPARK_EC2_DIR = os.path.dirname(os.path.realpath(__file__))

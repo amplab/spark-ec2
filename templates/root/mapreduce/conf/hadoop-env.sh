@@ -6,7 +6,9 @@
 # remote nodes.
 
 # The java implementation to use.  Required.
-export JAVA_HOME={{java_home}}
+# Hadoop 2.x requires java-7 (it's not compatible with java-8), see
+# https://wiki.apache.org/hadoop/HadoopJavaVersions
+export JAVA_HOME=/usr/lib/jvm/java-1.7.0
 
 # Extra Java CLASSPATH elements.  Optional.
 # export HADOOP_CLASSPATH=

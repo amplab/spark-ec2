@@ -20,8 +20,9 @@ export HADOOP_YARN_USER=${HADOOP_YARN_USER:-yarn}
 #export YARN_CONF_DIR="${YARN_CONF_DIR:-$HADOOP_YARN_HOME/conf}"
 export YARN_CONF_DIR="/root/ephemeral-hdfs/conf"
 
-# some Java parameters
-export JAVA_HOME={{java_home}}
+# Java parameters - Hadoop requires java-7
+export JAVA_HOME="/usr/lib/jvm/java-1.7.0"
+
 JAVA=$JAVA_HOME/bin/java
 JAVA_HEAP_MAX=-Xmx1000m 
 

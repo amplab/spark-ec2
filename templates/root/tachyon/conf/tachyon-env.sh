@@ -20,12 +20,13 @@ if [[ `uname -a` == Darwin* ]]; then
 else
   # Assuming Linux
   if [ -z "$JAVA_HOME" ]; then
-    export JAVA_HOME={{java_home}}
+    # TODO: Does tachyon work with java-8?
+    export JAVA_HOME=/usr/lib/jvm/java-1.7.0
+    export JAVA="$JAVA_HOME/bin/java"
   fi
   export TACHYON_RAM_FOLDER=/mnt/ramdisk
 fi
 
-export JAVA="$JAVA_HOME/bin/java"
 export TACHYON_MASTER_ADDRESS={{active_master}}
 export TACHYON_UNDERFS_ADDRESS=hdfs://{{active_master}}:9000
 #export TACHYON_UNDERFS_ADDRESS=hdfs://localhost:9000
