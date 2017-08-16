@@ -21,19 +21,7 @@ export HADOOP_YARN_USER=${HADOOP_YARN_USER:-yarn}
 export YARN_CONF_DIR="/root/ephemeral-hdfs/conf"
 
 # some Java parameters
-# export JAVA_HOME=/home/y/libexec/jdk1.6.0/
-#if [ "$JAVA_HOME" != "" ]; then
-#  #echo "run java in $JAVA_HOME"
-#  JAVA_HOME=$JAVA_HOME
-#fi
-#  
-#if [ "$JAVA_HOME" = "" ]; then
-#  echo "Error: JAVA_HOME is not set."
-#  exit 1
-#fi
-
 export JAVA_HOME={{java_home}}
-
 JAVA=$JAVA_HOME/bin/java
 JAVA_HEAP_MAX=-Xmx1000m 
 
