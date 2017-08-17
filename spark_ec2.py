@@ -96,27 +96,6 @@ VALID_SPARK_VERSIONS = set([
     "2.2.0"
 ])
 
-# https://spark.apache.org/releases/spark-release-2-0-0.html#removals-behavior-changes-and-deprecations
-# Removed :  Block-oriented integration with Tachyon (subsumed by file system integration)
-SPARK_TACHYON_MAP = {
-    "1.0.0": "0.4.1",
-    "1.0.1": "0.4.1",
-    "1.0.2": "0.4.1",
-    "1.1.0": "0.5.0",
-    "1.1.1": "0.5.0",
-    "1.2.0": "0.5.0",
-    "1.2.1": "0.5.0",
-    "1.3.0": "0.5.0",
-    "1.3.1": "0.5.0",
-    "1.4.0": "0.6.4",
-    "1.4.1": "0.6.4",
-    "1.5.0": "0.7.1",
-    "1.5.1": "0.7.1",
-    "1.5.2": "0.7.1",
-    "1.6.0": "0.8.2",
-    # nothing for spark >= 2.x
-}
-
 DEFAULT_SPARK_VERSION = SPARK_EC2_VERSION
 DEFAULT_SPARK_GITHUB_REPO = "https://github.com/apache/spark"
 
@@ -483,8 +462,6 @@ EC2_INSTANCE_TYPES = {
 }
 
 
-def get_tachyon_version(spark_version):
-    return SPARK_TACHYON_MAP.get(spark_version, "")
 
 
 # Attempt to resolve an appropriate AMI given the architecture and region of the request.
@@ -857,7 +834,7 @@ def setup_cluster(conn, master_nodes, slave_nodes, opts, deploy_ssh_key):
             ssh_write(slave_address, opts, ['tar', 'x'], dot_ssh_tar)
 
     modules = ['spark', 'ephemeral-hdfs', 'persistent-hdfs',
-               'mapreduce', 'spark-standalone', 'tachyon', 'rstudio']
+               'mapreduce', 'spark-standalone', 'rstudio']
 
     if opts.hadoop_major_version == "1":
         modules = list(filter(lambda x: x != "mapreduce", modules))
@@ -1103,15 +1080,9 @@ def deploy_files(conn, root_dir, opts, master_nodes, slave_nodes, modules):
         # Pre-built Spark deploy
         spark_v = get_validate_spark_version(opts.spark_version, opts.spark_git_repo)
         validate_spark_hadoop_version(spark_v, opts.hadoop_major_version)
-        tachyon_v = get_tachyon_version(spark_v)
     else:
         # Spark-only custom deploy
         spark_v = "%s|%s" % (opts.spark_git_repo, opts.spark_version)
-        tachyon_v = ""
-
-    if tachyon_v == "":
-      print("No valid Tachyon version found; Tachyon won't be set up")
-      modules.remove("tachyon")
 
     master_addresses = [get_dns_name(i, opts.private_ips) for i in master_nodes]
     slave_addresses = [get_dns_name(i, opts.private_ips) for i in slave_nodes]
@@ -1127,7 +1098,6 @@ def deploy_files(conn, root_dir, opts, master_nodes, slave_nodes, modules):
         "swap": str(opts.swap),
         "modules": '\n'.join(modules),
         "spark_version": spark_v,
-        "tachyon_version": tachyon_v,
         "hadoop_major_version": opts.hadoop_major_version,
         "spark_worker_instances": worker_instances_str,
         "spark_master_opts": opts.master_opts
