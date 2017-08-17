@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo setup-tools.sh
+
 # Disable Transparent Huge Pages (THP)
 # THP can result in system thrashing (high sys usage) due to frequent defrags of memory.
 # Most systems recommends turning THP off.

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo yum install -y -q pssh
+sudo setup-tools.sh
 
 # usage: echo_time_diff name start_time end_time
 echo_time_diff () {
