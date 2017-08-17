@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo setup-tools.sh
+~/spark-ec2/setup-tools.sh
 
 # Disable Transparent Huge Pages (THP)
 # THP can result in system thrashing (high sys usage) due to frequent defrags of memory.

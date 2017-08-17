@@ -234,10 +234,6 @@ def parse_args():
              "the directory is not created and its contents are copied directly into /. " +
              "(default: %default).")
     parser.add_option(
-        "--hadoop-major-version", default="yarn",
-        help="Major version of Hadoop. Valid options are 1 (Hadoop 1.0.4), 2 (CDH 4.2.0), yarn " +
-             "(Hadoop 2.4.0) (default: %default)")
-    parser.add_option(
         "-D", metavar="[ADDRESS:]PORT", dest="proxy_port",
         help="Use SSH dynamic port forwarding to create a SOCKS proxy at " +
              "the given local address (for use with login)")
@@ -286,10 +282,6 @@ def parse_args():
     parser.add_option(
         "--use-existing-master", action="store_true", default=False,
         help="Launch fresh slaves, but use an existing stopped master if possible")
-    parser.add_option(
-        "--worker-instances", type="int", default=1,
-        help="Number of instances per worker: variable SPARK_WORKER_INSTANCES. Not used if YARN " +
-             "is used as Hadoop major version (default: %default)")
     parser.add_option(
         "--master-opts", type="string", default="",
         help="Extra options to give to master through SPARK_MASTER_OPTS variable " +
@@ -365,19 +357,6 @@ def get_or_make_group(conn, name, vpc_id):
     else:
         print("Creating security group " + name)
         return conn.create_security_group(name, "Spark EC2 group", vpc_id)
-
-def validate_spark_hadoop_version(spark_version, hadoop_version):
-    if "." in spark_version:
-        parts = spark_version.split(".")
-        if parts[0].isdigit():
-            spark_major_version = float(parts[0])
-            if spark_major_version > 1.0 and hadoop_version != "yarn":
-              print("Spark version: {v}, does not support Hadoop version: {hv}".
-                    format(v=spark_version, hv=hadoop_version), file=stderr)
-              sys.exit(1)
-        else:
-            print("Invalid Spark version: {v}".format(v=spark_version), file=stderr)
-            sys.exit(1)
 
 def get_validate_spark_version(version, repo):
     if "." in version:
@@ -833,18 +812,10 @@ def setup_cluster(conn, master_nodes, slave_nodes, opts, deploy_ssh_key):
             print(slave_address)
             ssh_write(slave_address, opts, ['tar', 'x'], dot_ssh_tar)
 
-    modules = ['spark', 'ephemeral-hdfs', 'persistent-hdfs',
-               'mapreduce', 'spark-standalone', 'rstudio']
-
-    if opts.hadoop_major_version == "1":
-        modules = list(filter(lambda x: x != "mapreduce", modules))
+    modules = ['spark', 'spark-standalone']
 
     if opts.ganglia:
         modules.append('ganglia')
-
-    # Clear SPARK_WORKER_INSTANCES if running on YARN
-    if opts.hadoop_major_version == "yarn":
-        opts.worker_instances = ""
 
     # NOTE: We should clone the repository before running deploy_files to
     # prevent ec2-variables.sh from being overwritten
@@ -883,8 +854,8 @@ def setup_cluster(conn, master_nodes, slave_nodes, opts, deploy_ssh_key):
 
 
 def setup_spark_cluster(master, opts):
-    ssh(master, opts, "chmod u+x spark-ec2/setup.sh")
-    ssh(master, opts, "spark-ec2/setup.sh")
+    ssh(master, opts, "chmod u+x ${HOME}/spark-ec2/setup.sh")
+    ssh(master, opts, "${HOME}/spark-ec2/setup.sh")
     print("Spark standalone cluster started at http://%s:8080" % master)
 
     if opts.ganglia:
@@ -1065,13 +1036,9 @@ def deploy_files(conn, root_dir, opts, master_nodes, slave_nodes, modules):
     active_master = get_dns_name(master_nodes[0], opts.private_ips)
 
     num_disks = get_num_disks(opts.instance_type)
-    hdfs_data_dirs = "/mnt/ephemeral-hdfs/data"
-    mapred_local_dirs = "/mnt/hadoop/mrlocal"
     spark_local_dirs = "/mnt/spark"
     if num_disks > 1:
         for i in range(2, num_disks + 1):
-            hdfs_data_dirs += ",/mnt%d/ephemeral-hdfs/data" % i
-            mapred_local_dirs += ",/mnt%d/hadoop/mrlocal" % i
             spark_local_dirs += ",/mnt%d/spark" % i
 
     cluster_url = "%s:7077" % active_master
@@ -1079,27 +1046,21 @@ def deploy_files(conn, root_dir, opts, master_nodes, slave_nodes, modules):
     if "." in opts.spark_version:
         # Pre-built Spark deploy
         spark_v = get_validate_spark_version(opts.spark_version, opts.spark_git_repo)
-        validate_spark_hadoop_version(spark_v, opts.hadoop_major_version)
     else:
         # Spark-only custom deploy
         spark_v = "%s|%s" % (opts.spark_git_repo, opts.spark_version)
 
     master_addresses = [get_dns_name(i, opts.private_ips) for i in master_nodes]
     slave_addresses = [get_dns_name(i, opts.private_ips) for i in slave_nodes]
-    worker_instances_str = "%d" % opts.worker_instances if opts.worker_instances else ""
     template_vars = {
         "master_list": '\n'.join(master_addresses),
         "active_master": active_master,
         "slave_list": '\n'.join(slave_addresses),
         "cluster_url": cluster_url,
-        "hdfs_data_dirs": hdfs_data_dirs,
-        "mapred_local_dirs": mapred_local_dirs,
         "spark_local_dirs": spark_local_dirs,
         "swap": str(opts.swap),
         "modules": '\n'.join(modules),
         "spark_version": spark_v,
-        "hadoop_major_version": opts.hadoop_major_version,
-        "spark_worker_instances": worker_instances_str,
         "spark_master_opts": opts.master_opts
     }
 
@@ -1283,7 +1244,6 @@ def real_main():
 
     # Input parameter validation
     spark_v = get_validate_spark_version(opts.spark_version, opts.spark_git_repo)
-    validate_spark_hadoop_version(spark_v, opts.hadoop_major_version)
 
     if opts.wait is not None:
         # NOTE: DeprecationWarnings are silent in 2.7+ by default.

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo setup-tools.sh
+~/spark-ec2/setup-tools.sh
 
 # usage: echo_time_diff name start_time end_time
 echo_time_diff () {
