@@ -9,48 +9,67 @@ fi
 
 
 # Connectivity tools
-sudo yum install -y pssh rsync
+echo "Install connectivity tools (ssh, rsync)"
+sudo yum install -y -q pssh rsync
 
 # Dev tools
-sudo yum install -y gcc gcc-c++ ant git
+echo "Install dev tools (gcc, ant, git)"
+sudo yum install -y -q gcc gcc-c++ ant git
 
 # Install java-8 for Spark 2.2.x
-sudo yum install -y java-1.8.0 java-1.8.0-devel
-sudo yum --enablerepo='*-debug*' install -y java-1.8.0-openjdk-debuginfo
-sudo yum remove -y  java-1.7.0
+echo "Install java-8"
+sudo yum install -y -q java-1.8.0 java-1.8.0-devel
+sudo yum --enablerepo='*-debug*' install -y -q java-1.8.0-openjdk-debuginfo
+echo "Remove java-7 and set the default to java-8"
+sudo yum remove -y -q java-1.7.0
 sudo /usr/sbin/alternatives --auto java
 sudo /usr/sbin/alternatives --auto javac
 
 # Perf tools
-sudo yum install -y dstat iotop strace sysstat htop perf
-sudo debuginfo-install -y glibc
-sudo debuginfo-install -y kernel
+echo "Install performance tools"
+sudo yum install -y -q dstat iotop strace sysstat htop perf
+sudo debuginfo-install -y -q glibc
+sudo debuginfo-install -y -q kernel
 
 # PySpark and MLlib deps
-sudo yum install -y python-matplotlib python-tornado scipy libgfortran
+echo "Install python tools"
+sudo yum install -y -q python-matplotlib python-tornado scipy libgfortran
 # SparkR deps
-sudo yum install -y R
+echo "Install R tools"
+sudo yum install -y -q R
+
 # Ganglia
-sudo yum install -y ganglia ganglia-web ganglia-gmond ganglia-gmetad
+echo "Install Ganglia monitoring tools"
+sudo yum install -y -q ganglia ganglia-web ganglia-gmond ganglia-gmetad
 
 # Install Maven
-cd /tmp
-wget "http://archive.apache.org/dist/maven/maven-3/3.2.3/binaries/apache-maven-3.2.3-bin.tar.gz"
-tar xvzf apache-maven-3.2.3-bin.tar.gz
-mv apache-maven-3.2.3 /opt/
+echo "Install Maven"
+if [ ! -d /opt/apache-maven-3.2.3 ]; then
+    cd /tmp
+    wget "http://archive.apache.org/dist/maven/maven-3/3.2.3/binaries/apache-maven-3.2.3-bin.tar.gz"
+    tar zxf apache-maven-3.2.3-bin.tar.gz
+    mv apache-maven-3.2.3 /opt/
+fi
 
 # Edit bash profile
-echo "export PS1=\"\\u@\\h \\W]\\$ \"" >> ~/.bash_profile
-echo "export JAVA_HOME=/usr/lib/jvm/java-1.8.0" >> ~/.bash_profile
-echo "export M2_HOME=/opt/apache-maven-3.2.3" >> ~/.bash_profile
-echo "export PATH=\$PATH:\$M2_HOME/bin" >> ~/.bash_profile
+echo "Update .bash_profile"
+if grep -q 'java-1.8.0' ~/.bash_profile; then
+    echo ".bash_profile setup"
+else
+    echo "export PS1=\"\\u@\\h \\W]\\$ \"" >> ~/.bash_profile
+    echo "export JAVA_HOME=/usr/lib/jvm/java-1.8.0" >> ~/.bash_profile
+    echo "export M2_HOME=/opt/apache-maven-3.2.3" >> ~/.bash_profile
+    echo "export PATH=\$PATH:\$M2_HOME/bin" >> ~/.bash_profile
+fi
 
 source ~/.bash_profile
 
 # Create /usr/bin/realpath which is used by R to find Java installations
 # NOTE: /usr/bin/realpath is missing in CentOS AMIs. See
 # http://superuser.com/questions/771104/usr-bin-realpath-not-found-in-centos-6-5
-echo '#!/bin/bash' > /usr/bin/realpath
-echo 'readlink -e "$@"' >> /usr/bin/realpath
-chmod a+x /usr/bin/realpath
+if [ ! -f /usr/bin/realpath ]; then
+    echo '#!/bin/bash' > /usr/bin/realpath
+    echo 'readlink -e "$@"' >> /usr/bin/realpath
+    chmod a+x /usr/bin/realpath
+fi
 
