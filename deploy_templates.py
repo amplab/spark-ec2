@@ -47,9 +47,6 @@ elif slave_ram_mb > 10*1024:
 else:
   slave_ram_mb = max(512, slave_ram_mb - 1300) # Leave 1.3 GB RAM
 
-# Make tachyon_mb as slave_ram_mb for now.
-tachyon_mb = slave_ram_mb
-
 worker_instances_str = ""
 worker_cores = slave_cpus
 
@@ -63,18 +60,13 @@ template_vars = {
   "master_list": os.getenv("MASTERS"),
   "active_master": os.getenv("MASTERS").split("\n")[0],
   "slave_list": os.getenv("SLAVES"),
-  "hdfs_data_dirs": os.getenv("HDFS_DATA_DIRS"),
-  "mapred_local_dirs": os.getenv("MAPRED_LOCAL_DIRS"),
   "spark_local_dirs": os.getenv("SPARK_LOCAL_DIRS"),
   "spark_worker_mem": "%dm" % slave_ram_mb,
   "spark_worker_instances": worker_instances_str,
   "spark_worker_cores": "%d" %  worker_cores,
   "spark_master_opts": os.getenv("SPARK_MASTER_OPTS", ""),
   "spark_version": os.getenv("SPARK_VERSION"),
-  "tachyon_version": os.getenv("TACHYON_VERSION"),
-  "hadoop_major_version": os.getenv("HADOOP_MAJOR_VERSION"),
   "java_home": os.getenv("JAVA_HOME"),
-  "default_tachyon_mem": "%dMB" % tachyon_mb,
   "system_ram_mb": "%d" % system_ram_mb,
   "aws_access_key_id": os.getenv("AWS_ACCESS_KEY_ID"),
   "aws_secret_access_key": os.getenv("AWS_SECRET_ACCESS_KEY"),
