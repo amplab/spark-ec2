@@ -1,4 +1,4 @@
-_Please note: spark-ec2 is **no longer under active development**. If you're looking for a similar tool that is under active development, we recommend you take a look at [Flintrock](https://github.com/nchammas/flintrock)._
+_Please note: spark-ec2 is **no longer under active development** and the project has been archived. All the existing code, PRs and issues are still accessible but are now read-only. If you're looking for a similar tool that is under active development, we recommend you take a look at [Flintrock](https://github.com/nchammas/flintrock)._
 
 # EC2 Cluster Setup for Apache Spark
 
