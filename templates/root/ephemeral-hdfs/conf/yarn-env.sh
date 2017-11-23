@@ -18,7 +18,7 @@ export HADOOP_YARN_USER=${HADOOP_YARN_USER:-yarn}
 
 # resolve links - $0 may be a softlink
 #export YARN_CONF_DIR="${YARN_CONF_DIR:-$HADOOP_YARN_HOME/conf}"
-export YARN_CONF_DIR="/root/ephemeral-hdfs/conf"
+export YARN_CONF_DIR="~/ephemeral-hdfs/conf"
 
 # some Java parameters
 # export JAVA_HOME=/home/y/libexec/jdk1.6.0/

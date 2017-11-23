@@ -42,6 +42,7 @@ import warnings
 from datetime import datetime
 from optparse import OptionParser
 from sys import stderr
+from collections import namedtuple
 
 if sys.version < "3":
     from urllib2 import urlopen, Request, HTTPError
@@ -177,7 +178,7 @@ def parse_args():
         prog="spark-ec2",
         version="%prog {v}".format(v=SPARK_EC2_VERSION),
         usage="%prog [options] <action> <cluster_name>\n\n"
-        + "<action> can be: launch, destroy, login, stop, start, get-master, reboot-slaves")
+        + "<action> can be: create, launch, destroy, login, stop, start, get-master, reboot-slaves")
 
     parser.add_option(
         "-s", "--slaves", type="int", default=1,
@@ -210,6 +211,11 @@ def parse_args():
         help="Availability zone to launch instances in, or 'all' to spread " +
              "slaves across multiple (an additional $0.01/Gb for bandwidth" +
              "between zones applies) (default: a single zone chosen at random)")
+    parser.add_option(
+        "--ami-type", default="spark",
+        help="Type of ami to use (default: %default). " +
+             "Valid options are %default and ubuntu. " +
+	     "If you specify an ami, the ami-type option will be ignored.")
     parser.add_option(
         "-a", "--ami",
         help="Amazon Machine Image ID to use")
@@ -331,6 +337,12 @@ def parse_args():
     parser.add_option(
         "--instance-profile-name", default=None,
         help="IAM profile name to launch instances under")
+    parser.add_option(
+        "--elastic-ip", default=None,
+        help="Elastic IP to associate with the master")
+    parser.add_option(
+        "--no-setup", action="store_true", default=False,
+        help="Do not run the usual setup commands")
 
     (opts, args) = parser.parse_args()
     if len(args) != 2:
@@ -466,13 +478,40 @@ def get_spark_ami(opts):
         r=opts.spark_ec2_git_repo.replace("https://github.com", "https://raw.github.com", 1),
         b=opts.spark_ec2_git_branch)
 
-    ami_path = "%s/%s/%s" % (ami_prefix, opts.region, instance_type)
+    if opts.ami_type == "spark":
+      ami_path = "%s/%s/%s" % (ami_prefix, opts.region, instance_type)
+    elif opts.ami_type == "ubuntu":
+      ami_path = "%s-ubuntu/ami-list-ubuntu-amd64" % ami_prefix
+    else:
+      print("Bad ami type")
+      sys.exit(1)
+
     reader = codecs.getreader("ascii")
     try:
         ami = reader(urlopen(ami_path)).read().strip()
     except:
         print("Could not resolve AMI at: " + ami_path, file=stderr)
         sys.exit(1)
+
+    if opts.ami_type == "ubuntu":
+      storage_type = "ebs"	#"", "ebs", "ebs-io1", "ebs-ssd"
+      AMItup = namedtuple('AMI', ['region','release','version','arch','hwtype','date','ami','hyper'])
+      amil = ami.split('\n')
+      amill = [l.split(',') for l in amil]
+      amilt = [AMItup._make(l) for l in amill]
+      if instance_type == 'hvm':
+	hwtype = 'hvm:' + storage_type
+	amilt = [t for t in amilt if t.region == opts.region and t.hyper == 'hvm' and t.hwtype == hwtype]
+      else:
+	hwtype = storage_type
+	amilt = [t for t in amilt if t.region == opts.region and t.hyper != 'hvm' and t.hwtype == hwtype]
+      if len(amilt) != 1:
+        print("%d AMIs found, needed exactly one" % len(amilt))
+	for t in amilt:
+	  print(t)
+	sys.exit(1)
+      ami = amilt[0].ami
+
 
     print("Spark AMI: " + ami)
     return ami
@@ -483,6 +522,7 @@ def get_spark_ami(opts):
 # Returns a tuple of EC2 reservation objects for the master and slaves
 # Fails if there already instances running in the cluster's groups.
 def launch_cluster(conn, opts, cluster_name):
+
     if opts.identity_file is None:
         print("ERROR: Must provide an identity file (-i) for ssh connections.", file=stderr)
         sys.exit(1)
@@ -598,6 +638,16 @@ def launch_cluster(conn, opts, cluster_name):
             device.volume_type = opts.ebs_vol_type
             device.delete_on_termination = True
             block_map["/dev/sd" + chr(ord('s') + i)] = device
+
+    # for vanilla ubuntu AMIs, list out ephemeral block devices so they
+    # attached to be mounted on /mnt*
+    if opts.user == "ubuntu":
+        for i in range(get_num_disks(opts.instance_type)):
+            dev = BlockDeviceType()
+            dev.ephemeral_name = 'ephemeral%d' % i
+            # The first ephemeral drive is /dev/sdb.
+            name = '/dev/sd' + string.ascii_letters[i + 1]
+            block_map[name] = dev
 
     # AWS ignores the AMI-specified block device mapping for M3 (see SPARK-3342).
     if opts.instance_type.startswith('m3.'):
@@ -810,6 +860,11 @@ def setup_cluster(conn, master_nodes, slave_nodes, opts, deploy_ssh_key):
             print(slave_address)
             ssh_write(slave_address, opts, ['tar', 'x'], dot_ssh_tar)
 
+    #install git on vanilla ubuntu ami
+    if opts.user == "ubuntu":
+        git_install = "sudo apt-get install -y -q git"
+        ssh(master, opts, git_install)
+
     modules = ['spark', 'ephemeral-hdfs', 'persistent-hdfs',
                'mapreduce', 'spark-standalone', 'tachyon', 'rstudio']
 
@@ -836,10 +891,17 @@ def setup_cluster(conn, master_nodes, slave_nodes, opts, deploy_ssh_key):
                                                   b=opts.spark_ec2_git_branch)
     )
 
+
     print("Deploying files to master...")
+    if opts.user == "root":
+        root_dir=SPARK_EC2_DIR + "/" + "deploy.generic"
+    elif opts.user == "ubuntu":
+        root_dir=SPARK_EC2_DIR + "/" + "deploy.ubuntu"
+    else:
+        root_dir=SPARK_EC2_DIR + "/" + "deploy.generic"
     deploy_files(
         conn=conn,
-        root_dir=SPARK_EC2_DIR + "/" + "deploy.generic",
+        root_dir=root_dir,
         opts=opts,
         master_nodes=master_nodes,
         slave_nodes=slave_nodes,
@@ -1346,20 +1408,22 @@ def real_main():
         opts.zone = random.choice(conn.get_all_zones()).name
 
     if action == "launch":
-        if opts.slaves <= 0:
-            print("ERROR: You have to start at least 1 slave", file=sys.stderr)
-            sys.exit(1)
-        if opts.resume:
-            (master_nodes, slave_nodes) = get_existing_cluster(conn, opts, cluster_name)
-        else:
-            (master_nodes, slave_nodes) = launch_cluster(conn, opts, cluster_name)
-        wait_for_cluster_state(
-            conn=conn,
-            opts=opts,
-            cluster_instances=(master_nodes + slave_nodes),
-            cluster_state='ssh-ready'
-        )
-        setup_cluster(conn, master_nodes, slave_nodes, opts, True)
+	if opts.slaves <= 0:
+	    print("ERROR: You have to start at least 1 slave", file=sys.stderr)
+	    sys.exit(1)
+	if opts.resume:
+	    (master_nodes, slave_nodes) = get_existing_cluster(conn, opts, cluster_name)
+	else:
+	    (master_nodes, slave_nodes) = launch_cluster(conn, opts, cluster_name)
+	wait_for_cluster_state(
+	    conn=conn,
+	    opts=opts,
+	    cluster_instances=(master_nodes + slave_nodes),
+	    cluster_state='ssh-ready'
+	)
+
+	if not opts.no_setup:
+	  setup_cluster(conn, master_nodes, slave_nodes, opts, True)
 
     elif action == "destroy":
         (master_nodes, slave_nodes) = get_existing_cluster(
@@ -1488,6 +1552,9 @@ def real_main():
                         inst.stop()
 
     elif action == "start":
+	if opts.elastic_ip:
+	    pdn = "ec2-" + "-".join(opts.elastic_ip.split(".")) + "." + opts.region + ".compute.amazonaws.com"
+	    print("will set master's public dns name to %s" % pdn)
         (master_nodes, slave_nodes) = get_existing_cluster(conn, opts, cluster_name)
         print("Starting slaves...")
         for inst in slave_nodes:
@@ -1503,6 +1570,29 @@ def real_main():
             cluster_instances=(master_nodes + slave_nodes),
             cluster_state='ssh-ready'
         )
+        if opts.elastic_ip:
+            print("setting master's public dns name to %s" % pdn)
+            conn.associate_address(master_nodes[0].id, opts.elastic_ip)
+            master_nodes[0].ip_address=opts.elastic_ip
+            master_nodes[0].public_dns_name=pdn
+            
+            print("Attachment made")
+            
+        # Determine types of running instances
+        existing_master_type = master_nodes[0].instance_type
+        existing_slave_type = slave_nodes[0].instance_type
+        # Setting opts.master_instance_type to the empty string indicates we
+        # have the same instance type for the master and the slaves
+        if existing_master_type == existing_slave_type:
+            existing_master_type = ""
+        opts.master_instance_type = existing_master_type
+        opts.instance_type = existing_slave_type
+
+	if not opts.no_setup:
+	  setup_cluster(conn, master_nodes, slave_nodes, opts, False)
+
+    elif action == "setup":
+        (master_nodes, slave_nodes) = get_existing_cluster(conn, opts, cluster_name)
 
         # Determine types of running instances
         existing_master_type = master_nodes[0].instance_type
@@ -1514,7 +1604,7 @@ def real_main():
         opts.master_instance_type = existing_master_type
         opts.instance_type = existing_slave_type
 
-        setup_cluster(conn, master_nodes, slave_nodes, opts, False)
+	setup_cluster(conn, master_nodes, slave_nodes, opts, True)
 
     else:
         print("Invalid action: %s" % action, file=stderr)

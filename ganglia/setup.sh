@@ -1,20 +1,33 @@
 #!/bin/bash
 
-/root/spark-ec2/copy-dir /etc/ganglia/
+USER=`whoami`
 
-# Start gmond everywhere
-/etc/init.d/gmond restart
+#learn the linux distribution
+DISTRIB_ID=Centos
+if [[ -e /etc/lsb-release ]]; then source /etc/lsb-release; fi
+echo "DISTRIB_ID=$DISTRIB_ID"
 
-for node in $SLAVES $OTHER_MASTERS; do
-  ssh -t -t $SSH_OPTS root@$node "/etc/init.d/gmond restart"
-done
+if [[ $DISTRIB_ID = "Centos" ]]; then
 
-# gmeta needs rrds to be owned by nobody
-chown -R nobody /var/lib/ganglia/rrds
-# cluster-wide aggregates only show up with this. TODO: Fix this cleanly ?
-ln -s /usr/share/ganglia/conf/default.json /var/lib/ganglia/conf/
+  /root/spark-ec2/copy-dir /etc/ganglia/
 
-/etc/init.d/gmetad restart
+  # Start gmond everywhere
+  /etc/init.d/gmond restart
 
-# Start http server to serve ganglia
-/etc/init.d/httpd restart
+  for node in $SLAVES $OTHER_MASTERS; do
+    ssh -t -t $SSH_OPTS root@$node "/etc/init.d/gmond restart"
+  done
+
+  # gmeta needs rrds to be owned by nobody
+  chown -R nobody /var/lib/ganglia/rrds
+  # cluster-wide aggregates only show up with this. TODO: Fix this cleanly ?
+  ln -s /usr/share/ganglia/conf/default.json /var/lib/ganglia/conf/
+
+  /etc/init.d/gmetad restart
+
+  # Start http server to serve ganglia
+  /etc/init.d/httpd restart
+
+elif [[ $DISTRIB_ID = "Ubuntu" ]]; then
+  echo "WARNING: Skipping ganglia on ubuntu..."
+fi

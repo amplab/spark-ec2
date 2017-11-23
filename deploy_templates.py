@@ -17,7 +17,7 @@ cpu_command = "nproc"
 master_ram_kb = int(
   os.popen(mem_command).read().strip())
 # This is the master's memory. Try to find slave's memory as well
-first_slave = os.popen("cat /root/spark-ec2/slaves | head -1").read().strip()
+first_slave = os.popen("cat ~/spark-ec2/slaves | head -1").read().strip()
 
 slave_mem_command = "ssh -t -o StrictHostKeyChecking=no %s %s" %\
         (first_slave, mem_command)
@@ -80,11 +80,17 @@ template_vars = {
   "aws_secret_access_key": os.getenv("AWS_SECRET_ACCESS_KEY"),
 }
 
-template_dir="/root/spark-ec2/templates"
+deploy_root_dir = os.getenv("DEPLOY_ROOT_DIR")
+
+template_dir=deploy_root_dir+"/spark-ec2/templates"
+tmp_template_dir=os.getenv("TMP_TEMPLATE_DIR")
 
 for path, dirs, files in os.walk(template_dir):
   if path.find(".svn") == -1:
     dest_dir = os.path.join('/', path[len(template_dir):])
+    if dest_dir.startswith("/root"):
+      dest_dir = deploy_root_dir + dest_dir[5:]
+    dest_dir = "/tmp/templates/" + dest_dir
     if not os.path.exists(dest_dir):
       os.makedirs(dest_dir)
     for filename in files:
@@ -92,7 +98,6 @@ for path, dirs, files in os.walk(template_dir):
         dest_file = os.path.join(dest_dir, filename)
         with open(os.path.join(path, filename)) as src:
           with open(dest_file, "w") as dest:
-            print("Configuring " + dest_file)
             text = src.read()
             for key in template_vars:
               text = text.replace("{{" + key + "}}", template_vars[key] or '')

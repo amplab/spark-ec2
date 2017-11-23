@@ -11,8 +11,8 @@ export JAVA_HOME={{java_home}}
 # Extra Java CLASSPATH elements.  Optional.
 # export HADOOP_CLASSPATH=
 
-export HADOOP_HOME="/root/ephemeral-hdfs"
-export HADOOP_MAPREDUCE_HOME="/root/mapreduce"
+export HADOOP_HOME="~/ephemeral-hdfs"
+export HADOOP_MAPREDUCE_HOME="~/mapreduce"
 
 # The maximum amount of heap to use, in MB. Default is 1000.
 export HADOOP_HEAPSIZE=1000
@@ -60,10 +60,14 @@ export HADOOP_PID_DIR=/var/hadoop/ephemeral-hdfs/pids
 # export HADOOP_NICENESS=10
 
 # Set hadoop user for CDH (which doesn't allow running as root)
-export HADOOP_NAMENODE_USER=hadoop
-export HADOOP_DATANODE_USER=hadoop
-export HADOOP_SECONDARYNAMENODE_USER=hadoop
-export HADOOP_JOBTRACKER_USER=hadoop
-export HADOOP_TASKTRACKER_USER=hadoop
+USER=`whoami`
+if [[ $USER == "root" ]]; then
+  USER=hadoop
+fi
+export HADOOP_NAMENODE_USER=$USER
+export HADOOP_DATANODE_USER=$USER
+export HADOOP_SECONDARYNAMENODE_USER=$USER
+export HADOOP_JOBTRACKER_USER=$USER
+export HADOOP_TASKTRACKER_USER=$USER
 
 ulimit -n 16000

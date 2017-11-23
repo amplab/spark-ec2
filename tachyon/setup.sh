@@ -1,9 +1,9 @@
 #!/bin/bash
 
-/root/spark-ec2/copy-dir /root/tachyon
+~/spark-ec2/copy-dir ~/tachyon
 
-/root/tachyon/bin/tachyon format
+~/tachyon/bin/tachyon format
 
 sleep 1
 
-/root/tachyon/bin/tachyon-start.sh all Mount
+~/tachyon/bin/tachyon-start.sh all Mount
