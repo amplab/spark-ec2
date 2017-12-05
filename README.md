@@ -42,6 +42,9 @@ identify machines belonging to each cluster in the Amazon EC2 Console.
 ## Launching a Cluster
 
 -   Go into the `ec2` directory in the release of Apache Spark you downloaded.
+- 	If ec2 directory is missing in downloaded spark, then follow these steps
+	-	create a directory named ec2 inside your downloaded spark.
+	-	Clone this repo (https://github.com/amplab/spark-ec2) inside ec2 directory created above.
 -   Run
     `./spark-ec2 -k <keypair> -i <key-file> -s <num-slaves> launch <cluster-name>`,
     where `<keypair>` is the name of your EC2 key pair (that you gave it
