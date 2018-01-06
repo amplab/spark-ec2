@@ -1,7 +1,5 @@
 #!/bin/bash
 
-sudo yum install -y -q pssh
-
 # usage: echo_time_diff name start_time end_time
 echo_time_diff () {
   local format='%Hh %Mm %Ss'
@@ -24,7 +22,6 @@ source ec2-variables.sh
 PRIVATE_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/local-hostname`
 PUBLIC_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/hostname`
 hostname $PRIVATE_DNS
-echo $PRIVATE_DNS > /etc/hostname
 export HOSTNAME=$PRIVATE_DNS  # Fix the bash built-in hostname variable too
 
 echo "Setting up Spark on `hostname`..."
@@ -48,68 +45,29 @@ fi
 echo "Setting executable permissions on scripts..."
 find . -regex "^.+.\(sh\|py\)" | xargs chmod a+x
 
-echo "RSYNC'ing /root/spark-ec2 to other cluster nodes..."
-rsync_start_time="$(date +'%s')"
-for node in $SLAVES $OTHER_MASTERS; do
-  echo $node
-  rsync -e "ssh $SSH_OPTS" -az /root/spark-ec2 $node:/root &
-  scp $SSH_OPTS ~/.ssh/id_rsa $node:.ssh &
-  sleep 0.1
-done
-wait
-rsync_end_time="$(date +'%s')"
-echo_time_diff "rsync /root/spark-ec2" "$rsync_start_time" "$rsync_end_time"
-
-echo "Running setup-slave on all cluster nodes to mount filesystems, etc..."
-setup_slave_start_time="$(date +'%s')"
-pssh --inline \
-    --host "$MASTERS $SLAVES" \
-    --user root \
-    --extra-args "-t -t $SSH_OPTS" \
-    --timeout 0 \
-    "spark-ec2/setup-slave.sh"
-setup_slave_end_time="$(date +'%s')"
-echo_time_diff "setup-slave" "$setup_slave_start_time" "$setup_slave_end_time"
-
 # Always include 'scala' module if it's not defined as a work around
 # for older versions of the scripts.
 if [[ ! $MODULES =~ *scala* ]]; then
   MODULES=$(printf "%s\n%s\n" "scala" $MODULES)
 fi
 
-# Install / Init module
-for module in $MODULES; do
-  echo "Initializing $module"
-  module_init_start_time="$(date +'%s')"
-  if [[ -e $module/init.sh ]]; then
-    source $module/init.sh
-  fi
-  module_init_end_time="$(date +'%s')"
-  echo_time_diff "$module init" "$module_init_start_time" "$module_init_end_time"
-  cd /root/spark-ec2  # guard against init.sh changing the cwd
-done
+cp /root/spark-ec2/slaves /root/spark/conf/
 
 # Deploy templates
 # TODO: Move configuring templates to a per-module ?
 echo "Creating local config files..."
 ./deploy_templates.py
 
-# Copy spark conf by default
-echo "Deploying Spark config files..."
-chmod u+x /root/spark/conf/spark-env.sh
-/root/spark-ec2/copy-dir /root/spark/conf
-
-# Setup each module
+# Updating config folder for each module
 for module in $MODULES; do
-  echo "Setting up $module"
-  module_setup_start_time="$(date +'%s')"
-  if [[ -e $module/setup.sh ]]; then
-      source ./$module/setup.sh
+  echo "Updating config files..."
+  module_update_start_time="$(date +'%s')"
+  if [[ -d $module/conf ]]; then
+      /root/spark-ec2/copy-dir ./$module/conf
   fi
   sleep 0.1
-  module_setup_end_time="$(date +'%s')"
-  echo_time_diff "$module setup" "$module_setup_start_time" "$module_setup_end_time"
-  cd /root/spark-ec2  # guard against setup.sh changing the cwd
+  module_update_end_time="$(date +'%s')"
+  echo_time_diff "$module update" "$module_update_start_time" "$module_update_end_time"
 done
 
 popd > /dev/null

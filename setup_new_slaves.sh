@@ -1,7 +1,5 @@
 #!/bin/bash
 
-sudo yum install -y -q pssh
-
 # usage: echo_time_diff name start_time end_time
 echo_time_diff () {
   local format='%Hh %Mm %Ss'
@@ -33,6 +31,7 @@ export MASTERS=`cat masters`
 NUM_MASTERS=`cat masters | wc -l`
 OTHER_MASTERS=`cat masters | sed '1d'`
 export SLAVES=`cat slaves`
+export NEW_SLAVES=`cat new_slaves`
 SSH_OPTS="-o StrictHostKeyChecking=no -o ConnectTimeout=5"
 
 if [[ "x$JAVA_HOME" == "x" ]] ; then
@@ -60,10 +59,10 @@ wait
 rsync_end_time="$(date +'%s')"
 echo_time_diff "rsync /root/spark-ec2" "$rsync_start_time" "$rsync_end_time"
 
-echo "Running setup-slave on all cluster nodes to mount filesystems, etc..."
+echo "Running setup-slave on new slave nodes to mount filesystems, etc..."
 setup_slave_start_time="$(date +'%s')"
 pssh --inline \
-    --host "$MASTERS $SLAVES" \
+    --host "$NEW_SLAVES" \
     --user root \
     --extra-args "-t -t $SSH_OPTS" \
     --timeout 0 \
@@ -81,8 +80,8 @@ fi
 for module in $MODULES; do
   echo "Initializing $module"
   module_init_start_time="$(date +'%s')"
-  if [[ -e $module/init.sh ]]; then
-    source $module/init.sh
+  if [[ -e $module/init_new_slaves.sh ]]; then
+    source $module/init_new_slaves.sh
   fi
   module_init_end_time="$(date +'%s')"
   echo_time_diff "$module init" "$module_init_start_time" "$module_init_end_time"
@@ -103,8 +102,8 @@ chmod u+x /root/spark/conf/spark-env.sh
 for module in $MODULES; do
   echo "Setting up $module"
   module_setup_start_time="$(date +'%s')"
-  if [[ -e $module/setup.sh ]]; then
-      source ./$module/setup.sh
+  if [[ -e $module/setup_new_slaves.sh ]]; then
+      source ./$module/setup_new_slaves.sh
   fi
   sleep 0.1
   module_setup_end_time="$(date +'%s')"
