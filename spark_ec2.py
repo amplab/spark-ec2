@@ -148,7 +148,21 @@ def setup_external_libs(libs):
             tar.close()
             os.remove(tgz_file_path)
             print(" - Finished downloading {lib}.".format(lib=lib["name"]))
-        sys.path.insert(1, lib_dir)
+
+        if lib["add-path"]:
+            lib["add-path"](lib_dir)
+        else:
+            sys.path.insert(1, lib_dir)
+
+
+def add_pyaml_path(lib_dir):
+    lib_py2 = os.path.join(lib_dir, "lib")
+    if os.path.exists(lib_py2) and sys.version < "3":
+        sys.path.insert(1, lib_py2)
+
+    lib_py3 = os.path.join(lib_dir, "lib3")
+    if os.path.exists(lib_py3) and sys.version >= "3":
+        sys.path.insert(1, lib_py3)
 
 
 # Only PyPI libraries are supported.
@@ -156,7 +170,14 @@ external_libs = [
     {
         "name": "boto",
         "version": "2.34.0",
-        "md5": "5556223d2d0cc4d06dd4829e671dcecd"
+        "md5": "5556223d2d0cc4d06dd4829e671dcecd",
+        "add-path": None
+    },
+    {
+        "name": "PyYAML",
+        "version": "3.11",
+        "md5": "f50e08ef0fe55178479d3a618efe21db",
+        "add-path": add_pyaml_path
     }
 ]
 
@@ -166,9 +187,72 @@ import boto
 from boto.ec2.blockdevicemapping import BlockDeviceMapping, BlockDeviceType, EBSBlockDeviceType
 from boto import ec2
 
+import yaml
 
 class UsageError(Exception):
     pass
+
+
+def process_conf_file(file_path, parser):
+    """
+    Load configuration file and extract arguments.
+    """
+    # Loading the configuration file.
+    configuration = {}
+    try:
+        with open(file_path) as configuration_file:
+            configuration = yaml.safe_load(configuration_file)
+    except Exception as e:
+        print("[!] An error occured when loading the config file:\n{}".format(e), file=stderr)
+        sys.exit(1)
+
+    unneeded_opts = ("version", "help")
+
+    # mapppin_conf() aims to avoid maintaining a manual mapping dictionary.
+    # Transforms --option-like-this to option_like_this
+    def mapping_conf(opt):
+        normal_opt = str(opt).split("/")[-1]
+        trans_opt = normal_opt.strip("-")
+        trans_opt = trans_opt.replace("-", "_")
+        return {trans_opt: normal_opt}
+
+    map_conf = {}
+    [map_conf.update(mapping_conf(opt)) for opt in parser.option_list]
+    [map_conf.pop(unneeded_opt, None) for unneeded_opt in unneeded_opts]
+
+    # Generating path to identity file (located in ~/.ssh/)
+    home_dir = os.path.expanduser('~')
+    key_pair_path = os.path.join(home_dir, ".ssh", configuration["identity_file"])
+    configuration["identity_file"] = key_pair_path
+
+    # Setting credentials to the environment to access AWS.
+    if "credentials" in configuration:
+        try:
+            key_id = configuration["credentials"]["aws_access_key_id"]
+            access_key = configuration["credentials"]["aws_secret_access_key"]
+        except KeyError:
+            pass
+        else:
+            os.environ["AWS_ACCESS_KEY_ID"] = key_id
+            os.environ["AWS_SECRET_ACCESS_KEY"] =  access_key
+
+    # Creating the args from the values present in the configuration file.
+    args = []
+    options = set(map_conf).intersection(configuration)
+    for op in options:
+        takes_value = parser.get_option(map_conf[op]).takes_value()
+        # Extends args with options that takes an value, example: slaves.
+        if takes_value:
+            option_value = "{opt} {val}".format(opt=map_conf[op],
+                                                val=configuration[op])
+            args.extend(option_value.split())
+        elif configuration[op]:
+            # Option that doesn't takes value, like --copy-aws-credentials
+            # Verifying that those options are setted(True).
+            args.append(map_conf[op])
+
+    new_opts, _ = parser.parse_args(args)
+    return new_opts
 
 
 # Configure and parse our command-line arguments
@@ -331,12 +415,18 @@ def parse_args():
     parser.add_option(
         "--instance-profile-name", default=None,
         help="IAM profile name to launch instances under")
+    parser.add_option("-c", "--conf-file", default=None,
+                        help="Specify config file", metavar="FILE")
 
     (opts, args) = parser.parse_args()
+
     if len(args) != 2:
         parser.print_help()
         sys.exit(1)
     (action, cluster_name) = args
+
+    if opts.conf_file:
+        opts = process_conf_file(opts.conf_file, parser)
 
     # Boto config check
     # http://boto.cloudhackers.com/en/latest/boto_config_tut.html
