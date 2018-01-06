@@ -61,6 +61,21 @@
   </property>
 
   <property>
+    <name>fs.s3a.impl</name>
+    <value>org.apache.hadoop.fs.s3a.S3AFileSystem</value>
+  </property>
+
+  <property>
+    <name>fs.s3a.access.key</name>
+    <value>{{aws_access_key_id}}</value>
+  </property>
+  
+  <property>
+    <name>fs.s3a.secret.key</name>
+    <value>{{aws_secret_access_key}}</value>
+  </property>
+
+  <property>
     <name>hadoop.security.group.mapping</name>
     <value>org.apache.hadoop.security.ShellBasedUnixGroupsMapping</value>
   </property>
